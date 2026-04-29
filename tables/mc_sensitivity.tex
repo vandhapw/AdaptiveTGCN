@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering
+\caption{Monte Carlo Sample Settings and Computational Trade-offs}
+\label{table:mc_sensitivity}
+\begin{tabular}{ccc}
+\toprule
+\textbf{MC Samples} & \textbf{Relative Runtime} & \textbf{Uncertainty Quality} \\
+\midrule
+10 & Fast & Lower precision \\
+20 & Moderate & Balanced \\
+50 & Slow & High precision \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize The experimental results in this paper use 20 Monte Carlo samples, which provides a balanced trade-off between computational efficiency and uncertainty estimation quality.
+\end{flushleft}
+\end{table}

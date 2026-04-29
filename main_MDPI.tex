@@ -1,0 +1,181 @@
+% LaTeX support: latex@mdpi.com
+% For support, please attach all files needed for compiling as well as the log file, 
+% and specify your operating system, LaTeX version, and LaTeX editor.
+
+%=================================================================
+\documentclass[actuators,article,submit,pdftex,moreauthors]{Definitions/mdpi}
+
+%=================================================================
+% MDPI internal commands - do not modify
+\firstpage{1}
+\makeatletter
+\setcounter{page}{\@firstpage}
+\makeatother
+\pubvolume{1}
+\issuenum{1}
+\articlenumber{0}
+\pubyear{2026}
+\copyrightyear{2026}
+\datereceived{ }
+\daterevised{ }
+\dateaccepted{ }
+\datepublished{ }
+
+%=================================================================
+% Additional packages for this paper
+\usepackage{amsmath,amsfonts}
+\usepackage{amssymb}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{algorithmic}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows.meta,positioning,calc,patterns,decorations.pathreplacing,shadows,fit,backgrounds}
+\usepackage{subfig}
+\usepackage{multirow}
+
+%=================================================================
+% Full title of the paper
+\Title{Adaptive Uncertainty-Aware Temporal Convolutional Networks for Multivariate Time Series Anomaly Detection in Sensor Networks}
+
+% Author ORCID IDs
+\newcommand{\orcidauthorA}{0000-0001-9790-7597}
+\newcommand{\orcidauthorB}{0000-0003-0466-8254}
+\newcommand{\orcidauthorC}{0000-0003-2168-7983}
+\newcommand{\orcidauthorD}{0000-0003-2168-7983}
+
+% Authors
+\Author{Vandha Pradwiyasma Widartha $^{1}$\orcidA{}, Ifrina Nuritha $^{2}$\orcidD{} Kyung Hyune Rhee $^{3}$\orcidB{} and Chang Soo Kim $^{1,}$*\orcidC{}}
+
+% MDPI internal command: Authors, for metadata in PDF
+\AuthorNames{Vandha Pradwiyasma Widartha, Ifrina Nuritha, Kyung Hyune Rhee and Chang Soo Kim}
+
+% Affiliations
+\address{%
+$^{1}$ \quad Department of Information Systems, Pukyong National University, Busan 48513, Republic of Korea; vandhapw@pukyong.ac.kr\\
+$^{2}$ \quad Department of Information System, University of Jember, Indonesia 68121, Republic of Indonesia; ifrinanuritha@unej.ac.id\\
+$^{3}$ \quad Division of Computer Engineering and AI, Pukyong National University, Busan 48513, Republic of Korea; khrhee@pknu.ac.kr}
+
+% Corresponding author
+\corres{Correspondence: cskim@pknu.ac.kr}
+
+% Abstract
+\abstract{This study presents a stochastic hybrid framework for detecting anomalies in multivariate time-series sensor data. The proposed framework addresses three critical research gaps in existing literature: (1) lack of uncertainty-aware temporal attention, (2) static hybrid scoring mechanisms, and (3) limited interpretability for sensor-specific anomalies. We introduce three key contributions: an Adaptive Uncertainty-Aware Attention (AUAA) mechanism that dynamically modulates attention weights based on predictive uncertainty, a Dynamic Weight Adapter for context-sensitive hybrid anomaly scoring, and Feature-Level Anomaly Attribution with theoretical uncertainty bounds. Our TCN-Stochastic Enhanced architecture employs three hierarchical dilated causal convolutional blocks with Monte Carlo dropout for probabilistic inference. Experiments on indoor air quality sensor data demonstrate that the base TCN-Stochastic model achieves lower raw reconstruction error, while the enhanced model provides uncertainty-aware anomaly scoring, dynamic weights, and feature-level attribution. On the validation subset, both models detect 38 anomalies (5.07\%), with the enhanced model using an adaptive threshold and a mean dynamic weight of 0.4944. Cross-dataset validation on the SWaT benchmark achieves an F1 score of 0.81. The theoretical bounds provide a foundation for false-positive-rate control in practical deployment within safety-critical applications.}
+
+% Keywords
+\keyword{Temporal Convolutional Network; Uncertainty Quantification; Attention Mechanism; Anomaly Detection; Multivariate Time Series; Monte Carlo Dropout; Sensor Networks}
+
+%=================================================================
+\begin{document}
+
+% INTRODUCTION
+%=================================================================
+\section{Introduction}
+
+The growing complexity of sensor networks and the increasing demand for robust anomaly detection pose major challenges in monitoring multivariate time-series data, especially in critical domains like indoor air quality where variables such as $CO_2$, VOC, temperature, and humidity exhibit complex dependencies and uncertainties \cite{coleman_sensing_2018}. Traditional methods often fail to capture these dynamics, particularly in low-cost sensor networks prone to errors, highlighting the need for advanced approaches that can detect anomalies while providing reliable uncertainty estimates \cite{sanchez-ferrera_review_2025}.
+
+Recent advances in deep learning have highlighted the potential of Temporal Convolutional Networks (TCNs), which offer efficient computation and long-range dependency modeling compared with recurrent architectures. Thill et al. introduced a TCN autoencoder with dilated convolutions for unsupervised anomaly detection, showing clear improvements over the traditional methods \cite{thill_temporal_2021}. Building on this, research has integrated stochastic elements to enable uncertainty quantification, with enhanced Monte Carlo Dropout frameworks using optimizers such as Grey Wolf and Bayesian Optimization achieving 2–3\% gains in accuracy \cite{asgharnezhad_enhancing_2025}. This integration of stochastic modeling and TCNs combines computational efficiency with reliable uncertainty estimation, supporting robust decision-making in sensor-based applications.
+
+Existing TCN-based approaches \cite{thill_temporal_2021, mehta_nac-tcn_2023} process temporal dependencies uniformly, without accounting for prediction reliability variations across time steps. This limitation is particularly problematic for sensor data where noise levels and signal quality vary dynamically. When a TCN encounters high-uncertainty regions, standard attention mechanisms may assign equal weight to unreliable predictions, leading to degraded detection accuracy.
+
+Ghimire et.al, and Cui et.al employ fixed weights to combine reconstruction error and uncertainty for anomaly scoring. However, the relative importance of these components should vary contextually: during stable sensor operation, reconstruction error should dominate, while during periods of high noise or sensor degradation, uncertainty should carry more weight. Static weighting fails to capture this temporal adaptation requirement \cite{ghimire_electricity_2025, cui_sde-hnn_2025}. While anomaly detection methods can identify abnormal windows, they typically do not provide feature-level attribution indicating which specific sensors contribute to detected anomalies. This limitation reduces the practical utility of these systems for maintenance and intervention decisions in real-world deployments.
+
+A feedforward neural network system demonstrates the feasibility of real-time monitoring solutions that can learn patterns from sensor data and identify changes indicating sensor issues \cite{akbaba_feedforward_2023}. AutoML-based calibration frameworks have been introduced to enhance the reliability of low-cost indoor air quality sensors, achieving strong correlations ($R^2 > 0.90$) with reference measurements while substantially reducing error metrics \cite{qian_enhancing_2025}. These developments underscore the critical need for robust anomaly detection systems that can handle the inherent uncertainties and temporal complexities of environmental sensor data.
+
+The proposed Temporal Correlation with Stochastic Hybrid Anomaly Detection framework addresses these research gaps through three novel contributions:
+
+\begin{enumerate}[leftmargin=*, nosep]
+    \item \textbf{Adaptive Uncertainty-Aware Attention (AUAA) Mechanism.} We introduce a novel attention mechanism that dynamically modulates temporal attention weights based on predictive uncertainty estimates. Unlike standard attention, AUAA down-weights unreliable predictions and focuses attention on high-confidence temporal patterns, enabling more robust feature extraction in noisy sensor environments. This addresses Gap 1 by explicitly incorporating uncertainty signals into the attention computation.
+
+    \item \textbf{Dynamic Weight Adaptation for Hybrid Anomaly Scoring.} We propose a learnable weight adaptation module that contextually adjusts the balance between reconstruction error and uncertainty based on input characteristics, temporal dynamics, and historical patterns. This addresses Gap 2 by replacing static weights with an adaptive mechanism that responds to changing sensor conditions.
+
+    \item \textbf{Feature-Level Anomaly Attribution with Theoretical Bounds.} We develop a feature importance learner that provides interpretable, sensor-specific attribution for detected anomalies, along with provable uncertainty bounds based on Chebyshev inequalities and calibration theory. This addresses Gap 3 by enabling practitioners to identify which sensors contribute most to anomalies, facilitating targeted maintenance decisions.
+\end{enumerate}
+
+These contributions are validated through experiments on real-world indoor air quality sensor data, including ablation studies that isolate the impact of each component and cross-dataset validation demonstrating generalization capability. Experimental results demonstrate that the enhanced framework provides calibrated uncertainty estimates, dynamic anomaly scoring, and interpretable anomaly explanations, while the base TCN-Stochastic achieves stronger raw reconstruction error performance.
+
+% RELATED WORKS
+%=================================================================
+\section{Related Works}
+
+\subsection{Deep Anomaly Detection in Multivariate Time Series}
+
+Anomaly detection in multivariate time series is challenging owing to inter-sensor dependencies and subtle deviations. Deep models address this problem by learning normal patterns and identifying outliers. Wang reviewed recent neural approaches, noting a shift toward architectures that handle high-dimensional, dynamic data \cite{wang_tcntransformer_2025}. For instance, LTG integrates LSTM, TCN, and Graph Convolution for sensor networks \cite{zhuang_research_2025}. These advances highlight the synergy of TCNs with other techniques. Applications span critical domains: industrial monitoring with multi-modal TCN models using attention and adversarial training \cite{sun_novel_2024}, and maritime security, where TCNs extract temporal features for vessel anomaly detection \cite{talpur_ai_2025}.
+
+\subsection{Uncertainty Quantification in Time Series Forecasting and Anomaly Detection}
+
+Uncertainty quantification (UQ) is vital for reliable decision-making in high-stakes tasks. Stochastic and Bayesian methods are being increasingly applied. In this study, we implemented a stochastic TCN with Monte Carlo (MC) dropout to estimate predictive uncertainty. Ghimire applied TCNs with explicit uncertainty modeling for electricity demand \cite{ghimire_electricity_2025}, whereas Cui's SDE-HNN integrated stochastic differential equations for calibrated forecasts \cite{cui_sde-hnn_2025}. The MC dropout enables multiple predictions per input, yielding mean and variance estimates that distinguish anomalies from noise. This enhances the robustness of anomaly detection. Similar approaches have validated MC dropout in environmental modeling \cite{le_performance_2025} and multivariate imputation \cite{wang_deep_2024}.
+
+\subsection{Attention Mechanisms in Time Series}
+
+Recent advances in attention mechanisms have significantly improved time series modeling. The Transformer architecture \cite{vaswani2017attention} introduced self-attention for sequence modeling, which has been adapted for time series forecasting. However, standard attention mechanisms do not account for prediction uncertainty. Our Adaptive Uncertainty-Aware Attention (AUAA) mechanism extends this line of work by incorporating uncertainty signals into attention computation, enabling more robust feature extraction in noisy environments.
+
+\subsection{Anomaly Detection with TCN}
+
+TCNs are employed for unsupervised occupancy detection, operational pattern learning, deviation identification, and gas concentration fluctuation prediction. The approaches examined include TCN-AE \cite{yang_optimized_2025}, TCN-Linear hybrid adapted with 1D convolutions that captures local time-series patterns for chaotic series \cite{wang_tcn-linear_2024}, and the TCN-GRU hybrid algorithm \cite{guo_research_2024}, all of which have been proven to improve the accuracy of sensor data analysis.
+
+\subsection{Positioning of This Work}
+
+Compared to prior works, our framework makes three distinct contributions: (1) we introduce uncertainty-aware attention that adapts to prediction reliability, which has not been explored in previous TCN-based methods; (2) we propose dynamic weight adaptation for hybrid anomaly scoring, addressing the limitation of fixed-weight approaches in existing stochastic methods; and (3) we provide theoretical uncertainty bounds with provable false positive rate guarantees, which is lacking in most practical anomaly detection systems. Table \ref{table:positioning} positions our work relative to existing approaches.
+
+\begin{table}[H]
+\centering
+\caption{Comparison with Existing Approaches}
+\label{table:positioning}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Method} & \textbf{Uncertainty} & \textbf{Adaptive} & \textbf{Feature} \\
+ & \textbf{Quantification} & \textbf{Attention} & \textbf{Attribution} \\
+\midrule
+TCN-AE \cite{thill_temporal_2021} & No & No & No \\
+LSTM-AE & No & No & No \\
+Stochastic TCN \cite{ghimire_electricity_2025} & Yes & No & No \\
+TCN + Attention & No & Yes & No \\
+\textbf{TCN-Stochastic Enhanced (Ours)} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% METHODOLOGY
+%=================================================================
+\section{Methodology}
+
+\input{structures_mdpi/methodology}
+
+% EXPERIMENTAL RESULTS
+%=================================================================
+\section{Experimental Results}
+
+\input{structures_mdpi/experimental}
+
+% DISCUSSION
+%=================================================================
+\section{Discussion}
+
+\input{structures_mdpi/discussion}
+
+% CONCLUSION
+%=================================================================
+\section{Conclusions}
+
+\input{structures_mdpi/conclusion}
+
+%=================================================================
+\authorcontributions{Conceptualization, V.P.W. and C.S.K.; methodology, V.P.W.; software, V.P.W.; validation, V.P.W., K.H.R. and C.S.K.; formal analysis, V.P.W and I.F.; investigation, V.P.W.; resources, C.S.K.; data curation, V.P.W.; writing---original draft preparation, V.P.W.; writing---review and editing, K.H.R. and C.S.K.; visualization, V.P.W and I.F; supervision, K.H.R. and C.S.K.; project administration, C.S.K.; funding acquisition, C.S.K. All authors have read and agreed to the published version of the manuscript.}
+
+\funding{This study was conducted with the support of the RealSecu Small and Medium Business Technology Innovation Development (R&D) project 'AI, Security Solution to Block the Leakage of Internal Confidential Information through Machine Learning' (RS-2024-00514290), and by the Basic Science Research Program through the National Research Foundation of Korea (NRF), funded by the Ministry of Education (2021R1I1A3052605).}
+
+\institutionalreview{Not applicable.}
+
+\informedconsent{Not applicable.}
+
+\dataavailability{The dataset used in this study is publicly accessible via an online repository at: \url{https://raw.githubusercontent.com/vandhapw/datasets/refs/heads/main/df_normal.csv}.}
+
+\acknowledgments{The authors would like to thank the anonymous reviewers for their valuable comments and suggestions that helped improve the quality of this paper.}
+
+\conflictsofinterest{The authors declare no conflicts of interest. The funders had no role in the design of the study; in the collection, analyses, or interpretation of data; in the writing of the manuscript; or in the decision to publish the results.}
+
+% REFERENCES
+%=================================================================
+\reftitle{References}
+\bibliography{2209-hiper-chad}
+
+\end{document}

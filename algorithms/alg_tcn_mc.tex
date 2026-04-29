@@ -1,0 +1,28 @@
+\begin{algorithm}
+\caption{Stochastic TCN-based Anomaly Detection}
+\begin{algorithmic}[1]
+\REQUIRE Trained TCN model $f_{\theta}$, Input sequence $\mathbf{X}$, Thresholds $\tau_{95}, \tau_{99}$
+\ENSURE Anomaly flags $\mathbf{A}_{95}, \mathbf{A}_{99}$
+
+\STATE \textbf{// Monte Carlo Prediction}
+\STATE $\hat{\mathbf{y}}, \sigma \leftarrow$ MC\_Predict($f_{\theta}, \mathbf{X}, N=50$)
+
+\STATE \textbf{// Error Calculation}
+\FOR{each feature $i \in \{1, ..., 5\}$}
+    \STATE $e_i \leftarrow |y_i - \hat{y}_i|$
+\ENDFOR
+
+\STATE \textbf{// Anomaly Detection}
+\FOR{each feature $i$ and timestep $t$}
+    \STATE $A_{95}[i,t] \leftarrow \mathbb{1}[e_i(t) > \tau_{95}]$
+    \STATE $A_{99}[i,t] \leftarrow \mathbb{1}[e_i(t) > \tau_{99}]$
+    
+    \STATE \textbf{// Uncertainty-aware detection}
+    \IF{$e_i(t) > \hat{y}_i(t) + 2\sigma_i(t)$}
+        \STATE Mark as high-confidence anomaly
+    \ENDIF
+\ENDFOR
+
+\RETURN $\mathbf{A}_{95}, \mathbf{A}_{99}$
+\end{algorithmic}
+\end{algorithm}

@@ -1,0 +1,42 @@
+\begin{algorithm}[H]
+\footnotesize
+\caption{Dynamic Weight Adaptation for Hybrid Anomaly Scoring}
+\label{alg:dynamic_weight}
+\begin{algorithmic}
+\Require Reconstruction error $\mathbf{e} \in \mathbb{R}^{B \times T}$, uncertainty $\mathbf{u} \in \mathbb{R}^{B \times T}$, hidden state $\mathbf{h}_t \in \mathbb{R}^{d_h}$
+\Require Encoder parameters $\mathbf{W}_e, b_e$, GRU parameters, weight adapter parameters $\mathbf{W}_\alpha, b_\alpha$
+\Ensure Dynamic weight $\alpha_t \in [0,1]$ for each timestep $t$
+
+\State \textbf{Step 1: Separate Encoding}
+\State $\mathbf{z}_e \gets \sigma(\mathbf{W}_e \cdot \mathbf{e} + b_e) \in \mathbb{R}^{B \times T \times d_h}$
+\State $\mathbf{z}_u \gets \sigma(\mathbf{W}_u \cdot \mathbf{u} + b_u) \in \mathbb{R}^{B \times T \times d_h}$
+\State where $\sigma$ is the ReLU activation function
+
+\State \textbf{Step 2: Concatenated Context Feature}
+\State $\mathbf{c}_t \gets \text{Concat}(\mathbf{z}_{e,t}, \mathbf{z}_{u,t}) \in \mathbb{R}^{B \times 2d_h}$
+
+\State \textbf{Step 3: Temporal Context Modeling with GRU}
+\For{timestep $t = 1$ to $T$}
+    \State $\mathbf{h}_t \gets \text{GRU}(\mathbf{c}_t, \mathbf{h}_{t-1})$
+    \State \textbf{where:}
+    \State $\quad \mathbf{r}_t \gets \sigma(\mathbf{W}_{ir} \mathbf{c}_t + \mathbf{W}_{hr} \mathbf{h}_{t-1} + b_r)$ (reset gate)
+    \State $\quad \mathbf{z}_t \gets \sigma(\mathbf{W}_{iz} \mathbf{c}_t + \mathbf{W}_{hz} \mathbf{h}_{t-1} + b_z)$ (update gate)
+    \State $\quad \tilde{\mathbf{h}}_t \gets \tanh(\mathbf{W}_{ih} \mathbf{c}_t + \mathbf{W}_{hh} (\mathbf{r}_t \odot \mathbf{h}_{t-1}) + b_h)$ (candidate)
+    \State $\quad \mathbf{h}_t \gets (1 - \mathbf{z}_t) \odot \mathbf{h}_{t-1} + \mathbf{z}_t \odot \tilde{\mathbf{h}}_t$ (hidden state)
+\EndFor
+
+\State \textbf{Step 4: Dynamic Weight Prediction}
+\For{timestep $t = 1$ to $T$}
+    \State $\mathbf{f}_t \gets \text{Concat}(\mathbf{e}_t, \mathbf{u}_t, \mathbf{h}_t) \in \mathbb{R}^{B \times (2 + d_h)}$
+    \State $\alpha_{raw,t} \gets \mathbf{W}_\alpha \cdot \mathbf{f}_t + b_\alpha$
+    \State $\alpha_t \gets \text{sigmoid}(\alpha_{raw,t}) = \frac{1}{1 + e^{-\alpha_{raw,t}}}$
+    \State ensures $\alpha_t \in [0, 1]$
+\EndFor
+
+\State \textbf{Step 5: Hybrid Anomaly Score Computation}
+\State $\mathbf{s}_t \gets \alpha_t \odot \mathbf{e}_t + (1 - \alpha_t) \odot \mathbf{u}_t$
+\State where higher $\alpha_t$ emphasizes reconstruction error, lower $\alpha_t$ emphasizes uncertainty
+
+\State \textbf{Return} $(\boldsymbol{\alpha}, \mathbf{s}) = \{\alpha_t, s_t\}_{t=1}^T$
+\end{algorithmic}
+\end{algorithm}

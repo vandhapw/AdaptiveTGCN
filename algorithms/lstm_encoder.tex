@@ -1,0 +1,183 @@
+% \documentclass{article}
+% \usepackage{tikz}
+% \usepackage{amsmath}
+% \usepackage{amssymb}
+% \usetikzlibrary{shapes,arrows,positioning,calc}
+
+% \begin{document}
+
+\begin{figure}[H]
+% \centering
+\resizebox{8.5cm}{!}{
+\begin{tikzpicture}[
+    box/.style={rectangle, draw, thick, minimum width=1.5cm, minimum height=0.8cm},
+    input/.style={circle, draw, thick, minimum size=0.6cm},
+    arrow/.style={->, thick},
+    attention/.style={diamond, draw, thick, minimum size=1cm}
+]
+
+
+\tikzset{
+  input/.style={
+    draw,
+    fill=blue!50,  % Ganti dengan warna sesuai keinginan
+    minimum width=1.2cm,
+    minimum height=1cm,
+    align=center
+  }
+}
+
+\tikzset{
+  box/.style={
+    draw,
+    fill=blue!20,      % Warna background biru muda
+    minimum width=2cm,
+    minimum height=1cm,
+    align=center
+  }
+}
+
+
+% Input Layer
+\node[input] (x1) at (0,0) {$x_1$};
+\node[input] (x2) at (2.5,0) {$x_2$};
+\node[input] (x3) at (5,0) {$\cdots$};
+\node[input] (xL) at (7.5,0) {$x_L$};
+
+% Input formula
+\node[right=0.3cm of xL] {\small $\mathbf{X}_i = [x_1, x_2, \ldots, x_L]; \quad x_i \in \mathbb{R}^D$};
+
+% LSTM Layer 1
+\node[box] (lstm11) at (0,2) {LSTM};
+\node[box] (lstm12) at (2.5,2) {LSTM};
+\node[box] (lstm13) at (5,2) {LSTM};
+\node[box] (lstm1L) at (7.5,2) {LSTM};
+
+% LSTM Layer 2
+\node[box] (lstm21) at (0,3.5) {LSTM};
+\node[box] (lstm22) at (2.5,3.5) {LSTM};
+\node[box] (lstm23) at (5,3.5) {LSTM};
+\node[box] (lstm2L) at (7.5,3.5) {LSTM};
+
+% Hidden states
+\node[input] (h1) at (0,5) {$h_1$};
+\node[input] (h2) at (2.5,5) {$h_2$};
+\node[input] (h3) at (5,5) {$h_{\cdots}$};
+\node[input] (hL) at (7.5,5) {$h_L$};
+
+% LSTM formula
+\node[right=5cm of lstm22] {\small $h_t, c_t = \text{LSTM}(x_t, h_{t-1}, c_{t-1})$};
+\node[right=5cm of h2] {\small $\mathbf{H} = [h_1, h_2, \ldots, h_L]; \quad h_t \in \mathbb{R}^H$};
+
+% Attention mechanism
+\node[attention, fill=green!20] (att1) at (0,6.5) {$\alpha_1$};
+\node[attention, fill=green!20] (att2) at (2.5,6.5) {$\alpha_2$};
+\node[attention, fill=green!20] (att3) at (5,6.5) {$\alpha_{\cdots}$};
+\node[attention, fill=green!20] (attL) at (7.5,6.5) {$\alpha_L$};
+
+% Attention formulas
+\node[right=2.5cm of att3] {\small $e_t = \mathbf{w}_2^T \tanh(\mathbf{W}_1 h_t + \mathbf{b}_1) + b_2$};
+\node[right=10cm of att3, above=-1.0cm] {\small $\alpha_t = \frac{e^{e_t}}{\sum_{j=1}^L e^{e_j}}$};
+
+% Context vector
+\node[box, minimum width=5cm] (context) at (3.5,8) {Context Vector};
+\node[right=2cm of context] {\small $\mathbf{c} = \sum_{t=1}^L \alpha_t h_t$};
+
+% Projection layer
+\node[box, minimum width=2cm] (projection) at (3.5,9.5) {Projection};
+\node[below=1.5cm of projection, right=0.2cm of projection] {\small $\mathbf{z} = \mathbf{W}_v \mathbf{c} + \mathbf{b}_v$};
+
+% Output
+\node[input, minimum size=1cm] (output) at (3.5,11) {$\mathbf{z}$};
+
+% Arrows - Input to LSTM Layer 1
+\draw[arrow] (x1) -- (lstm11);
+\draw[arrow] (x2) -- (lstm12);
+\draw[arrow] (x3) -- (lstm13);
+\draw[arrow] (xL) -- (lstm1L);
+
+% Arrows - LSTM Layer 1 to Layer 2
+\draw[arrow] (lstm11) -- (lstm21);
+\draw[arrow] (lstm12) -- (lstm22);
+\draw[arrow] (lstm13) -- (lstm23);
+\draw[arrow] (lstm1L) -- (lstm2L);
+
+% Arrows - LSTM Layer 2 to Hidden states
+\draw[arrow] (lstm21) -- (h1);
+\draw[arrow] (lstm22) -- (h2);
+\draw[arrow] (lstm23) -- (h3);
+\draw[arrow] (lstm2L) -- (hL);
+
+% Arrows - Hidden states to Attention
+\draw[arrow] (h1) -- (att1);
+\draw[arrow] (h2) -- (att2);
+\draw[arrow] (h3) -- (att3);
+\draw[arrow] (hL) -- (attL);
+
+% Arrows - Attention to Context
+\draw[arrow] (att1) -- (context);
+\draw[arrow] (att2) -- (context);
+\draw[arrow] (att3) -- (context);
+\draw[arrow] (attL) -- (context);
+
+% Arrows - Context to Projection
+\draw[arrow] (context) -- (projection);
+
+% Arrow - Projection to Output
+\draw[arrow] (projection) -- (output);
+
+% Sequential connections in LSTM layers
+\draw[arrow, dashed] (lstm11) -- (lstm12);
+\draw[arrow, dashed] (lstm12) -- (lstm13);
+\draw[arrow, dashed] (lstm13) -- (lstm1L);
+
+\draw[arrow, dashed] (lstm21) -- (lstm22);
+\draw[arrow, dashed] (lstm22) -- (lstm23);
+\draw[arrow, dashed] (lstm23) -- (lstm2L);
+
+% Labels
+\node[left=0.5cm of x1] {\textbf{Input}};
+\node[left=0.5cm of lstm11] {\textbf{LSTM Layer 1}};
+\node[left=0.5cm of lstm21] {\textbf{LSTM Layer 2}};
+\node[left=0.5cm of h1] {\textbf{Hidden States}};
+\node[left=0.5cm of att1] {\textbf{Attention}};
+\node[left=1cm of context] {\textbf{Context}};
+\node[left=1cm of projection] {\textbf{Projection}};
+\node[left=0.5cm of output] {\textbf{Output}};
+
+\end{tikzpicture}
+}
+\caption{Flow Data of LSTM Encoder with Temporal Attention Mechanism. The LSTM encoder captures both short and long-term temporal dependencies from sequential inputs}
+\end{figure}
+% }
+% % Mathematical formulations
+% \section*{Formula Matematika Lengkap}
+
+% \subsection*{1. Input Representation}
+% \begin{align}
+% \mathbf{X}_i &= [x_1, x_2, \ldots, x_L] \\
+% x_i &\in \mathbb{R}^D
+% \end{align}
+
+% \subsection*{2. LSTM Encoder}
+% \begin{align}
+% h_t, c_t &= \text{LSTM}(x_t, h_{t-1}, c_{t-1}) \\
+% \mathbf{H} &= [h_1, h_2, \ldots, h_L] \\
+% h_t &\in \mathbb{R}^H
+% \end{align}
+
+% \subsection*{3. Temporal Attention Mechanism}
+% \begin{align}
+% e_t &= \mathbf{w}_2^T \tanh(\mathbf{W}_1 h_t + \mathbf{b}_1) + b_2 \\
+% \alpha_t &= \frac{e^{e_t}}{\sum_{j=1}^L e^{e_j}} \\
+% \mathbf{c} &= \sum_{t=1}^L \alpha_t h_t
+% \end{align}
+
+% \subsection*{4. Projection to Latent Space}
+% \begin{align}
+% \mathbf{z} &= \mathbf{W}_v \mathbf{c} + \mathbf{b}_v
+% \end{align}
+
+% di mana $\mathbf{z}$ merupakan representasi laten window yang akan digunakan oleh branch self-supervised, decoder, dan classifier.
+
+% \end{document}

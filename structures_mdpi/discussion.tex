@@ -1,0 +1,43 @@
+\subsection{Interpretation of Results}
+The experimental results demonstrate a clear distinction between reconstruction accuracy and uncertainty-aware anomaly detection. The base TCN-Stochastic model achieves lower raw reconstruction error on the validation subset (MSE = 0.000327), while the TCN-Stochastic Enhanced model reports higher reconstruction MSE (0.004250) because its objective combines reconstruction, uncertainty calibration, and dynamic weighting. Therefore, the enhanced model should not be claimed to improve raw MSE; its value lies in calibrated anomaly scoring, feature-level attribution, and interpretability.
+
+The ablation study reveals this trade-off. MC dropout leaves the base reconstruction error nearly unchanged while adding stochastic uncertainty estimation. AUAA and dynamic weighting introduce the uncertainty-aware objective and increase raw reconstruction error, but they also enable the model to compute adaptive anomaly scores, dynamic weights, and per-sensor attribution.
+
+\subsection{Comparison with Prior Work}
+Compared to the stochastic TCN framework of Ghimire et al. \cite{ghimire_electricity_2025}, our approach differs in two key aspects. First, we introduce adaptive attention that modulates feature extraction based on uncertainty, whereas Ghimire et al. use standard TCN with post-hoc uncertainty estimation. Second, our dynamic weight adaptation enables contextual anomaly scoring, addressing the limitation of fixed weights in prior approaches. The indoor-air-quality experimental results support these architectural additions as interpretability and anomaly-scoring mechanisms rather than as a raw MSE improvement over the base TCN.
+
+The theoretical bounds we provide distinguish our work from purely empirical approaches. The Chebyshev-based threshold guarantee ($P(\text{false positive}) \leq 1/k^2$) enables practitioners to select thresholds with known confidence levels, which is essential for safety-critical applications such as environmental monitoring and industrial control.
+
+\subsection{Practical Implications}
+The proposed framework offers several practical benefits for sensor network operators:
+
+\textbf{Interpretable Anomaly Attribution.} The feature importance learner enables operators to identify which specific sensors contribute to detected anomalies. In the experiments, mean attribution is distributed across humidity (21.0\%), VOC (20.5\%), CO\textsubscript{2} (20.4\%), dust (19.2\%), and temperature (18.9\%).
+
+\textbf{Adaptive Detection Sensitivity.} The dynamic weight adapter adjusts the balance between reconstruction error and uncertainty. In the experiments, the mean dynamic weight is 0.4944, indicating a slightly uncertainty-focused balance.
+
+\textbf{Calibrated Confidence.} The enhanced model exposes uncertainty estimates alongside reconstruction error, allowing anomaly decisions to incorporate predictive confidence rather than relying only on deterministic error.
+
+\subsection{Limitations and Failure Cases}
+Despite its strengths, the proposed framework has limitations that practitioners should consider:
+
+\textbf{Reconstruction-Accuracy Trade-Off.} The enhanced objective increases raw reconstruction MSE. Applications that prioritize pure forecasting accuracy may prefer the base TCN-Stochastic model, while applications that prioritize uncertainty-aware anomaly scoring may benefit from the enhanced model.
+
+\textbf{Dependency on Training Data Quality.} The uncertainty estimation relies on the assumption that the training distribution represents normal operation. If the training data contains undetected anomalies, the model may learn to treat them as normal, reducing detection sensitivity. We recommend rigorous data cleaning using DBSCAN clustering as described in the Methodology section.
+
+\textbf{Computational Overhead.} MC dropout inference requires multiple forward passes per prediction. The experiments use 20 Monte Carlo samples to reduce runtime while preserving uncertainty estimates.
+
+\textbf{Limited to One-Step Feature Prediction.} The current architecture predicts the next timestep for each feature from temporal windows. Capturing richer inter-feature dependencies during prediction could improve accuracy for highly correlated sensor groups, which we leave for future work.
+
+\subsection{Sensitivity Analysis}
+We conducted sensitivity analysis on key hyperparameters to guide practitioners in model configuration.
+
+\textbf{Number of MC Samples.} Table \ref{table:mc_sensitivity} shows the impact of MC sample count. The experiments use 20 samples for practical runtime.
+
+\input{tables/mc_sensitivity}
+
+\textbf{Dropout Rate.} The optimal dropout rate balances regularization and prediction quality. We used 0.2 in the experiments.
+
+\textbf{Attention Heads.} The AUAA configuration uses 4 attention heads, matching the model configuration.
+
+\subsection{Future Directions}
+Several promising directions emerge from this work. First, the enhanced objective should be tuned further if lower reconstruction MSE is desired alongside uncertainty calibration. Second, extending the framework to capture inter-feature dependencies through graph neural networks could improve prediction accuracy for correlated sensors. Third, online learning mechanisms could enable adaptation to concept drift in streaming sensor data.

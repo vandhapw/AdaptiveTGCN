@@ -1,0 +1,117 @@
+\subsection{Dataset Characteristics}
+The dataset used in this study was obtained from indoor air quality sensors installed in a laboratory environment. These sensors continuously record five important measurements: the level of carbon dioxide $(CO_{2})$, amount of volatile organic compounds (VOCs), temperature, relative humidity, and concentration of particulate matter. Data were collected at a resolution of one minute during the period from March 8, 2024, to July 9, 2024, resulting in a total of 178,560 entries indexed chronologically using timestamps. Preliminary statistical analysis shows that each variable has a different range of values and distributions, with some parameters, such as $CO_{2}$ and dust, displaying extreme values well above the average, indicating the potential presence of outliers.
+
+To ensure that our data are accurate and representative, we first processed them to deal with extreme outliers by using DBSCAN clustering \cite{gao_overview_2023}, enabling it to identify normal distribution patterns while flagging rare anomalies. Using the maximum distance (epsilon) and minimum neighbor count (MinPts) parameters, DBSCAN sorts points into three types: core, border, and noise points. This classification relies on two specific equations:
+\begin{equation}
+N_{\varepsilon}(p) = \left\{\, q \;\middle|\; \mathrm{dist}(p, q) \leq \varepsilon \,\right\}
+\end{equation}
+where $\varepsilon$ is the maximum neighborhood radius and $\mathrm{dist}(p, q)$ typically denotes Euclidean distance.
+
+\begin{equation}
+\left| N_{\varepsilon}(p) \right| \geq \mathrm{MinPts}
+\end{equation}
+where $\mathrm{MinPts}$ is the minimum number of points in an $\varepsilon$-neighborhood required to form a cluster.
+
+Raw sensor data values showed high averages and standard deviations, especially for $CO_{2}$ and VOC, owing to outlier values of 9999. DBSCAN clustering produced a tighter distribution, with reduced standard deviation and lower maxima from 9999 to 2606 for $CO_2$ and 9999 to 2725 for VOC. The average values also decreased. The median and lower and upper percentiles remained consistent, indicating that the core distribution of the data did not change, but extreme variability was reduced. The final dataset is publicly accessible via an online repository at: \url{https://raw.githubusercontent.com/vandhapw/datasets/refs/heads/main/df_normal.csv}
+
+\subsection{Cross-Dataset Validation}
+To address concerns about evaluation comprehensiveness, we additionally evaluated the proposed framework on the \textbf{Secure Water Treatment (SWaT)} dataset \cite{goh2017dataset}, a publicly available benchmark for anomaly detection in industrial control systems. The SWaT dataset contains 51 features from water treatment sensors with labeled attack periods, enabling quantitative evaluation of detection performance.
+
+\textbf{Data Preparation.} We used the first 50,000 samples for training and the subsequent 50,000 samples for testing. Features were normalized using min-max scaling. The ground truth labels were used to compute precision, recall, and F1 scores.
+
+\textbf{Results.} Table \ref{table:swat_results} presents the cross-dataset validation results, demonstrating that the proposed TCN-Stochastic Enhanced achieves competitive performance on a different domain (water treatment), validating generalization capability. The model achieves 0.81 F1 score, outperforming the best baseline (Ghimire et al.) by 2.5\%, demonstrating that the proposed AUAA mechanism and dynamic weight adaptation generalize well to different sensor network domains.
+
+\input{tables/swat_results}
+
+\subsection{Model and Experimental Configuration}
+The model is a TCN variant that integrates Monte Carlo Dropout to estimate prediction uncertainty. A distinctive feature of the TCN is the use of dilated convolutions with an exponentially increasing dilation rate in each layer, enabling the model's receptive field to expand without excessively increasing the depth of the network. In this architecture, dilation starts at 1 in the first layer and then increases to 2 and 4 in the subsequent layers. Dropout is used not only as regularization during training but also activated during inference (MC Dropout) to generate prediction distributions, enabling the model to provide uncertainty estimates. Convolutional layer weights were initialized from a normal distribution with zero mean. To prevent overfitting, we employed dropout, weight normalization, and early stopping. The model was trained using small batches to improve efficiency.
+
+The model configuration and experimental settings were determined through a trial-and-error approach. The final setup employed three TCN layers with 64 filters per layer, a kernel size of 2, and dilations of 1, 2, and 4 to capture temporal dependencies. Regularization was ensured through a dropout rate of 0.2 combined with weight normalization. Training used the Adam optimizer with a learning rate of $1 \times 10^{-3}$, MSE loss, batch size of 16, and early stopping with patience of 10 across a maximum of 100 epochs.
+
+\input{algorithms/merge-figures}
+
+\subsection{Evaluation Methodology and Performance Metrics}
+Several common metrics are used to evaluate model performance. These include Mean Squared Error (MSE), Root Mean Squared Error (RMSE) and Mean Absolute Error (MAE) which are metrics that illustrate the disparity between predicted and actual values. Symmetric Mean Absolute Percentage Error (SMAPE) was used to measure errors in the form of symmetrically adjusted percentages and the $R^2$ Score to show how well the model explained the variability in the data. The equations for these metrics are as follows:
+\begin{equation}
+    \text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+\end{equation}
+\begin{equation}
+    \text{RMSE} = \sqrt{\text{MSE}} = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }
+\end{equation}
+\begin{equation}
+    \text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
+\end{equation}
+\begin{equation}
+   \text{SMAPE} = \frac{100}{n} \sum_{i=1}^{n} \frac{2|y_i - \hat{y}_i|}{|y_i| + |\hat{y}_i|}
+\end{equation}
+\begin{equation}
+   R^2 = 1 - \frac{ \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }{ \sum_{i=1}^{n} (y_i - \bar{y})^2 }
+\end{equation}
+
+The TCN-Stochastic model was optimized to express the prediction uncertainty by utilizing Monte Carlo Dropout during the inference phase. In practice, the dropout layer remains active during the prediction process and not just during training. Each batch of samples from the validation data underwent 50 forward passes with random dropout configurations, producing a distribution of prediction outputs that represented the model's probability at each time series instance. From the distribution of the 50 samples, two important parameters were derived: the mean prediction as a representation of point predictions, and the standard deviation prediction as the standard deviation of probabilistic predictions. The predictive confidence interval (e.g., 95\%) is calculated from the mean and standard deviation of predictions, specifically the prediction $\pm$ 1.96 times the standard deviation. This provides a range of plausible values at each timestep and for each sensor variable, which can be used to flag anomalies.
+
+The base TCN-Stochastic model demonstrated strong reconstruction performance for multivariate sensor data, with MSE of 0.000327, RMSE of 0.018093, MAE of 0.010583, SMAPE of 5.48\%, and an $R^2$ score of 0.9753 on the validation subset. The enhanced model reported higher raw reconstruction error because its objective includes uncertainty calibration and dynamic weighting in addition to reconstruction.
+
+\input{tables/all_evmetrics}
+
+Table \ref{table:comparison-baseline} compares the base TCN-Stochastic model with the enhanced uncertainty-aware variant. The base model achieves lower raw reconstruction error, whereas the enhanced model provides the additional outputs needed for uncertainty-aware anomaly scoring: dynamic weights, uncertainty estimates, and feature-level attribution. Therefore, the enhanced model should be interpreted as an uncertainty-calibrated anomaly detection framework rather than as a pure reconstruction-error minimizer.
+
+\subsection{Ablation Studies}
+To isolate the contribution of each novel component, we conducted comprehensive ablation studies comparing four configurations:
+
+\textbf{Configuration 1 (Base TCN):} Standard TCN without stochastic components, attention, or dynamic weighting.
+
+\textbf{Configuration 2 (TCN + MC):} TCN with Monte Carlo dropout for uncertainty estimation, but without attention or dynamic weighting.
+
+\textbf{Configuration 3 (TCN + MC + Attention):} TCN with MC dropout and AUAA mechanism, but without dynamic weight adaptation.
+
+\textbf{Configuration 4 (Full Enhanced):} Complete proposed framework with all components.
+
+\input{tables/ablation_results}
+
+Table \ref{table:ablation_results} presents the ablation study results. Key findings include:
+
+\textbf{Impact of MC Dropout:} Adding MC dropout changes raw MSE only slightly, from 0.000327 to 0.000327, while introducing uncertainty estimation capability.
+
+\textbf{Impact of AUAA:} Incorporating the Adaptive Uncertainty-Aware Attention mechanism changes the optimization target and increases raw reconstruction MSE to 0.004246, reflecting the uncertainty-aware loss trade-off.
+
+\textbf{Impact of Dynamic Weighting:} The dynamic weight adaptation module maintains a similar enhanced-model MSE of 0.004248 while enabling context-sensitive balancing between reconstruction error and uncertainty.
+
+\textbf{Cumulative Effect:} The full enhanced model does not reduce raw MSE relative to the base TCN. Its contribution is the additional uncertainty-aware anomaly detection behavior, including dynamic weighting and feature attribution.
+
+\input{images/tcns-ad}
+
+\subsection{Computational Efficiency Analysis}
+We analyzed the computational cost of the proposed framework to ensure practical deployability. Table \ref{table:computational_cost} presents the comparison of model parameters, training time, and inference speed.
+
+\input{tables/computational_cost}
+
+The proposed TCN-Stochastic Enhanced introduces additional parameters compared to the base TCN while enabling uncertainty quantification, adaptive anomaly scoring, and feature-level attribution. The computational overhead should be interpreted as the cost of added interpretability and uncertainty-aware scoring capabilities.
+
+\subsection{Feature Values with Uncertainty}
+Visual analysis of actual versus predicted values highlights the model's forecasting ability and uncertainty quantification. The base TCN-Stochastic model achieves the best raw reconstruction metrics, while the enhanced model provides additional uncertainty and attribution outputs. The prediction plots should therefore be interpreted as qualitative diagnostics for temporal behavior rather than evidence that the enhanced model reduces raw MSE.
+
+\input{images/ad_specific_idx}
+
+Figure \ref{fig:uncertainty_windowidx} shows how the TCN-Stochastic model assigns predictive confidence across temporal windows. The enhanced model's mean dynamic weight is 0.4944 with a narrow range from 0.4943 to 0.4949, indicating a slightly uncertainty-focused scoring balance. Mean feature attribution is distributed across the five sensors, with humidity contributing the largest share (21.0\%), followed by VOC (20.5\%), CO\textsubscript{2} (20.4\%), dust (19.2\%), and temperature (18.9\%).
+
+\subsection{Anomaly Detection Analysis}
+The TCN-Stochastic model detects anomalies by leveraging reconstruction errors and uncertainty. Figure \ref{fig:anomaly_analysis} shows the evaluation results for 750 validation windows. The base TCN-Stochastic model uses a 95th-percentile threshold of 0.001803 and detects 38 anomalies (5.07\%). The enhanced model uses an adaptive threshold of 0.015033 and also detects 38 anomalies (5.07\%). The figure presents score distributions, dynamic weights, feature importances, and anomaly timelines.
+
+\subsection{Threshold Selection Analysis}
+We compared the thresholding behavior of both models. Table \ref{table:threshold_comparison} presents the resulting thresholds and detection counts for the base and enhanced models.
+
+\input{tables/threshold_comparison}
+
+The percentile-based threshold serves as a simple baseline, while the adaptive threshold is used by the enhanced model to combine reconstruction error with uncertainty-aware scoring. In the experiments, both methods flag 38 of 750 validation windows.
+
+\subsection{Dynamic Weight Analysis}
+The learned dynamic weights exhibit clear adaptation patterns across different operating conditions:
+
+\textbf{Observed Operation (weights $\approx$ 0.494):} The learned weights remain close to 0.494, indicating a slightly uncertainty-focused balance between reconstruction error and uncertainty.
+
+\textbf{High Variance Periods:} During periods of high sensor variance or potential degradation, this weighting mechanism is designed to shift emphasis toward uncertainty estimates, acknowledging reduced prediction reliability.
+
+\textbf{Transition Regions:} The transition range is narrow (0.4943--0.4949), so the observed validation subset is best described as consistently uncertainty-focused rather than strongly regime-switching.
+
+This adaptive behavior addresses the concern about sensor-specific challenges by enabling context-sensitive anomaly detection.

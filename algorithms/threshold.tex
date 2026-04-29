@@ -1,0 +1,13 @@
+\begin{align}
+\tau_{95} &= Q_{0.95}\big(\{e_i(t) : \forall t \in \text{validation set}\}\big) \\
+\tau_{99} &= Q_{0.99}\big(\{e_i(t) : \forall t \in \text{validation set}\}\big)
+\label{fig:threshold}
+\end{align}
+
+\noindent\textbf{where:}
+\begin{itemize}
+    \item $\tau_{95}, \tau_{99}$ : threshold values at the 95th and 99th percentiles, respectively.
+    \item $Q_{p}(\cdot)$ : quantile function at probability level $p$.
+    \item $e_i(t)$ : reconstruction error (or prediction error) for instance $i$ at time $t$.
+    \item $\text{validation set}$ : the dataset used to estimate thresholds, disjoint from the training set.
+\end{itemize}

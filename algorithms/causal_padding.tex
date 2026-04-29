@@ -1,0 +1,35 @@
+\begin{algorithm}[H]
+\caption{Causal Dilated Convolution with Asymmetric Padding}
+\label{alg:causal_conv}
+
+\SetKwInOut{Input}{Input}
+\SetKwInOut{Output}{Output}
+\SetKwInOut{Parameters}{Parameters}
+
+\Input{$\mathbf{x} \in \mathbb{R}^{B \times C_{in} \times T}$: input tensor (batch, channels, time)}
+\Parameters{$k$: kernel size, $d$: dilation factor, $\text{conv}$: convolution layer}
+\Output{$\mathbf{y} \in \mathbb{R}^{B \times C_{out} \times T}$: causally convolved output}
+
+\BlankLine
+\tcp{Calculate required padding for causal convolution}
+$p \leftarrow (k - 1) \times d$\;
+\tcp*[r]{Receptive field size minus 1}
+
+\BlankLine
+\tcp{Apply left-only padding to maintain causality}
+$\mathbf{x}_{padded} \leftarrow \text{Pad}(\mathbf{x}, [p, 0])$\;
+\tcp*[r]{Pad $p$ zeros on left, 0 on right}
+
+\BlankLine
+\tcp{Perform dilated convolution}
+$\mathbf{y}_{temp} \leftarrow \text{conv}(\mathbf{x}_{padded})$\;
+\tcp*[r]{Standard convolution operation}
+
+\BlankLine
+\tcp{Remove extra right padding to maintain original length}
+$\mathbf{y} \leftarrow \mathbf{y}_{temp}[:, :, :-p]$\;
+\tcp*[r]{Slice to remove last $p$ timesteps}
+
+\BlankLine
+\Return{$\mathbf{y}$}\;
+\end{algorithm}

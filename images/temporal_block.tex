@@ -1,0 +1,99 @@
+\begin{tikzpicture}[
+    % Styles
+    signal/.style={circle, draw=black!80, fill=blue!20, minimum size=6mm},
+    conv_op/.style={rectangle, draw=black!80, fill=orange!30, minimum width=20mm, minimum height=10mm},
+    residual/.style={diamond, draw=black!80, fill=green!30, minimum size=10mm},
+    activation/.style={rectangle, draw=black!80, fill=yellow!30, minimum width=15mm, minimum height=8mm},
+    % Arrows
+    flow/.style={-latex, thick},
+    skip/.style={-latex, thick, blue!60, dashed}
+]
+
+% Temporal Block Detail (showing one block)
+\node[font=\large\bfseries] at (0, 6) {Temporal Block Internal Structure};
+
+% Input
+\node[signal] (input) at (0, 4) {$x$};
+\node[below=2pt of input, font=\footnotesize] {[B, C, L]};
+
+% First conv path
+\node[conv_op] (conv1) at (0, 2) {Conv1d};
+\node[activation] (act1) at (0, 0.5) {ReLU+Dropout};
+\node[conv_op] (conv2) at (0, -1) {Conv1d};
+\node[activation] (act2) at (0, -2.5) {ReLU+Dropout};
+
+% Skip connection
+\node[conv_op, minimum width=15mm] (skip) at (3, 1) {1×1 Conv};
+\node[font=\footnotesize] at (3, 0.3) {(if needed)};
+
+% Residual connection
+\node[residual] (add) at (0, -4) {+};
+
+% Output
+\node[signal] (output) at (0, -5.5) {$y$};
+\node[below=2pt of output, font=\footnotesize] {[B, C', L]};
+
+% Connections
+\draw[flow] (input) -- (conv1);
+\draw[flow] (conv1) -- (act1);
+\draw[flow] (act1) -- (conv2);
+\draw[flow] (conv2) -- (act2);
+\draw[flow] (act2) -- (add);
+
+% Skip connection
+\draw[skip] (input) -| (skip);
+\draw[skip] (skip) |- (add);
+
+\draw[flow] (add) -- (output);
+
+% Chomp padding annotation
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}] 
+    (4.5, 2.5) -- (4.5, -2.5) 
+    node[midway, right=8pt, align=left, font=\footnotesize] {
+        Chomp Padding\\removes future\\information
+    };
+
+% Full network overview on the right
+\begin{scope}[shift={(10, 0)}]
+    \node[font=\large\bfseries] at (0, 6) {Complete TCN Architecture};
+    
+    % Blocks
+    \foreach \i/\d in {1/1, 2/2, 3/4} {
+        \node[rectangle, draw=black!80, fill=orange!20, 
+              minimum width=35mm, minimum height=20mm, rounded corners=3mm] 
+              (block\i) at (0, 4-\i*2.2) {
+            \begin{tabular}{c}
+                \textbf{Temporal Block \i}\\
+                \footnotesize dilation = \d\\
+                \footnotesize 64 channels
+            \end{tabular}
+        };
+    }
+    
+    % Input/Output
+    \node[rectangle, draw=black!80, fill=green!30, 
+          minimum width=35mm, minimum height=10mm, rounded corners=2mm] 
+          (input_layer) at (0, 4.5) {Input (5 channels)};
+    
+    \node[rectangle, draw=black!80, fill=purple!30, 
+          minimum width=35mm, minimum height=10mm, rounded corners=2mm] 
+          (fc_layer) at (0, -3) {FC Layer (64→5)};
+    
+    \node[rectangle, draw=black!80, fill=red!30, 
+          minimum width=35mm, minimum height=10mm, rounded corners=2mm] 
+          (output_layer) at (0, -4.5) {Output (5 channels)};
+    
+    % Connections
+    \draw[flow] (input_layer) -- (block1);
+    \draw[flow] (block1) -- (block2);
+    \draw[flow] (block2) -- (block3);
+    \draw[flow] (block3) -- (fc_layer);
+    \draw[flow] (fc_layer) -- (output_layer);
+    
+    % Annotations
+    \node[align=center, font=\footnotesize] at (5, 0) {
+        Total Receptive\\Field = $2^4 - 1 = 15$\\time steps
+    };
+\end{scope}
+
+\end{tikzpicture}

@@ -1,0 +1,176 @@
+\begin{figure}[H]
+\resizebox{8.5cm}{!}{
+\begin{tikzpicture}[
+    box/.style={rectangle, draw, thick, minimum width=2cm, minimum height=1cm, text},
+    bottleneck/.style={ellipse, draw, thick, minimum width=1.5cm, minimum height=1cm, fill=yellow!60, text },
+    branch/.style={rectangle, draw, thick, minimum width=2.5cm, minimum height=0.8cm, fill=#1, text centered},
+    arrow/.style={->, thick},
+    formula/.style={rectangle, minimum width=3cm, text centered, font=\scriptsize}
+]
+
+% Central Latent Representation (LEFT SIDE)
+\node[bottleneck, font=\Large] (latent) at (-4,0) {$\mathbf{z}$};
+\node[below=0.1cm of latent, font=\scriptsize, xshift=-0.5cm] {Representasi Laten};
+\node[below=0.3cm of latent, font=\scriptsize, xshift=-0.5cm] {(Bottleneck)};
+
+% Branch 1: Contrastive/Self-Supervised (RIGHT SIDE)
+\node[branch=blue!30] (contrastive) at (1,2) {
+    \begin{minipage}{3cm}
+    \centering
+    \textbf{Contrastive}\\
+    \textbf{Self-Supervised}
+    \end{minipage}
+};
+
+\node[box, fill=blue!30] (projection_head) at (5,2) {
+    \begin{minipage}{4cm}
+    \centering
+    \textbf{Projection Head}\\
+    MLP/Linear+ReLU
+    \end{minipage}
+};
+
+\node[box, fill=blue!20] (contrastive_loss) at (5,0.5) {
+    \begin{minipage}{4cm}
+    \centering
+    \textbf{Contrastive Loss}\\
+    Embedding Space
+    \end{minipage}
+};
+
+% Branch 2: Decoder (RIGHT SIDE)
+\node[box, fill=green!30] (hidden_state) at (1,-2) {
+    \begin{minipage}{3cm}
+    \centering
+    \textbf{Hidden State}\\
+    Initial Decoder
+    \end{minipage}
+};
+
+\node[box, fill=green!20] (lstm_decoder) at (5,-2) {
+    \begin{minipage}{4cm}
+    \centering
+    \textbf{LSTM Decoder}\\
+    + Cross-Attention
+    \end{minipage}
+};
+
+\node[box, fill=green!20] (rec_loss) at (5,-0.8) {
+    \begin{minipage}{4cm}
+    \centering
+    \textbf{Reconstruction Loss}
+    \end{minipage}
+};
+
+
+
+% Main arrows from latent representation (LEFT TO RIGHT)
+\draw[arrow, blue, line width=2pt] (latent) to[bend left=20] (contrastive);
+\draw[arrow, green, line width=2pt] (latent) to[bend right=20] (hidden_state);
+
+% Branch 1 arrows (horizontal flow)
+\draw[arrow, blue] (contrastive) -- (projection_head);
+\draw[arrow, blue] (projection_head) -- (contrastive_loss);
+
+% Branch 2 arrows (horizontal flow)
+% \draw[arrow, green] (decoder_branch) -- (hidden_state);
+\draw[arrow, green] (hidden_state) -- (lstm_decoder);
+\draw[arrow, green] (lstm_decoder) -- (rec_loss);
+
+% Gradient flow arrows (dashed, backward - RIGHT TO LEFT)
+\draw[arrow, dashed, blue] (contrastive_loss) -- (projection_head);
+\draw[arrow, dashed, blue] (projection_head) -- (contrastive);
+\draw[arrow, dashed, green] (lstm_decoder) -- (hidden_state);
+\draw[arrow, dashed, green] (rec_loss) -- (lstm_decoder);
+
+
+\draw[arrow, dashed, blue] (contrastive) to[bend left=20] (latent);
+\draw[arrow, dashed, green] (hidden_state) to [bend right=10] (latent);
+
+
+% Mathematical formulas
+\node[formula, above=0.2cm of contrastive, xshift=0.5cm] {
+    \begin{minipage}{4cm}
+    \textbf{Contrastive:}\\
+    $\mathbf{p} = f_{\text{proj}}(\mathbf{z})$\\
+    $\mathcal{L}_{\text{cont}} = -\log \frac{e^{\text{sim}(\mathbf{p}_i, \mathbf{p}_j)/\tau}}{\sum_{k} e^{\text{sim}(\mathbf{p}_i, \mathbf{p}_k)/\tau}}$
+    \end{minipage}
+};
+
+\node[formula, below=0.2cm of hidden_state, xshift=0.5cm] {
+    \begin{minipage}{4cm}
+    \textbf{Decoder:}\\
+    $\mathbf{h}_0 = \mathbf{W}_{\text{dec}} \mathbf{z} + \mathbf{b}_{\text{dec}}$\\
+    $\mathbf{h}_t = \text{LSTM}(\mathbf{x}_{t-1}, \mathbf{h}_{t-1})$\\
+    $\mathcal{L}_{\text{rec}} = \|\mathbf{X} - \hat{\mathbf{X}}\|^2$
+    \end{minipage}
+};
+
+% Bottleneck description (LEFT SIDE)
+% \node[formula, below=1.5cm of latent] {
+%     \begin{minipage}{4cm}
+%     \centering
+%     \textbf{Representasi Laten} $\mathbf{z}$:\\
+%     • Simpul pusat seluruh informasi window\\
+%     • **Bottleneck** yang mengandung informasi penting [[1]]\\
+%     • Dioptimalkan untuk semua tugas sekaligus
+%     \end{minipage}
+% };
+
+% Combined loss function (BOTTOM CENTER)
+\node[formula, below=0.2cm of hidden_state, xshift=5cm] {
+    \begin{minipage}{5cm}
+    \textbf{Combined Loss Function:}\\
+    $\mathcal{L}_{\text{total}} = \lambda_1 \mathcal{L}_{\text{cont}} + \lambda_2 \mathcal{L}_{\text{rec}} \\
+    \\
+    \textbf{Gradient Flow:}\\
+    $\frac{\partial \mathcal{L}_{\text{total}}}{\partial \mathbf{z}} = \lambda_1 \frac{\partial \mathcal{L}_{\text{cont}}}{\partial \mathbf{z}} + \lambda_2 \frac{\partial \mathcal{L}_{\text{rec}}}{\partial \mathbf{z}}$
+    \end{minipage}
+};
+
+% Title
+% \node[above=1.5cm of decoder_branch, font=\Large\bfseries] {Multi-Task Learning dengan Representasi Laten $\mathbf{z}$};
+
+% Input arrow to bottleneck
+\draw[arrow, thick, gray] (-7,0) -- (latent) node[above, midway, font=\scriptsize] {From Encoder};
+
+
+
+% Vertical separation line (optional)
+\draw[dashed, gray, opacity=0.5] (-1.5,-4.5) -- (-1.5,4.5) node[above, font=\scriptsize] {Bottleneck | Multi-Task Branches};
+
+\end{tikzpicture}
+}
+\caption{Latent representation with combination loss of constrastive and reconstruction }
+\end{figure}
+
+% Detailed Mathematical Framework
+% \section*{Framework Matematika Lengkap}
+
+% \subsection*{1. Representasi Laten Bottleneck}
+% \begin{align}
+% \mathbf{z} &\in \mathbb{R}^K \quad \text{(dimensi laten)}\\
+% \mathbf{z} &= \text{Encoder}(\mathbf{X}) \quad \text{(dari input window)}
+% \end{align}
+
+% \subsection*{2. Branch Contrastive/Self-Supervised}
+% \begin{align}
+% \mathbf{p} &= f_{\text{proj}}(\mathbf{z}) = \text{ReLU}(\mathbf{W}_p \mathbf{z} + \mathbf{b}_p)\\
+% \mathcal{L}_{\text{cont}} &= -\log \frac{e^{\text{sim}(\mathbf{p}_i, \mathbf{p}_j)/\tau}}{\sum_{k=1}^{2N} \mathbb{1}_{k \neq i} e^{\text{sim}(\mathbf{p}_i, \mathbf{p}_k)/\tau}}
+% \end{align}
+
+% \subsection*{3. Branch Decoder untuk Rekonstruksi}
+% \begin{align}
+% \mathbf{h}_0 &= \mathbf{W}_{\text{dec}} \mathbf{z} + \mathbf{b}_{\text{dec}}\\
+% \mathbf{h}_t, \mathbf{c}_t &= \text{LSTM}(\mathbf{x}_{t-1}, \mathbf{h}_{t-1}, \mathbf{c}_{t-1})\\
+% \hat{\mathbf{x}}_t &= \mathbf{W}_{\text{out}} \mathbf{h}_t + \mathbf{b}_{\text{out}}\\
+% \mathcal{L}_{\text{rec}} &= \frac{1}{L} \sum_{t=1}^{L} \|\mathbf{x}_t - \hat{\mathbf{x}}_t\|^2
+% \end{align}
+
+% \subsection*{5. Multi-Task Optimization}
+% \begin{align}
+% \mathcal{L}_{\text{total}} &= \lambda_1 \mathcal{L}_{\text{cont}} + \lambda_2 \mathcal{L}_{\text{rec}} + \lambda_3 \mathcal{L}_{\text{cls}}\\
+% \theta^* &= \arg\min_\theta \mathcal{L}_{\text{total}}(\theta)
+% \end{align}
+
+% di mana $\lambda_1, \lambda_2, \lambda_3$ adalah hyperparameter untuk menyeimbangkan kontribusi setiap loss function.

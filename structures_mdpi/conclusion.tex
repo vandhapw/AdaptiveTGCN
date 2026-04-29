@@ -1,0 +1,15 @@
+This study explored the use of a stochastic TCN for multivariate time-series forecasting and anomaly detection in sensor data, introducing three contributions that address critical research gaps in the field: (1) Adaptive Uncertainty-Aware Attention (AUAA), (2) Dynamic Weight Adaptation for context-sensitive hybrid anomaly scoring, and (3) Feature-Level Anomaly Attribution with theoretical uncertainty bounds.
+
+Experimental results demonstrate that the base TCN-Stochastic model achieves stronger raw reconstruction accuracy on the validation subset, with MSE of 0.000327 and $R^2$ of 0.9753. The enhanced model reports higher raw reconstruction MSE of 0.004250 because it optimizes a broader uncertainty-aware objective rather than reconstruction error alone. Both models detect 38 anomalies out of 750 validation windows (5.07\%), while the enhanced model additionally provides adaptive thresholding, dynamic weighting, uncertainty estimates, and feature-level attribution.
+
+The anomaly detection capabilities were validated through experiments and visualizations. Feature importance analysis shows a balanced attribution pattern across humidity, VOC, CO\textsubscript{2}, dust, and temperature, providing actionable insight for interpreting detected anomalies. The theoretical uncertainty bounds provide a foundation for false-positive-rate control in practical deployment.
+
+Key findings from this research include:
+\begin{itemize}[leftmargin=*, nosep]
+    \item The base TCN-Stochastic model remains the better choice when the primary target is minimum raw reconstruction error.
+    \item The enhanced model is better framed as an uncertainty-aware anomaly detection framework that provides adaptive scoring and interpretability.
+    \item Dynamic weight adaptation produced a mean weight of 0.4944 in the experiments, indicating a slightly uncertainty-focused balance.
+    \item Feature-level attribution enables interpretable anomaly explanations, facilitating targeted maintenance decisions.
+\end{itemize}
+
+Future work will focus on tuning the enhanced objective to better balance reconstruction accuracy and uncertainty calibration. The model will also be extended toward sensor fault detection, self-supervised learning for massive unlabeled data, online adaptation to concept drift, and privacy-preserving anomaly detection across distributed sensor networks.

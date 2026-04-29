@@ -1,0 +1,63 @@
+\begin{algorithm}[H]
+\footnotesize
+\caption{Monte Carlo Dropout Uncertainty Estimation}
+\label{alg:mc_uncertainty}
+\begin{algorithmic}
+\Require Input sequence $\mathbf{X} \in \mathbb{R}^{B \times T \times C}$, trained model $f_{\boldsymbol{\theta}}$, number of MC samples $N$, dropout rate $p_{drop}$
+\Ensure Mean prediction $\bar{\mathbf{y}} \in \mathbb{R}^{B \times T \times C}$, uncertainty $\sigma \in \mathbb{R}^{B \times T \times C}$
+
+\State \textbf{Step 1: Initialize Prediction Storage}
+\State $\mathbf{Y}_{ensemble} \gets \emptyset \in \mathbb{R}^{B \times T \times C \times N}$
+\State Activate dropout layers (normally dropout is disabled during inference)
+
+\State \textbf{Step 2: Monte Carlo Sampling}
+\For{sample $n = 1$ to $N$}
+    \State \textbf{Forward pass with stochastic dropout:}
+    \State $\hat{\mathbf{y}}_n \gets f_{\boldsymbol{\theta}}(\mathbf{X}) \in \mathbb{R}^{B \times T \times C}$
+    \State Each forward pass uses different random dropout mask
+    \State Store prediction: $\mathbf{Y}_{ensemble}[:,:,:,n] \gets \hat{\mathbf{y}}_n$
+\EndFor
+
+\State \textbf{Step 3: Compute Mean Prediction}
+\For{each timestep $t = 1$ to $T$}
+    \For{each feature $c = 1$ to $C$}
+        \For{each batch $b = 1$ to $B$}
+            \State $\bar{\mathbf{y}}[b,t,c] \gets \frac{1}{N} \sum_{n=1}^{N} \mathbf{Y}_{ensemble}[b,t,c,n]$
+            \State represents the expected value under dropout distribution
+        \EndFor
+    \EndFor
+\EndFor
+
+\State \textbf{Step 4: Compute Predictive Variance}
+\For{each timestep $t = 1$ to $T$}
+    \For{each feature $c = 1$ to $C$}
+        \For{each batch $b = 1$ to $B$}
+            \State $\sigma^2[b,t,c] \gets \frac{1}{N} \sum_{n=1}^{N} (\mathbf{Y}_{ensemble}[b,t,c,n] - \bar{\mathbf{y}}[b,t,c])^2$
+            \State measures prediction disagreement across samples
+        \EndFor
+    \EndFor
+\EndFor
+
+\State \textbf{Step 5: Compute Epistemic Uncertainty}
+\For{each timestep $t = 1$ to $T$}
+    \For{each feature $c = 1$ to $C$}
+        \For{each batch $b = 1$ to $B$}
+            \State $\sigma[b,t,c] \gets \sqrt{\sigma^2[b,t,c]}$
+            \State represents model uncertainty (epistemic uncertainty)
+        \EndFor
+    \EndFor
+\EndFor
+
+\State \textbf{Step 6: Confidence Interval Computation}
+\State $\text{CI}_{95\%}^{lower} \gets \bar{\mathbf{y}} - 1.96 \cdot \sigma$
+\State $\text{CI}_{95\%}^{upper} \gets \bar{\mathbf{y}} + 1.96 \cdot \sigma$
+\State provides 95% confidence bounds for predictions
+
+\State \textbf{Step 7: Activation of Downstream Mechanisms}
+\State Use $\bar{\mathbf{y}}$ for reconstruction error computation: $\mathbf{e} \gets |\mathbf{y}_{true} - \bar{\mathbf{y}}|$
+\State Use $\sigma$ for AUAA mechanism and dynamic weight adaptation
+\State Use confidence intervals for anomaly threshold selection
+
+\State \textbf{Return} $(\bar{\mathbf{y}}, \sigma, \text{CI}_{95\%})$
+\end{algorithmic}
+\end{algorithm}

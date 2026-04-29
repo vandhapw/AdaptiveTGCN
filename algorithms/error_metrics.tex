@@ -1,0 +1,15 @@
+\begin{table}[h!]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Metric} & \textbf{Formula} \\
+\midrule
+MSE & $\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2$ \\[0.3em]
+RMSE & $\sqrt{\text{MSE}}$ \\[0.3em]
+MAE & $\frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|$ \\[0.3em]
+SMAPE & $\frac{100}{n}\sum_{i=1}^{n}\frac{2|y_i - \hat{y}_i|}{|y_i| + |\hat{y}_i|}$ \\[0.3em]
+R² Score & $1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2}$ \\
+\bottomrule
+\end{tabular}
+\caption{Evaluation Metrics for Model Performance}
+\end{table}

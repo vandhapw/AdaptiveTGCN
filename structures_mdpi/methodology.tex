@@ -1,0 +1,147 @@
+\subsection{Problem Statement}
+Given multivariate time-series data $\mathcal{D} = \{(\mathbf{x}_t, y_t)\}_{t=1}^{T}$ collected from multiple real-world sensors, where each $\mathbf{x}_t \in \mathbb{R}^{n}$ represents the measurements of several features at time $t$, the raw input data can be formally expressed as:
+
+\begin{equation}
+\mathbf{X}_{raw} = \{\mathbf{x}_t\}_{t=1}^{T}, \quad 
+\mathbf{x}_t = 
+\begin{bmatrix}
+x_{f1}(t) \\
+x_{f2}(t) \\
+x_{f3}(t) \\
+x_{fn}(t) \\
+\end{bmatrix} \in \mathbb{R}^{n}
+\end{equation}
+
+\subsubsection{Feature Engineering}
+
+Feature extraction enriches raw time-series data by extracting informative representations that capture both temporal dependencies and statistical properties. 
+
+\subsubsection{Sliding Window Segmentation}
+Sliding window segmentation serves as a pre-processing step to analyze temporal correlations across different window indices. Partitioning the continuous time series into overlapping segments enables each window to be analyzed individually and in relation to others.
+
+\input{algorithms/stochastic_pipeline}
+
+\subsection{Enhanced TCN-Stochastic Architecture}
+The proposed Temporal Correlation Network (TCN) Stochastic Enhanced is designed for multivariate time series anomaly detection by combining temporal convolutional networks with probabilistic modeling and novel attention mechanisms to capture both deterministic patterns and uncertainty in sensor data. The architecture introduces three key innovations: (1) Adaptive Uncertainty-Aware Attention (AUAA), (2) Dynamic Weight Adaptation for hybrid scoring, and (3) Feature-Level Anomaly Attribution.
+
+\subsubsection{TCN Component with Stochastic Depth}
+The core architecture comprises three hierarchical temporal block layers, each with 64 channels and exponentially increasing dilations ($2^i$) to capture both short- and long-term temporal dependencies. Each block integrates two dilated causal convolutions with kernel size, weight normalization for stability, ReLU activations, and dropout layers that provide regularization during training and uncertainty estimation via Monte Carlo sampling.
+
+\input{algorithms/[alg]model-training}
+
+\input{algorithms/[alg]mc-uncertainty} 
+
+\textbf{Novel Enhancement: Stochastic Depth.} Unlike standard TCN implementations, our architecture incorporates stochastic depth \cite{huang_deep_2016} where each temporal block has a probability $p_l$ of being randomly dropped during training. This regularization technique improves generalization by encouraging the network to learn redundant representations. The probability increases with layer depth: $p_l = 0.1 \times (l/L)$, where $l$ is the layer index and $L$ is the total number of layers.
+
+\subsubsection{Adaptive Uncertainty-Aware Attention (AUAA)}
+We introduce a novel attention mechanism that incorporates predictive uncertainty into the attention computation. Standard attention mechanisms compute attention weights solely based on feature similarity, which can lead to unreliable attention distributions when predictions have high uncertainty.
+
+\textbf{Mathematical Formulation.} Given input sequence $X \in \mathbb{R}^{B \times T \times C}$ and uncertainty estimates $\Sigma \in \mathbb{R}^{B \times T \times 1}$, the AUAA mechanism computes attention weights as:
+
+\begin{equation}
+\alpha_t = \text{softmax}\left(\frac{Q_t K_t^T}{\sqrt{d_k}}\right) \odot \frac{1}{1 + \sigma_t}
+\end{equation}
+
+where $Q_t, K_t$ are query and key projections at time $t$, $d_k$ is the key dimension, $\sigma_t$ is the predictive uncertainty, and $\odot$ denotes element-wise multiplication. The uncertainty gate $g_t = 1/(1 + \sigma_t)$ down-weights attention for high-uncertainty predictions, ensuring that the model focuses on reliable temporal patterns.
+
+\textbf{Implementation Details.} The AUAA module uses multi-head attention with 4 heads and a hidden dimension of 64. The uncertainty gate is implemented as a learnable neural network:
+\begin{equation}
+g_t = \sigma\left(W_g \cdot \sigma_t + b_g\right)
+\end{equation}
+where $\sigma(\cdot)$ is the sigmoid activation function. This allows the model to learn the optimal mapping from uncertainty to attention modulation.
+
+\input{algorithms/[alg]auaa-mechanism}
+
+\subsubsection{Dynamic Weight Adaptation for Hybrid Scoring}
+Existing stochastic anomaly detection methods use fixed weights to combine reconstruction error and uncertainty. We propose a dynamic weight adaptation mechanism that learns to contextually adjust these weights based on input characteristics.
+
+\textbf{Mathematical Formulation.} Let $e_t$ be the reconstruction error and $u_t$ be the uncertainty at time $t$. The dynamic weight $\alpha_t$ is computed as:
+
+\begin{equation}
+\alpha_t = \text{sigmoid}\left(W_\alpha \cdot [e_t, u_t, h_t] + b_\alpha\right)
+\end{equation}
+
+where $h_t$ is a hidden state encoding temporal context, and $[\cdot]$ denotes concatenation. The hybrid anomaly score is then:
+
+\begin{equation}
+s_t = \alpha_t \cdot e_t + (1 - \alpha_t) \cdot u_t
+\end{equation}
+
+This formulation allows the model to automatically learn when to emphasize reconstruction error (e.g., during stable operation) versus uncertainty (e.g., during sensor degradation or high noise).
+
+\textbf{Architecture.} The weight adapter consists of two encoder networks that process reconstruction error and uncertainty separately, followed by a context GRU that captures temporal patterns in the weight evolution. The final weight prediction uses a sigmoid activation to ensure $\alpha_t \in [0, 1]$.
+
+\input{algorithms/[alg]dynamic-weight}
+
+\subsubsection{Feature-Level Anomaly Attribution}
+To provide interpretable anomaly explanations, we introduce a feature importance learner that identifies which sensors contribute most to detected anomalies.
+
+\textbf{Learnable Feature Importance.} The module computes feature-specific importance weights $w_f$ for each feature $f$:
+
+\begin{equation}
+w_f = \text{softmax}\left(V \cdot \tanh(W \cdot X + b)\right)
+\end{equation}
+
+where $X$ is the input feature vector, and $W, V, b$ are learnable parameters. The importance weights are then applied to per-feature reconstruction errors:
+
+\begin{equation}
+\text{error}_f^{\text{weighted}} = w_f \cdot \text{error}_f
+\end{equation}
+
+\textbf{Sensor-Specific Correlation.} We also learn a correlation matrix $C \in \mathbb{R}^{n \times n}$ that captures inter-sensor dependencies:
+
+\begin{equation}
+X_{\text{correlated}} = X \cdot C
+\end{equation}
+
+This allows the model to account for known correlations between sensors (e.g., temperature and humidity) when computing feature importance.
+
+\input{algorithms/[alg]feature-attribution}
+
+\subsubsection{Theoretical Uncertainty Bounds}
+We provide provable bounds on false positive rates for anomaly detection using concentration inequalities.
+
+\begin{Theorem}
+(Chebyshev-Based Threshold) For any random variable $X$ with mean $\mu$ and variance $\sigma^2$, the probability of observing a value more than $k$ standard deviations from the mean is bounded by:
+
+\begin{equation}
+P(|X - \mu| > k\sigma) \leq \frac{1}{k^2}
+\end{equation}
+\end{Theorem}
+
+\textbf{Application to Anomaly Detection.} Given predicted uncertainties $\{u_t\}_{t=1}^T$, we compute a threshold $\tau$ that guarantees a false positive rate (FPR) of at most $\epsilon$:
+
+\begin{equation}
+\tau = \bar{u} + \sqrt{\frac{1}{\epsilon}} \cdot \sigma_u
+\end{equation}
+
+where $\bar{u}$ and $\sigma_u$ are the mean and standard deviation of predicted uncertainties. This provides a distribution-free guarantee on anomaly detection performance.
+
+\textbf{Calibrated Confidence Intervals.} We also compute calibrated confidence intervals for predictions:
+
+\begin{equation}
+[\hat{y}_t - z_{1-\alpha/2} \cdot \sigma_t \cdot \lambda, \hat{y}_t + z_{1-\alpha/2} \cdot \sigma_t \cdot \lambda]
+\end{equation}
+
+where $z_{1-\alpha/2}$ is the standard normal quantile, $\sigma_t$ is the predicted standard deviation, and $\lambda$ is a learnable calibration scale parameter optimized during training.
+
+\subsubsection{Dilated Causal Convolution}
+The concept of dilated causal convolutions is fundamental to TCNs \cite{mehta_nac-tcn_2023}, which effectively ensures that predictions at any given time step, $t$, are informed solely by past and present inputs, while preventing any influence from future inputs. This approach enhances the integrity of the temporal predictions of the model. To process the input sequences effectively, padding was used. Dilated convolutions introduce gaps between the filter taps. This design allows the receptive field of the convolutional layer to grow rapidly as the network becomes deeper. This growth occurs without significantly increasing the computational cost or reducing resolution. This method is particularly useful for capturing long-range connections in time series data.
+
+$k$ represents the kernel size (filter size), and $d_{l}$ denotes the dilation rate for layer $l$. The dilation rate typically increases exponentially with the block number, often as $2^{\, (l-1)}$. For instance, in the proposed architecture, block 1 uses $d = 2^0 = 1$. The receptive field (RF) of the network, which is the extent of the input sequence that influences a single output, expands significantly with each dilated layer. The formula for calculating the receptive field is given as $RF = \sum_{l=1}^{L} (k - 1) \cdot d_{l}$. For a kernel size $k=2$ and specified dilation rates, the receptive field grows to cover a substantial portion of the input sequence, enabling the model to learn complex temporal patterns.
+
+\subsubsection{Anomaly Detection with Enhanced Scoring}
+Uncertainty quantification is essential for reliable anomaly detection in noisy sensor data, as it provides confidence measures to separate true anomalies from normal variations. Thresholds are determined dynamically using multiple methods, including percentile-based thresholds, theoretical bounds, and distribution-free quantile methods \cite{cao_anomaly_2024}.
+
+\textbf{Enhanced Threshold Selection.} We implement four threshold selection methods:
+\begin{enumerate}
+    \item \textbf{Percentile-based:} $\tau = \text{percentile}(s_t, 95\%)$
+    \item \textbf{Adaptive:} $\tau = \tau_{\text{base}} \cdot (0.8 + 0.4 \cdot \bar{\alpha})$, where $\bar{\alpha}$ is the mean dynamic weight
+    \item \textbf{Theoretical:} $\tau = \bar{u} + \sqrt{1/\epsilon} \cdot \sigma_u$ (Chebyshev bound)
+    \item \textbf{Distribution-free:} $\tau = \text{percentile}(s_t, (1-\gamma) \times 100\%)$, where $\gamma$ is expected contamination
+\end{enumerate}
+
+\input{algorithms/threshold}
+\input{algorithms/[alg]stochastic-AD}
+
+Algorithm \ref{alg:stochastic_tcn} illustrates how the model works by comparing the model's predictions against actual data to identify significant deviations. The trained TCN model performs repeated predictions using the Monte Carlo technique to obtain the average prediction and uncertainty level. The error is calculated as the absolute difference between the actual value and the prediction, then compared to the dynamic thresholds of $\tau_{95}$ and $\tau_{99}$ determined from the historical error distribution, representing the 95th and 99th percentiles, respectively. If the error exceeds these thresholds or exceeds the 2 sigma rules prediction, the data point is flagged as a high confidence anomaly.

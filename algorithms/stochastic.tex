@@ -1,0 +1,28 @@
+\begin{algorithm}[H]
+\SetAlgoLined
+\DontPrintSemicolon
+\caption{Stochastic TCN Forward Pass with Uncertainty Estimation}
+\label{alg:stochastic_tcn}
+
+\KwIn{$\mathbf{x}$: input tensor, $n\_samples$: number of Monte Carlo samples (default: 10)}
+\KwOut{$\mathbf{\mu}_{pred}$: mean prediction, $\mathbf{\sigma}_{pred}$: prediction uncertainty}
+
+\SetKwFunction{FMain}{StochasticTCN.forward}
+\SetKwProg{Fn}{Function}{:}{}
+
+\Fn{\FMain{$\mathbf{x}$, $n\_samples$}}{
+    $predictions \leftarrow$ empty list\;
+    \BlankLine
+    \For{$i \leftarrow 1$ \KwTo $n\_samples$}{
+        \tcp{Forward pass with dropout active}
+        $pred \leftarrow$ TCN\_backbone($\mathbf{x}$)\;
+        $predictions$.append($pred$)\;
+    }
+    \BlankLine
+    $\mathbf{P} \leftarrow$ stack($predictions$)\;
+    $\mathbf{\mu}_{pred} \leftarrow$ mean($\mathbf{P}$, dim=0)\;
+    $\mathbf{\sigma}_{pred} \leftarrow$ std($\mathbf{P}$, dim=0)\;
+    \BlankLine
+    \Return{$\mathbf{\mu}_{pred}$, $\mathbf{\sigma}_{pred}$}\;
+}
+\end{algorithm}

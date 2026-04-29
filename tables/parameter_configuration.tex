@@ -1,0 +1,25 @@
+\begin{table}[h!]
+\centering
+\caption{Summary of Model Parameters and Configuration Values}
+\label{table:parameter_model}
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Component} & \textbf{Parameter Value} \\
+\midrule
+Number of TCN Layers & 3 \\
+Number of Filters per Layer & 64 \\
+Kernel Size & 2 \\
+Layer Dilatation & 1, 2, 4 \\
+Dropout Rate & 0.2 \\
+Loss Function & MSELoss \\
+Optimizer & Adam \\
+Learning Rate & $1 \times 10^{-3}$ \\
+Scheduler & Unused \\
+Batch Size & 16 \\
+Maximum Number of Epochs & 100 \\
+Patience (Early Stopping) & 10 \\
+Weight Initialization & Normal(0, 0.01) \\
+Additional Regularisation & Weight Norm, Dropout \\
+\bottomrule
+\end{tabularx}
+\end{table}

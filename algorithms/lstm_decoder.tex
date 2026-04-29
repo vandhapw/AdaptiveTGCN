@@ -1,0 +1,237 @@
+\begin{figure}[H]
+\resizebox{8.5cm}{!}{
+\centering
+\begin{tikzpicture}[
+    box/.style={rectangle, draw, thick, minimum width=2cm, minimum height=1cm, text centered, rounded corners=3pt},
+    latent/.style={ellipse, draw, thick, minimum width=1.5cm, minimum height=1cm, fill=yellow!60, text centered},
+    decoder/.style={rectangle, draw, thick, minimum width=1.8cm, minimum height=0.8cm, fill=blue!60, text centered, rounded corners=2pt},
+    encoder/.style={rectangle, draw, thick, minimum width=1.8cm, minimum height=0.8cm, fill=green!60, text centered, rounded corners=2pt},
+    attention/.style={diamond, draw, thick, minimum size=1.2cm, fill=red!60, text centered},
+    arrow/.style={->, thick, >=stealth},
+    formula/.style={rectangle, minimum width=3cm, text centered, font=\scriptsize}
+]
+
+% Latent Vector Input (TOP)
+\node[latent, font=\Large] (latent) at (0,16) {$\mathbf{z}$};
+\node[below=0.1cm of latent, font=\scriptsize] {Latent Vector};
+
+% Initial Hidden State Projection
+\node[box, fill=orange!60] (projection) at (0,14) {
+    \begin{minipage}{2cm}
+    \centering
+    \textbf{Linear}\\
+    \textbf{Projection}
+    \end{minipage}
+};
+
+% Initial Hidden State
+\node[decoder] (h0) at (0,12) {$\mathbf{h}_0$};
+
+% Repeated Hidden States
+\node[decoder] (h0_1) at (-3,10) {$\mathbf{h}_0$};
+\node[decoder] (h0_2) at (-1,10) {$\mathbf{h}_0$};
+\node[decoder] (h0_3) at (1,10) {$\mathbf{h}_0$};
+\node[decoder] (h0_L) at (3,10) {$\mathbf{h}_0$};
+
+% LSTM Decoder States
+\node[decoder] (d1) at (-3,8) {$\mathbf{d}_1$};
+\node[decoder] (d2) at (-1,8) {$\mathbf{d}_2$};
+\node[decoder] (d3) at (1,8) {$\mathbf{d}_3$};
+\node[decoder] (dL) at (3,8) {$\mathbf{d}_L$};
+
+% Encoder Memory (for cross-attention)
+\node[encoder] (H1) at (4,5.5) {$\mathbf{h}_1^{enc}$};
+\node[encoder] (H2) at (4,4.5) {$\mathbf{h}_2^{enc}$};
+\node[encoder] (H3) at (6,5.5) {$\mathbf{h}_3^{enc}$};
+\node[encoder] (HL) at (6,4.5) {$\mathbf{h}_L^{enc}$};
+
+% Cross-Attention Module
+% \node[attention] (cross_att) at (1,6) {
+%     \begin{minipage}{1.8cm}
+%     \centering
+%     \textbf{Cross-}\\
+%     \textbf{Attention}
+%     \end{minipage}
+% };
+\matrix (cross_att) [matrix of nodes,
+  nodes={draw, minimum size=0.5cm},
+  row sep=2pt, column sep=2pt
+] at (0,5)
+{
+  \node[fill=green!30] {}; & \node[fill=blue!20] {}; & \node[fill=green!20] {}; & \node[fill=blue!30] {}; & \node[fill=green!10] {}; \\
+  \node[fill=blue!10] {}; & \node[fill=green!40] {}; & \node[fill=blue!50] {}; & \node[fill=green!20] {}; & \node[fill=blue!40] {}; \\
+  \node[fill=green!50] {}; & \node[fill=blue!30] {}; & \node[fill=green!10] {}; & \node[fill=blue!20] {}; & \node[fill=green!30] {}; \\
+  \node[fill=blue!20] {}; & \node[fill=green!20] {}; & \node[fill=blue!10] {}; & \node[fill=green!40] {}; & \node[fill=blue!50] {}; \\
+  \node[fill=green!10] {}; & \node[fill=blue!30] {}; & \node[fill=green!20] {}; & \node[fill=blue!10] {}; & \node[fill=green!40] {}; \\
+};
+
+
+
+% Output Reconstruction
+\node[box, fill=pink!60] (output_proj) at (0,2) {
+    \begin{minipage}{2cm}
+    \centering
+    \textbf{Output}\\
+    \textbf{Projection}
+    \end{minipage}
+};
+
+% Reconstructed Sequence (BOTTOM)
+\node[box, fill=gray!60] (reconstruction) at (0,0) {
+    \begin{minipage}{3cm}
+    \centering
+    \textbf{Reconstructed}\\
+    \textbf{Sequence}
+    \end{minipage}
+};
+
+% CURVED ARROWS - Main Flow (TOP TO BOTTOM)
+\draw[arrow, blue!80, line width=1.5pt] (latent) to[out=270, in=90] (projection);
+\draw[arrow, blue!80, line width=1.5pt] (projection) to[out=270, in=90] (h0);
+
+% Curved Repetition arrows
+% \draw[arrow, orange!80] (h0) to[out=15, in=90, bend left=2] (h0_1);
+\draw[arrow, orange!80]
+  (h0) to[out=180, in=100] (h0_1);
+
+\draw[arrow, orange!80] (h0) to[out=250, in=90] (h0_2);
+\draw[arrow, orange!80] (h0) to[out=290, in=90] (h0_3);
+% \draw[arrow, orange!80] (h0) to[out=315, in=90, bend right=20] (h0_L);
+\draw[arrow, orange!80]
+  (h0.east) to[out=5, in=100] (h0_L.north);
+
+% Curved LSTM Decoder arrows
+\draw[arrow, green!80] (h0_1) to[out=270, in=90] (d1);
+\draw[arrow, green!80] (h0_2) to[out=270, in=90] (d2);
+\draw[arrow, green!80] (h0_3) to[out=270, in=90] (d3);
+\draw[arrow, green!80] (h0_L) to[out=270, in=90] (dL);
+
+% Curved Sequential connections in LSTM
+\draw[arrow, dashed, purple!60] (d1) to[out=0, in=180, bend left=80] (d2);
+\draw[arrow, dashed, purple!60] (d2) to[out=0, in=180, bend left=80] (d3);
+\draw[arrow, dashed, purple!60] (d3) to[out=0, in=180, bend left=80] (dL);
+
+% Curved Cross-attention arrows from decoder
+\draw[arrow, blue!70, line width=1.2pt] (d1) to[out=315, in=180, bend right=30] (cross_att);
+\draw[arrow, blue!70, line width=1.2pt] (d2) to[out=270, in=90] (cross_att.north);
+\draw[arrow, blue!70, line width=1.2pt] (d3) to[out=270, in=90] (cross_att.north);
+
+\draw[arrow, blue!70, line width=1.2pt] (dL) to[out=225, in=0, bend left=30] (cross_att);
+
+% Curved Cross-attention arrows from encoder
+\draw[arrow, green!70, line width=1.2pt] (H1.west) to[out=40, in=40, bend right=40] (cross_att.east);
+\draw[arrow, green!70, line width=1.2pt] (H2.west) to[out=180, in=20, bend left=30] (cross_att.east);
+\draw[arrow, green!70, line width=1.2pt] (H3.north) to[out=180, in=340, bend right=30] (cross_att);
+\draw[arrow, green!70, line width=1.2pt] (HL.south) to[out=180, in=0, bend left=40] (cross_att);
+
+% Curved output flow
+\draw[arrow, red!80, line width=1.5pt] (cross_att) to[out=225, in=45, bend right=20] (output_proj);
+\draw[arrow, red!80, line width=1.5pt] (cross_att) to[out=225, in=45, bend left=20] (output_proj);
+\draw[arrow, red!80, line width=1.5pt] (output_proj) to[out=270, in=90] (reconstruction);
+
+% Curved Mathematical formulas with better positions
+\node[formula, right=0.2cm of projection] {
+    \begin{minipage}{4cm}
+    \textbf{Initial Projection:}\\
+    $\mathbf{h}_0 = \mathbf{W}_d \mathbf{z} + \mathbf{b}_d$
+    \end{minipage}
+};
+
+\node[formula, above=3.5cm of h0_L, right=1cm] {
+    \begin{minipage}{3cm}
+    \textbf{Hidden State Repetition:}\\
+    $\tilde{\mathbf{H}}_0 = [\mathbf{h}_0, \ldots, \mathbf{h}_0] \in \mathbb{R}^{L \times H}$
+    \end{minipage}
+};
+
+\node[formula, right=0.2cm of dL] {
+    \begin{minipage}{3cm}
+    \textbf{LSTM Decoder:}\\
+    $\mathbf{D} = [\mathbf{d}_1, \ldots, \mathbf{d}_L]$\\
+    $\mathbf{d}_t \in \mathbb{R}^H$
+    \end{minipage}
+};
+
+\node[formula, left=0.1cm of cross_att] {
+    \begin{minipage}{4cm}
+    \textbf{Cross-Attention:}\\
+    $\mathbf{A} = \text{MultiHeadAttn}(\mathbf{D}, \mathbf{H}, \mathbf{H})$\\
+    \textcolor{blue}{Query}: $\mathbf{D}$ (decoder)\\
+    \textcolor{green}{Key/Value}: $\mathbf{H}$ (encoder)
+    \end{minipage}
+};
+
+\node[formula, right=0.2cm of output_proj] {
+    \begin{minipage}{3cm}
+    \textbf{Output Reconstruction:}\\
+    $\tilde{\mathbf{X}}_i = \mathbf{A}\mathbf{W}_o + \mathbf{b}_o$\\
+    $\tilde{\mathbf{X}}_i \in \mathbb{R}^{L \times D}$
+    \end{minipage}
+};
+
+% Curved Labels with connecting lines
+
+
+% Enhanced Legend with curved background
+\node[below=1.5cm of reconstruction, font=\scriptsize, draw, rounded corners=5pt, fill=gray!10, inner sep=8pt] {
+    \begin{minipage}{8cm}
+    \textbf{Description:}\\
+    \textcolor{blue}{——} Decoder states (Query) - curved flow\\
+    \textcolor{green}{——} Encoder memory (Key/Value) - curved attention\\  
+    \textcolor{purple}{- - -} Sequential LSTM connections - smooth curves\\
+    \textcolor{red}{——} Output reconstruction - curved transformation
+    \end{minipage}
+};
+
+% Decorative curved background elements
+\draw[gray!20, line width=8pt, opacity=0.3] 
+    (-4,16) to[out=270, in=90, bend right=30] (-2,0);
+\draw[gray!20, line width=8pt, opacity=0.3] 
+    (4,16) to[out=270, in=90, bend left=30] (2,0);
+
+\end{tikzpicture}
+}
+\caption{Decoder Architecture with Cross-Attention Mechanism (Curved Flow Design)}
+\end{figure}
+
+% % Mathematical Framework
+% \section*{Framework Matematika Decoder dengan Curved Flow}
+
+% \subsection*{1. Proyeksi Awal Laten ke Hidden Decoder}
+% \begin{align}
+% \mathbf{h}_0 &= \mathbf{W}_d \mathbf{z} + \mathbf{b}_d \\
+% \mathbf{h}_0 &\in \mathbb{R}^H
+% \end{align}
+
+% \subsection*{2. Repetisi Hidden State untuk Inisialisasi Urutan}
+% \begin{align}
+% \tilde{\mathbf{H}}_0 &= [\mathbf{h}_0, \mathbf{h}_0, \ldots, \mathbf{h}_0] \in \mathbb{R}^{L \times H}
+% \end{align}
+
+% \subsection*{3. LSTM Decoder dengan Sequential Flow}
+% \begin{align}
+% \mathbf{d}_t, \mathbf{c}_t &= \text{LSTM}(\mathbf{x}_{t-1}, \mathbf{h}_{t-1}, \mathbf{c}_{t-1}) \\
+% \mathbf{D} &= [\mathbf{d}_1, \mathbf{d}_2, \ldots, \mathbf{d}_L] \in \mathbb{R}^{L \times H}
+% \end{align}
+
+% \subsection*{4. Cross-Attention dengan Curved Connections}
+% \begin{align}
+% \mathbf{A} &= \text{MultiHeadAttn}(\mathbf{D}, \mathbf{H}, \mathbf{H}) \\
+% \text{Query} &: \mathbf{D} \text{ (decoder states)} \\
+% \text{Key/Value} &: \mathbf{H} \text{ (encoder memory)}
+% \end{align}
+
+% **Detailed Cross-Attention dengan Flow Dinamis:**
+% \begin{align}
+% \mathbf{Q} &= \mathbf{D}\mathbf{W}_q \\
+% \mathbf{K} &= \mathbf{H}\mathbf{W}_k \\
+% \mathbf{V} &= \mathbf{H}\mathbf{W}_v \\
+% \mathbf{A} &= \text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^T}{\sqrt{d_k}}\right)\mathbf{V}
+% \end{align}
+
+% \subsection*{5. Output Reconstruction dengan Curved Transformation}
+% \begin{align}
+% \tilde{\mathbf{X}}_i &= \mathbf{A}\mathbf{W}_o + \mathbf{b}_o \\
+% \tilde{\mathbf{X}}_i &\in \mathbb{R}^{L \times D}
+% \end{align}
+
