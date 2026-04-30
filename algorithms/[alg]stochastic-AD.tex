@@ -1,28 +1,25 @@
 \begin{algorithm}[H]
 \footnotesize
-\caption{Stochastic TCN-based Anomaly Detection}
+\caption{Stochastic TCN Anomaly Detection}
 \label{alg:stochastic_tcn}
 \begin{algorithmic}
-\Require Trained TCN model $f_{\theta}$, input sequence $\mathbf{X}$, thresholds $\tau_{95}, \tau_{99}$
+\Require Trained model $f_{\theta}$, input $\mathbf{X}$, thresholds $\tau_{95}, \tau_{99}$
 \Ensure Anomaly flags $\mathbf{A}_{95}, \mathbf{A}_{99}$
 
-\Statex
-\State \textbf{Monte Carlo Prediction:}
-\State $(\hat{\mathbf{y}}, \sigma) \gets \text{MC-Predict}(f_{\theta}, \mathbf{X}, N=50)$
+\State \textbf{Monte Carlo inference:}
+\State $\hat{\mathbf{y}}, \sigma \gets \text{MC-Predict}(f_{\theta}, \mathbf{X}, N=50)$
 
-\Statex
-\State \textbf{Error Calculation:}
+\State \textbf{Error calculation:}
 \For{each feature $i \in \{1,\dots,5\}$}
     \State $e_i \gets |y_i - \hat{y}_i|$
 \EndFor
 
-\Statex
-\State \textbf{Anomaly Detection:}
+\State \textbf{Anomaly detection:}
 \For{each feature $i$ and timestep $t$}
-    \State $A_{95}[i,t] \gets \mathbb{1}[e_i(t) > \tau_{95}]$
-    \State $A_{99}[i,t] \gets \mathbb{1}[e_i(t) > \tau_{99}]$
+    \State $\mathbf{A}_{95}[i,t] \gets \mathbb{1}[\,e_i(t) > \tau_{95}\,]$
+    \State $\mathbf{A}_{99}[i,t] \gets \mathbb{1}[\,e_i(t) > \tau_{99}\,]$
     \If{$e_i(t) > \hat{y}_i(t) + 2\sigma_i(t)$}
-        \State Mark as high-confidence anomaly
+        \State Flag as high-confidence anomaly $\checkmark$
     \EndIf
 \EndFor
 

@@ -3,58 +3,34 @@
 \caption{Feature-Level Anomaly Attribution}
 \label{alg:feature_attribution}
 \begin{algorithmic}
-\Require Input features $\mathbf{X} \in \mathbb{R}^{B \times T \times n}$, reconstruction errors $\mathbf{E} \in \mathbb{R}^{B \times T \times n}$
-\Require Attribution parameters $\mathbf{W}, \mathbf{V}, b$, correlation matrix $\mathbf{C} \in \mathbb{R}^{n \times n}$
-\Ensure Feature importance weights $\mathbf{w}_f \in \mathbb{R}^n$, weighted errors $\mathbf{E}_{weighted} \in \mathbb{R}^{B \times T \times n}$
+\Require Input $\mathbf{X} \in \mathbb{R}^{B \times T \times n}$, reconstruction errors $\mathbf{E} \in \mathbb{R}^{B \times T \times n}$
+\Require Learnable params $\mathbf{W}, \mathbf{V}, b$, correlation matrix $\mathbf{C} \in \mathbb{R}^{n \times n}$
+\Ensure Feature importance $\mathbf{w} \in \mathbb{R}^{n}$, weighted errors $\mathbf{E}_{w}$, anomaly flags $\mathbf{A}$
 
-\State \textbf{Step 1: Feature Correlation Learning}
-\For{feature pair $(i, j)$ where $i, j \in \{1, \dots, n\}$}
-    \State $\mathbf{C}_{ij} \gets \text{Correlation}(\mathbf{X}_{:,:,i}, \mathbf{X}_{:,:,j})$
-    \State captures known dependencies between sensors (e.g., temperature-humidity)
+\State \textbf{Step 1: Inter-sensor correlation}
+\State $\mathbf{C}_{ij} \gets \text{Corr}(\mathbf{X}_{:,:,i},\, \mathbf{X}_{:,:,j})$ \Comment{Physical sensor coupling}
+\State $\mathbf{X}_{corr} \gets \mathbf{X} \times \mathbf{C}$
+
+\State \textbf{Step 2: Temporal aggregation}
+\State $\mathbf{X}_{agg} \gets \text{Mean}(\mathbf{X}_{corr},\ \text{dim}=T)$ \Comment{$B \times n$}
+
+\State \textbf{Step 3: Learnable importance}
+\For{$b = 1$ to $B$}
+    \State $\mathbf{h}_b \gets \tanh(\mathbf{W} \cdot \mathbf{X}_{agg,b} + b)$
+    \State $\mathbf{w}_b \gets \text{softmax}(\mathbf{V} \cdot \mathbf{h}_b)$ \Comment{$\sum_i w_{b,i} = 1$}
+\EndFor
+\State $\mathbf{w} \gets \frac{1}{B}\sum_{b=1}^{B} \mathbf{w}_b$ \Comment{Cross-batch average}
+
+\State \textbf{Step 4: Weighted errors \& anomaly flags}
+\For{$f = 1$ to $n$}
+    \State $\mathbf{E}_{w}[:,:,f] \gets \mathbf{w}[f] \cdot \mathbf{E}[:,:,f]$
+    \State $\mathbf{A}_f \gets \mathbb{1}\big[\mathbf{E}_{w}[:,:,f] > \tau_f\big]$
 \EndFor
 
-\State \textbf{Step 2: Correlated Feature Transformation}
-\State $\mathbf{X}_{corr} \gets \mathbf{X} \times \mathbf{C} \in \mathbb{R}^{B \times T \times n}$
-\State accounts for inter-sensor relationships
+\State \textbf{Step 5: Attribution summary}
+\State $\text{rank} \gets \text{argsort}(\mathbf{w},\ \text{descending})$
+\State $\text{contrib}_i \gets \frac{\mathbf{w}_i \cdot \sum_{t,b} \mathbf{E}[b,t,i]}{\sum_{f,t,b} \mathbf{E}[b,t,f]} \times 100\%$
 
-\State \textbf{Step 3: Temporal Feature Aggregation}
-\State $\mathbf{X}_{agg} \gets \text{Mean}(\mathbf{X}_{corr}, \text{dim}=T) \in \mathbb{R}^{B \times n}$
-\State aggregates temporal dimensions for spatial feature analysis
-
-\State \textbf{Step 4: Learnable Feature Importance Computation}
-\For{each batch instance $b = 1$ to $B$}
-    \State $\mathbf{h}_b \gets \tanh(\mathbf{W} \cdot \mathbf{X}_{agg,b,:} + b) \in \mathbb{R}^{d_h}$
-    \State $\mathbf{s}_b \gets \mathbf{V} \cdot \mathbf{h}_b \in \mathbb{R}^{n}$
-    \State $\mathbf{w}_b \gets \text{softmax}(\mathbf{s}_b) = \frac{e^{\mathbf{s}_{b,i}}}{\sum_j e^{\mathbf{s}_{b,j}}}$
-    \State ensures $\sum_i \mathbf{w}_{b,i} = 1$ (probability distribution)
-\EndFor
-
-\State \textbf{Step 5: Cross-Batch Averaging}
-\State $\mathbf{w}_{mean} \gets \frac{1}{B} \sum_{b=1}^{B} \mathbf{w}_b \in \mathbb{R}^{n}$
-\State provides stable feature importance across the batch
-
-\State \textbf{Step 6: Weighted Error Computation}
-\For{feature $f = 1$ to $n$}
-    \For{timestep $t = 1$ to $T$}
-        \For{batch $b = 1$ to $B$}
-            \State $\mathbf{E}_{weighted}[b,t,f] \gets \mathbf{w}_{mean}[f] \cdot \mathbf{E}[b,t,f]$
-            \State upweights errors for high-importance features
-            \State downweights errors for low-importance features
-        \EndFor
-    \EndFor
-\EndFor
-
-\State \textbf{Step 7: Feature-Specific Anomaly Flagging}
-\For{feature $f = 1$ to $n$}
-    \State $\mathbf{A}_f \gets \mathbb{1}[\mathbf{E}_{weighted}[:,:,f] > \tau_f]$
-    \State where $\tau_f$ is the feature-specific threshold
-\EndFor
-
-\State \textbf{Step 8: Attribution Summary Computation}
-\State \textbf{For deployment and monitoring:}
-\State $\mathbf{attribution\_rank} \gets \text{argsort}(\mathbf{w}_{mean}, \text{descending})$
-\State $\mathbf{contribution\_percentage}_i \gets \frac{\mathbf{w}_{mean,i} \cdot \sum_{t,b} \mathbf{E}[b,t,i]}{\sum_{f,t,b} \mathbf{E}[b,t,f]} \times 100\%$
-
-\State \textbf{Return} $(\mathbf{w}_{mean}, \mathbf{E}_{weighted}, \mathbf{A})$
+\State \textbf{Return} $(\mathbf{w},\, \mathbf{E}_{w},\, \mathbf{A})$
 \end{algorithmic}
 \end{algorithm}

@@ -1,47 +1,42 @@
 \begin{algorithm}[H]
 \footnotesize
-\caption{Adaptive Uncertainty-Aware Attention (AUAA) Mechanism}
+\caption{Adaptive Uncertainty-Aware Attention (AUAA)}
 \label{alg:auaa}
 \begin{algorithmic}
-\Require Input sequence $\mathbf{X} \in \mathbb{R}^{B \times T \times C}$, uncertainty estimates $\boldsymbol{\Sigma} \in \mathbb{R}^{B \times T \times 1}$, query projection $\mathbf{W}_Q$, key projection $\mathbf{W}_K$, uncertainty gate parameters $\mathbf{W}_g, b_g$
-\Require Number of attention heads $H=4$, hidden dimension $d_{model}=64$
-\Ensure Attention-weighted output $\mathbf{Y}_{AUAA} \in \mathbb{R}^{B \times T \times C}$
+\Require Input $\mathbf{X} \in \mathbb{R}^{B \times T \times C}$, uncertainty $\boldsymbol{\Sigma} \in \mathbb{R}^{B \times T}$, heads $H=4$, hidden dim $d=64$
+\Require Projections $\mathbf{W}_Q^h, \mathbf{W}_K^h, \mathbf{W}_V^h$, gate params $\mathbf{W}_g, b_g$
+\Ensure Uncertainty-modulated output $\mathbf{Y} \in \mathbb{R}^{B \times T \times C}$
 
-\State \textbf{Step 1: Multi-Head Projections}
-\For{head $h = 1$ to $H$}
-    \State $\mathbf{Q}^h \gets \mathbf{X} \mathbf{W}_Q^h \in \mathbb{R}^{B \times T \times d_k}$
-    \State $\mathbf{K}^h \gets \mathbf{X} \mathbf{W}_K^h \in \mathbb{R}^{B \times T \times d_k}$
-    \State $\mathbf{V}^h \gets \mathbf{X} \mathbf{W}_V^h \in \mathbb{R}^{B \times T \times d_v}$
-    \State where $d_k = d_v = d_{model} / H$
+\State \textbf{Step 1: Multi-head projections} ($d_k = d_v = d/H$)
+\For{$h = 1$ to $H$}
+    \State $\mathbf{Q}^h \gets \mathbf{X} \mathbf{W}_Q^h$, \quad $\mathbf{K}^h \gets \mathbf{X} \mathbf{W}_K^h$, \quad $\mathbf{V}^h \gets \mathbf{X} \mathbf{W}_V^h$
 \EndFor
 
-\State \textbf{Step 2: Standard Attention Computation}
-\For{head $h = 1$ to $H$}
-    \State $\mathbf{A}^h_{raw} \gets \frac{\mathbf{Q}^h (\mathbf{K}^h)^\top}{\sqrt{d_k}} \in \mathbb{R}^{B \times T \times T}$
-    \State $\mathbf{A}^h_{std} \gets \text{softmax}(\mathbf{A}^h_{raw}, \text{dim}=T)$
+\State \textbf{Step 2: Standard scaled dot-product attention}
+\For{$h = 1$ to $H$}
+    \State $\mathbf{A}^h_{raw} \gets \frac{\mathbf{Q}^h (\mathbf{K}^h)^{\!\top}}{\sqrt{d_k}}$
+    \State $\mathbf{A}^h \gets \text{softmax}(\mathbf{A}^h_{raw},\ \text{dim}=T)$
 \EndFor
 
-\State \textbf{Step 3: Uncertainty Gate Computation}
-\State $\mathbf{g}_{raw} \gets \sigma(\mathbf{W}_g \odot \boldsymbol{\Sigma} + b_g) \in \mathbb{R}^{B \times T}$
-\State $\mathbf{G}_{gate} \gets \frac{1}{1 + \boldsymbol{\Sigma}} \in \mathbb{R}^{B \times T}$
-\State where $\sigma$ is the sigmoid activation function
+\State \textbf{Step 3: Uncertainty gate}
+\State $\mathbf{g} \gets \sigma(\mathbf{W}_g \odot \boldsymbol{\Sigma} + b_g)$ \Comment{Learnable gate, $\sigma =$ sigmoid}
+\State $\mathbf{G} \gets \frac{1}{1 + \boldsymbol{\Sigma}}$ \Comment{Analytic fallback gate}
 
-\State \textbf{Step 4: Uncertainty-Aware Modulation}
-\For{head $h = 1$ to $H$}
-    \For{timestep $t = 1$ to $T$}
-        \State \textbf{For each timestep, apply uncertainty gate:}
-        \State $\mathbf{A}^h_{mod}[t,:] \gets \mathbf{A}^h_{std}[t,:] \odot \mathbf{G}_{gate}[:,t]$
-        \State \textbf{Renormalize:} $\mathbf{A}^h_{mod}[t,:] \gets \frac{\mathbf{A}^h_{mod}[t,:]}{\sum_j \mathbf{A}^h_{mod}[t,j]}$
+\State \textbf{Step 4: Uncertainty-modulated attention}
+\For{$h = 1$ to $H$}
+    \For{$t = 1$ to $T$}
+        \State $\mathbf{A}^h[t,:] \gets \mathbf{A}^h[t,:] \odot \mathbf{G}[:,t]$
+        \State $\mathbf{A}^h[t,:] \gets \frac{\mathbf{A}^h[t,:]}{\sum_j \mathbf{A}^h[t,j]}$ \Comment{Renormalize}
     \EndFor
 \EndFor
 
-\State \textbf{Step 5: Output Computation}
-\For{head $h = 1$ to $H$}
-    \State $\mathbf{O}^h \gets \mathbf{A}^h_{mod} \mathbf{V}^h \in \mathbb{R}^{B \times T \times d_v}$
+\State \textbf{Step 5: Output}
+\For{$h = 1$ to $H$}
+    \State $\mathbf{O}^h \gets \mathbf{A}^h \mathbf{V}^h$
 \EndFor
-\State $\mathbf{O}_{concat} \gets \text{Concat}(\mathbf{O}^1, \dots, \mathbf{O}^H) \in \mathbb{R}^{B \times T \times d_{model}}$
-\State $\mathbf{Y}_{AUAA} \gets \mathbf{O}_{concat} \mathbf{W}_O \in \mathbb{R}^{B \times T \times C}$
+\State $\mathbf{O} \gets \text{Concat}(\mathbf{O}^1, \dots, \mathbf{O}^H)$
+\State $\mathbf{Y} \gets \mathbf{O} \mathbf{W}_O$
 
-\State \textbf{Return} $\mathbf{Y}_{AUAA}$
+\State \textbf{Return} $\mathbf{Y}$
 \end{algorithmic}
 \end{algorithm}

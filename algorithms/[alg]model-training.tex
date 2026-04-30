@@ -1,44 +1,29 @@
 \begin{algorithm}[H]
 \footnotesize
-\caption{TCN-Stochastic Model Training Procedure}
+\caption{Model Training Procedure}
 \label{alg:model_training}
 \begin{algorithmic}
-\Require Training dataset $\mathcal{D}_{train} = \{(\mathbf{x}_t, y_t)\}_{t=1}^{T_{train}}$, validation dataset $\mathcal{D}_{val}$, learning rate $\eta$, epochs $E$, batch size $B$, dropout rate $p_{drop}$, early stopping patience $P$
-\Ensure Trained model parameters $\boldsymbol{\theta}^*$
+\Require Training set $\mathcal{D}_{train}$, validation set $\mathcal{D}_{val}$, learning rate $\eta$, epochs $E$, batch size $B$, patience $P$
+\Ensure Optimal parameters $\boldsymbol{\theta}^*$
 
-\State \textbf{Initialization:}
-\State Initialize model parameters $\boldsymbol{\theta}$ with He initialization
-\State Set optimizer: Adam($\eta$)
-\State Initialize best validation loss: $L_{best} \gets \infty$
-\State Set patience counter: $patience \gets 0$
+\State Initialize $\boldsymbol{\theta}$ (He init), optimizer $\gets$ Adam($\eta$)
+\State $L_{best} \gets \infty$, $patience \gets 0$
 
 \For{epoch $e = 1$ to $E$}
-    \State Shuffle training data
+    \State Shuffle $\mathcal{D}_{train}$
     \For{each mini-batch $(\mathbf{X}_b, \mathbf{y}_b)$ of size $B$}
-        \State \textbf{Forward Pass:} $\hat{\mathbf{y}}_b \gets f_{\boldsymbol{\theta}}(\mathbf{X}_b)$
-        \State \textbf{Loss Computation:}
-        \State $L_{recon} \gets \mathcal{L}_{MSE}(\mathbf{y}_b, \hat{\mathbf{y}}_b) = \frac{1}{B} \sum_{i=1}^{B} \|y_i - \hat{y}_i\|^2$
-        \State $L_{total} \gets L_{recon} + \lambda_{unc} \mathcal{L}_{uncertainty} + \lambda_{att} \mathcal{L}_{attention}$
-        \State \textbf{Backward Pass:} $\nabla_{\boldsymbol{\theta}} L_{total} \gets \frac{\partial L_{total}}{\partial \boldsymbol{\theta}}$
-        \State \textbf{Parameter Update:} $\boldsymbol{\theta} \gets \boldsymbol{\theta} - \eta \cdot \nabla_{\boldsymbol{\theta}} L_{total}$
+        \State $\hat{\mathbf{y}}_b \gets f_{\boldsymbol{\theta}}(\mathbf{X}_b)$
+        \State $L \gets \mathcal{L}_{\text{MSE}}(\mathbf{y}_b, \hat{\mathbf{y}}_b) + \lambda_1 \mathcal{L}_{\text{unc}} + \lambda_2 \mathcal{L}_{\text{att}}$
+        \State $\boldsymbol{\theta} \gets \boldsymbol{\theta} - \eta \cdot \nabla_{\boldsymbol{\theta}} L$
     \EndFor
     
-    \State \textbf{Validation:}
-    \State $\hat{\mathbf{y}}_{val} \gets f_{\boldsymbol{\theta}}(\mathcal{D}_{val})$
-    \State $L_{val} \gets \mathcal{L}_{MSE}(\mathbf{y}_{val}, \hat{\mathbf{y}}_{val})$
-    
+    \State $L_{val} \gets \mathcal{L}_{\text{MSE}}(f_{\boldsymbol{\theta}}(\mathcal{D}_{val}), \mathbf{y}_{val})$
     \If{$L_{val} < L_{best}$}
-        \State $L_{best} \gets L_{val}$
-        \State Save model parameters: $\boldsymbol{\theta}^* \gets \boldsymbol{\theta}$
-        \State $patience \gets 0$
+        \State $L_{best} \gets L_{val}$, save $\boldsymbol{\theta}^* \gets \boldsymbol{\theta}$, $patience \gets 0$
     \Else
         \State $patience \gets patience + 1$
     \EndIf
-    
-    \If{$patience \ge P$}
-        \State \textbf{Early stopping triggered}
-        \State Break
-    \EndIf
+    \If{$patience \ge P$} \textbf{break} \EndIf
 \EndFor
 
 \State \textbf{Return} $\boldsymbol{\theta}^*$
