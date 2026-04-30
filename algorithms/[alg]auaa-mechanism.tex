@@ -20,12 +20,11 @@
 
 \State \textbf{Step 3: Uncertainty gate}
 \State $\mathbf{g} \gets \sigma(\mathbf{W}_g \odot \boldsymbol{\Sigma} + b_g)$ \Comment{Learnable gate, $\sigma =$ sigmoid}
-\State $\mathbf{G} \gets \frac{1}{1 + \boldsymbol{\Sigma}}$ \Comment{Analytic fallback gate}
 
 \State \textbf{Step 4: Uncertainty-modulated attention}
 \For{$h = 1$ to $H$}
     \For{$t = 1$ to $T$}
-        \State $\mathbf{A}^h[t,:] \gets \mathbf{A}^h[t,:] \odot \mathbf{G}[:,t]$
+        \State $\mathbf{A}^h[t,:] \gets \mathbf{A}^h[t,:] \odot \mathbf{g}[:,t]$
         \State $\mathbf{A}^h[t,:] \gets \frac{\mathbf{A}^h[t,:]}{\sum_j \mathbf{A}^h[t,j]}$ \Comment{Renormalize}
     \EndFor
 \EndFor

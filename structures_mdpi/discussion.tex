@@ -24,14 +24,14 @@ Despite its strengths, the proposed framework has limitations that practitioners
 
 \textbf{Dependency on Training Data Quality.} The uncertainty estimation relies on the assumption that the training distribution represents normal operation. If the training data contains undetected anomalies, the model may learn to treat them as normal, reducing detection sensitivity. We recommend rigorous data cleaning using DBSCAN clustering as described in the Methodology section.
 
-\textbf{Computational Overhead.} MC dropout inference requires multiple forward passes per prediction. The experiments use 20 Monte Carlo samples to reduce runtime while preserving uncertainty estimates.
+\textbf{Computational Overhead.} MC dropout inference requires $N=50$ forward passes per prediction. This factor-50 latency is parallelizable: on a GPU, batched inference absorbs all $N$ passes simultaneously with minimal overhead beyond memory utilization.
 
 \textbf{Limited to One-Step Feature Prediction.} The current architecture predicts the next timestep for each feature from temporal windows. Capturing richer inter-feature dependencies during prediction could improve accuracy for highly correlated sensor groups, which we leave for future work.
 
 \subsection{Sensitivity Analysis}
 We conducted sensitivity analysis on key hyperparameters to guide practitioners in model configuration.
 
-\textbf{Number of MC Samples.} Table \ref{table:mc_sensitivity} shows the impact of MC sample count. The experiments use 20 samples for practical runtime.
+\textbf{Number of MC Samples.} Table \ref{table:mc_sensitivity} shows the impact of MC sample count. The experiments use 50 samples, providing a balanced trade-off between uncertainty quality and runtime.
 
 \input{tables/mc_sensitivity}
 
