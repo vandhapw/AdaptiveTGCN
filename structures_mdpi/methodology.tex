@@ -21,7 +21,7 @@ The proposed TCN-Stochastic Enhanced framework combines temporal convolutional n
 
 \subsubsection{TCN Backbone with Stochastic Depth}
 
-The backbone consists of three hierarchical temporal blocks (64 channels each) with exponentially increasing dilation rates $d \in \{1, 2, 4\}$. Each block stacks two dilated causal convolutions with weight normalization, ReLU activation, and dropout — serving dual purposes: regularization during training, and uncertainty quantification via Monte Carlo sampling at inference.
+The backbone consists of three hierarchical temporal blocks (64 channels each) with exponentially increasing dilation rates $d \in \{1, 2, 4\}$. Each block stacks two dilated causal convolutions with weight normalization, ReLU activation, and dropout — serving dual purposes: regularization during training, and uncertainty quantification via Monte Carlo sampling at inference, following the Bayesian approximation framework of Gal and Ghahramani \cite{gal2016dropout_bayesian}.
 
 \input{algorithms/[alg]model-training}
 
