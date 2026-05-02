@@ -14,10 +14,14 @@
 \citation{bai2018tcn}
 \citation{goh2017dataset}
 \citation{bai2018tcn}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Related Works}{2}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Deep Anomaly Detection in Multivariate Time Series}{2}{subsection.2.1}\protected@file@percent }
 \citation{tuli2022tranad}
 \citation{xu2022anomalytransformer}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Architecture of the proposed uncertainty-calibrated TCN framework for multivariate sensor anomaly detection. Three innovations address three sensor-specific gaps: \textbf  {(1)} Adaptive Uncertainty-Aware Attention (AUAA) gates temporal attention by per-sensor predictive uncertainty $\boldsymbol  {\sigma }_t$, closing the loop between uncertainty estimation and attention computation; \textbf  {(2)} the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; \textbf  {(3)} the Feature-Attribution Learner produces per-sensor importance scores with Chebyshev-based false-positive-rate guarantees. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc. The ablation table at the bottom right summarizes the cumulative contribution of each component.}}{3}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:architecture}{{1}{3}{Architecture of the proposed uncertainty-calibrated TCN framework for multivariate sensor anomaly detection. Three innovations address three sensor-specific gaps: \textbf {(1)} Adaptive Uncertainty-Aware Attention (AUAA) gates temporal attention by per-sensor predictive uncertainty $\boldsymbol {\sigma }_t$, closing the loop between uncertainty estimation and attention computation; \textbf {(2)} the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; \textbf {(3)} the Feature-Attribution Learner produces per-sensor importance scores with Chebyshev-based false-positive-rate guarantees. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc. The ablation table at the bottom right summarizes the cumulative contribution of each component}{figure.caption.1}{}}
+\newlabel{fig:architecture@cref}{{[figure][1][]1}{[1][2][]3}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Works}{3}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Deep Anomaly Detection in Multivariate Time Series}{3}{subsection.2.1}\protected@file@percent }
 \citation{lakshminarayanan2017ensembles}
 \citation{ghimire_electricity_2025}
 \citation{cui_sde-hnn_2025}
@@ -25,79 +29,78 @@
 \citation{xu2022anomalytransformer}
 \citation{ghimire_electricity_2025}
 \citation{cui_sde-hnn_2025}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Uncertainty Quantification in Time Series}{3}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Attention Mechanisms for Temporal Data}{3}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Interpretable Anomaly Detection}{3}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Uncertainty Quantification in Time Series}{4}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Attention Mechanisms for Temporal Data}{4}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Interpretable Anomaly Detection}{4}{subsection.2.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of the proposed framework with existing approaches across key dimensions.}}{4}{table.caption.2}\protected@file@percent }
+\newlabel{table:positioning}{{1}{4}{Comparison of the proposed framework with existing approaches across key dimensions}{table.caption.2}{}}
+\newlabel{table:positioning@cref}{{[table][1][]1}{[1][4][]4}}
 \citation{ester1996dbscan}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of the proposed framework with existing approaches across key dimensions.}}{4}{table.caption.1}\protected@file@percent }
-\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{table:positioning}{{1}{4}{Comparison of the proposed framework with existing approaches across key dimensions}{table.caption.1}{}}
-\newlabel{table:positioning@cref}{{[table][1][]1}{[1][3][]4}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{4}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Problem Statement and Sensor-Specific Formulation}{4}{subsection.3.1}\protected@file@percent }
-\newlabel{eq:sensor_model}{{1}{4}{Problem Statement and Sensor-Specific Formulation}{equation.3.1}{}}
-\newlabel{eq:sensor_model@cref}{{[equation][1][]1}{[1][4][]4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Feature Engineering and Preprocessing}{4}{subsection.3.2}\protected@file@percent }
-\newlabel{eq:feature_rep}{{2}{4}{Feature Engineering and Preprocessing}{equation.3.2}{}}
-\newlabel{eq:feature_rep@cref}{{[equation][2][]2}{[1][4][]4}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Dataset statistics before and after DBSCAN-based outlier filtering.}}{5}{table.caption.2}\protected@file@percent }
-\newlabel{table:dataset_stats}{{2}{5}{Dataset statistics before and after DBSCAN-based outlier filtering}{table.caption.2}{}}
-\newlabel{table:dataset_stats@cref}{{[table][2][]2}{[1][4][]5}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Uncertainty-Calibrated TCN Architecture}{5}{subsection.3.3}\protected@file@percent }
-\newlabel{eq:mc_moments}{{3}{5}{Uncertainty-Calibrated TCN Architecture}{equation.3.3}{}}
-\newlabel{eq:mc_moments@cref}{{[equation][3][]3}{[1][5][]5}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Adaptive Uncertainty-Aware Attention (AUAA)}{5}{subsection.3.4}\protected@file@percent }
-\newlabel{eq:auaa_attention}{{4}{5}{Adaptive Uncertainty-Aware Attention (AUAA)}{equation.3.4}{}}
-\newlabel{eq:auaa_attention@cref}{{[equation][4][]4}{[1][5][]5}}
-\newlabel{eq:auaa_gate}{{5}{5}{Adaptive Uncertainty-Aware Attention (AUAA)}{equation.3.5}{}}
-\newlabel{eq:auaa_gate@cref}{{[equation][5][]5}{[1][5][]5}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Dynamic Weight Adapter for Anomaly Scoring}{6}{subsection.3.5}\protected@file@percent }
-\newlabel{eq:dynamic_weight}{{6}{6}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.6}{}}
-\newlabel{eq:dynamic_weight@cref}{{[equation][6][]6}{[1][6][]6}}
-\newlabel{eq:hybrid_score}{{7}{6}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.7}{}}
-\newlabel{eq:hybrid_score@cref}{{[equation][7][]7}{[1][6][]6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Feature-Level Anomaly Attribution}{6}{subsection.3.6}\protected@file@percent }
-\newlabel{eq:feature_importance}{{8}{6}{Feature-Level Anomaly Attribution}{equation.3.8}{}}
-\newlabel{eq:feature_importance@cref}{{[equation][8][]8}{[1][6][]6}}
-\newlabel{eq:chebyshev}{{9}{6}{Feature-Level Anomaly Attribution}{equation.3.9}{}}
-\newlabel{eq:chebyshev@cref}{{[equation][9][]9}{[1][6][]6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Composite Loss Function}{6}{subsection.3.7}\protected@file@percent }
-\newlabel{eq:loss}{{10}{6}{Composite Loss Function}{equation.3.10}{}}
-\newlabel{eq:loss@cref}{{[equation][10][]10}{[1][6][]6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Anomaly Detection Pipeline}{7}{subsection.3.8}\protected@file@percent }
-\newlabel{alg:stochastic_tcn}{{3.8}{7}{Anomaly Detection Pipeline}{Item.10}{}}
-\newlabel{alg:stochastic_tcn@cref}{{[subsection][8][3]3.8}{[1][7][]7}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Experimental Results}{7}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Dataset and Preprocessing}{7}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Experimental Configuration}{7}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{5}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Problem Statement and Sensor-Specific Formulation}{5}{subsection.3.1}\protected@file@percent }
+\newlabel{eq:sensor_model}{{1}{5}{Problem Statement and Sensor-Specific Formulation}{equation.3.1}{}}
+\newlabel{eq:sensor_model@cref}{{[equation][1][]1}{[1][5][]5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Feature Engineering and Preprocessing}{5}{subsection.3.2}\protected@file@percent }
+\newlabel{eq:feature_rep}{{2}{5}{Feature Engineering and Preprocessing}{equation.3.2}{}}
+\newlabel{eq:feature_rep@cref}{{[equation][2][]2}{[1][5][]5}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Dataset statistics before and after DBSCAN-based outlier filtering.}}{6}{table.caption.3}\protected@file@percent }
+\newlabel{table:dataset_stats}{{2}{6}{Dataset statistics before and after DBSCAN-based outlier filtering}{table.caption.3}{}}
+\newlabel{table:dataset_stats@cref}{{[table][2][]2}{[1][5][]6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Uncertainty-Calibrated TCN Architecture}{6}{subsection.3.3}\protected@file@percent }
+\newlabel{eq:mc_moments}{{3}{6}{Uncertainty-Calibrated TCN Architecture}{equation.3.3}{}}
+\newlabel{eq:mc_moments@cref}{{[equation][3][]3}{[1][6][]6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Adaptive Uncertainty-Aware Attention (AUAA)}{6}{subsection.3.4}\protected@file@percent }
+\newlabel{eq:auaa_attention}{{4}{6}{Adaptive Uncertainty-Aware Attention (AUAA)}{equation.3.4}{}}
+\newlabel{eq:auaa_attention@cref}{{[equation][4][]4}{[1][6][]6}}
+\newlabel{eq:auaa_gate}{{5}{6}{Adaptive Uncertainty-Aware Attention (AUAA)}{equation.3.5}{}}
+\newlabel{eq:auaa_gate@cref}{{[equation][5][]5}{[1][6][]6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Dynamic Weight Adapter for Anomaly Scoring}{7}{subsection.3.5}\protected@file@percent }
+\newlabel{eq:dynamic_weight}{{6}{7}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.6}{}}
+\newlabel{eq:dynamic_weight@cref}{{[equation][6][]6}{[1][7][]7}}
+\newlabel{eq:hybrid_score}{{7}{7}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.7}{}}
+\newlabel{eq:hybrid_score@cref}{{[equation][7][]7}{[1][7][]7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Feature-Level Anomaly Attribution}{7}{subsection.3.6}\protected@file@percent }
+\newlabel{eq:feature_importance}{{8}{7}{Feature-Level Anomaly Attribution}{equation.3.8}{}}
+\newlabel{eq:feature_importance@cref}{{[equation][8][]8}{[1][7][]7}}
+\newlabel{eq:chebyshev}{{9}{7}{Feature-Level Anomaly Attribution}{equation.3.9}{}}
+\newlabel{eq:chebyshev@cref}{{[equation][9][]9}{[1][7][]7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Composite Loss Function}{7}{subsection.3.7}\protected@file@percent }
+\newlabel{eq:loss}{{10}{7}{Composite Loss Function}{equation.3.10}{}}
+\newlabel{eq:loss@cref}{{[equation][10][]10}{[1][7][]7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Anomaly Detection Pipeline}{8}{subsection.3.8}\protected@file@percent }
+\newlabel{alg:stochastic_tcn}{{3.8}{8}{Anomaly Detection Pipeline}{Item.10}{}}
+\newlabel{alg:stochastic_tcn@cref}{{[subsection][8][3]3.8}{[1][8][]8}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Experimental Results}{8}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Dataset and Preprocessing}{8}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Experimental Configuration}{8}{subsection.4.2}\protected@file@percent }
 \citation{goh2017dataset}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Forecasting Performance}{8}{subsection.4.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Forecasting performance across baseline models and the proposed Full Enhanced framework.}}{8}{table.caption.3}\protected@file@percent }
-\newlabel{table:forecasting}{{3}{8}{Forecasting performance across baseline models and the proposed Full Enhanced framework}{table.caption.3}{}}
-\newlabel{table:forecasting@cref}{{[table][3][]3}{[1][8][]8}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Ablation Studies}{8}{subsection.4.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Ablation study showing cumulative component contributions.}}{8}{table.caption.4}\protected@file@percent }
-\newlabel{table:ablation}{{4}{8}{Ablation study showing cumulative component contributions}{table.caption.4}{}}
-\newlabel{table:ablation@cref}{{[table][4][]4}{[1][8][]8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Forecasting Performance}{9}{subsection.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Forecasting performance across baseline models and the proposed Full Enhanced framework.}}{9}{table.caption.4}\protected@file@percent }
+\newlabel{table:forecasting}{{3}{9}{Forecasting performance across baseline models and the proposed Full Enhanced framework}{table.caption.4}{}}
+\newlabel{table:forecasting@cref}{{[table][3][]3}{[1][9][]9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Ablation Studies}{9}{subsection.4.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Ablation study showing cumulative component contributions.}}{9}{table.caption.5}\protected@file@percent }
+\newlabel{table:ablation}{{4}{9}{Ablation study showing cumulative component contributions}{table.caption.5}{}}
+\newlabel{table:ablation@cref}{{[table][4][]4}{[1][9][]9}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Cross-Dataset Validation on SWaT}{9}{subsection.4.5}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Cross-dataset validation on the SWaT industrial control benchmark.}}{9}{table.caption.5}\protected@file@percent }
-\newlabel{table:swat}{{5}{9}{Cross-dataset validation on the SWaT industrial control benchmark}{table.caption.5}{}}
-\newlabel{table:swat@cref}{{[table][5][]5}{[1][9][]9}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Anomaly Detection Results}{9}{subsection.4.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Per-Sensor Attribution Distribution}{9}{subsection.4.7}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Per-sensor anomaly attribution distribution from the feature-importance learner.}}{9}{table.caption.6}\protected@file@percent }
-\newlabel{table:attribution}{{6}{9}{Per-sensor anomaly attribution distribution from the feature-importance learner}{table.caption.6}{}}
-\newlabel{table:attribution@cref}{{[table][6][]6}{[1][9][]9}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Additional Analyses}{9}{subsection.4.8}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Monte Carlo sample count sensitivity analysis.}}{10}{table.caption.7}\protected@file@percent }
-\newlabel{table:mc_sensitivity}{{7}{10}{Monte Carlo sample count sensitivity analysis}{table.caption.7}{}}
-\newlabel{table:mc_sensitivity@cref}{{[table][7][]7}{[1][9][]10}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{10}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Interpretation of Results}{10}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Comparison with Prior Stochastic TCN Frameworks}{10}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Sensor-Specific Design Justification}{10}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Limitations and Future Work}{11}{subsection.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusions}{11}{section.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Cross-dataset validation on the SWaT industrial control benchmark.}}{10}{table.caption.6}\protected@file@percent }
+\newlabel{table:swat}{{5}{10}{Cross-dataset validation on the SWaT industrial control benchmark}{table.caption.6}{}}
+\newlabel{table:swat@cref}{{[table][5][]5}{[1][10][]10}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Anomaly Detection Results}{10}{subsection.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Per-Sensor Attribution Distribution}{10}{subsection.4.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Per-sensor anomaly attribution distribution from the feature-importance learner.}}{10}{table.caption.7}\protected@file@percent }
+\newlabel{table:attribution}{{6}{10}{Per-sensor anomaly attribution distribution from the feature-importance learner}{table.caption.7}{}}
+\newlabel{table:attribution@cref}{{[table][6][]6}{[1][10][]10}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Additional Analyses}{10}{subsection.4.8}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Monte Carlo sample count sensitivity analysis.}}{11}{table.caption.8}\protected@file@percent }
+\newlabel{table:mc_sensitivity}{{7}{11}{Monte Carlo sample count sensitivity analysis}{table.caption.8}{}}
+\newlabel{table:mc_sensitivity@cref}{{[table][7][]7}{[1][10][]11}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{11}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Interpretation of Results}{11}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Comparison with Prior Stochastic TCN Frameworks}{11}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Sensor-Specific Design Justification}{11}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Limitations and Future Work}{12}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusions}{12}{section.6}\protected@file@percent }
 \bibdata{2209-hiper-chad}
 \bibcite{coleman_sensing_2018}{{1}{}{{Coleman and Meggers}}{{}}}
 \bibcite{chandola2009survey}{{2}{2009}{{Chandola et~al.}}{{Chandola, Banerjee, and Kumar}}}
@@ -111,8 +114,8 @@
 \bibcite{lakshminarayanan2017ensembles}{{10}{2017}{{Lakshminarayanan et~al.}}{{Lakshminarayanan, Pritzel, and Blundell}}}
 \bibcite{vaswani2017attention}{{11}{2017}{{Vaswani et~al.}}{{Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, and Polosukhin}}}
 \bibcite{ester1996dbscan}{{12}{1996}{{Ester et~al.}}{{Ester, Kriegel, Sander, and Xu}}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}References}{13}{section.7}\protected@file@percent }
-\newlabel{LastPage}{{}{13}{}{page.13}{}}
-\xdef\lastpage@lastpage{13}
-\xdef\lastpage@lastpageHy{13}
-\gdef \@abspage@last{13}
+\@writefile{toc}{\contentsline {section}{\numberline {7}References}{14}{section.7}\protected@file@percent }
+\newlabel{LastPage}{{}{14}{}{page.14}{}}
+\xdef\lastpage@lastpage{14}
+\xdef\lastpage@lastpageHy{14}
+\gdef \@abspage@last{14}

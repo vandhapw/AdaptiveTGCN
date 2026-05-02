@@ -74,6 +74,15 @@ We present an uncertainty-calibrated TCN framework for multivariate sensor anoma
     \item \textbf{Feature-Level Anomaly Attribution with Theoretical Bounds.} A feature-importance learner providing per-sensor explanations, complemented by Chebyshev-based uncertainty bounds that guarantee $P(\text{false positive}) \leq 1/k^2$. This addresses Gap~3 by delivering actionable, sensor-specific explanations with provable calibration guarantees.
 \end{enumerate}
 
+The overall architecture of the proposed framework is illustrated in \cref{fig:architecture}. The framework follows a closed-loop design: sensor data pass through a three-layer TCN backbone, MC dropout produces per-sensor uncertainty estimates, and these uncertainty signals are then fed back into the attention mechanism (AUAA), the dynamic anomaly scoring (Weight Adapter), and the per-sensor explanation module (Feature Attribution)---rather than being used only as an output-level term.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/architecture_diagram.png}
+\caption{Architecture of the proposed uncertainty-calibrated TCN framework for multivariate sensor anomaly detection. Three innovations address three sensor-specific gaps: \textbf{(1)} Adaptive Uncertainty-Aware Attention (AUAA) gates temporal attention by per-sensor predictive uncertainty $\boldsymbol{\sigma}_t$, closing the loop between uncertainty estimation and attention computation; \textbf{(2)} the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; \textbf{(3)} the Feature-Attribution Learner produces per-sensor importance scores with Chebyshev-based false-positive-rate guarantees. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc. The ablation table at the bottom right summarizes the cumulative contribution of each component.}
+\label{fig:architecture}
+\end{figure}
+
 We validate through four-month IAQ sensor data, comprehensive ablation studies isolating each component, cross-dataset evaluation on the SWaT industrial control benchmark~\cite{goh2017dataset}, and sensitivity analysis of key hyperparameters.
 
 % ============================================================

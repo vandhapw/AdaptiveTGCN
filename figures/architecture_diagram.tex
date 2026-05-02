@@ -1,0 +1,182 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows.meta,positioning,calc,patterns,decorations.pathreplacing,shadows,fit,backgrounds,shapes.multipart,matrix}
+
+\begin{document}
+\begin{tikzpicture}[
+    node distance=0.85cm,
+    % --- Color palette ---
+    inputColor/.style={fill=blue!8, draw=blue!40, thick},
+    tcnColor/.style={fill=teal!10, draw=teal!50, thick},
+    auaaColor/.style={fill=orange!10, draw=orange!60, thick},
+    adapterColor/.style={fill=purple!10, draw=purple!55, thick},
+    outputColor/.style={fill=green!10, draw=green!50, thick},
+    innovationColor/.style={fill=red!8, draw=red!55, thick, dashed, line width=0.8pt},
+    % --- Block styles ---
+    block/.style={rectangle, rounded corners=3pt, draw, minimum width=2.6cm, minimum height=0.9cm, align=center, font=\footnotesize\bfseries},
+    smallBlock/.style={rectangle, rounded corners=2pt, draw, minimum width=2.0cm, minimum height=0.7cm, align=center, font=\footnotesize},
+    tinyBlock/.style={rectangle, rounded corners=2pt, draw, minimum width=1.5cm, minimum height=0.55cm, align=center, font=\scriptsize},
+    arrow/.style={-{Stealth[scale=0.8]}, thick, draw=gray!50},
+    feedbackArrow/.style={-{Stealth[scale=0.7]}, thick, draw=red!60, densely dashed},
+    label/.style={font=\footnotesize\itshape, text=gray},
+    % --- Callout boxes for innovations ---
+    callout/.style={rectangle, rounded corners=5pt, fill=white, draw=red!50, thick, dashed, inner sep=6pt, font=\footnotesize},
+    highlight/.style={font=\footnotesize\bfseries, text=red!70!black},
+]
+
+% ============================================================
+% INPUT LAYER
+% ============================================================
+\node [block, inputColor, minimum width=3.2cm, minimum height=1.3cm] (input) {
+    \textbf{Multivariate Sensor Input}\\[2pt]
+    \scriptsize $\mathbf{X} \in \mathbb{R}^{W \times n}$ \\[1pt]
+    \scriptsize CO$_2$ | VOC | Temp | Hum | PM$_{2.5}$
+};
+
+% ============================================================
+% FEATURE ENGINEERING
+% ============================================================
+\node [smallBlock, inputColor, below=of input] (features) {
+    \textbf{Windowed Features}\\[1pt]
+    \scriptsize $x_f(t), \Delta_f, \mu_f^W, \sigma_f^W$
+};
+
+% ============================================================
+% TCN BACKBONE (3 layers)
+% ============================================================
+\node [block, tcnColor, below=of features, minimum width=5.5cm, minimum height=2.0cm] (tcn) {
+    \textbf{TCN Backbone (3 Layers)}\\[4pt]
+    \begin{tikzpicture}[scale=0.7, every node/.style={font=\tiny}]
+        \node [tinyBlock, fill=white, draw=teal!40] (l1) {Layer 1\\d=1, ch=64};
+        \node [tinyBlock, fill=white, draw=teal!40, right=0.3cm of l1] (l2) {Layer 2\\d=2, ch=64};
+        \node [tinyBlock, fill=white, draw=teal!40, right=0.3cm of l2] (l3) {Layer 3\\d=4, ch=64};
+        \draw [-{Stealth[scale=0.5]}, teal!50] (l1) -- (l2);
+        \draw [-{Stealth[scale=0.5]}, teal!50] (l2) -- (l3);
+    \end{tikzpicture}\\[2pt]
+    {\scriptsize Causal Conv + WeightNorm + ReLU + Stochastic Depth}
+};
+
+% ============================================================
+% MC DROPOUT (stochastic passes)
+% ============================================================
+\node [smallBlock, tcnColor, below=of tcn, minimum width=3.8cm] (mcdropout) {
+    \textbf{MC Dropout ($M$=50 passes)}\\[1pt]
+    \scriptsize $\{\hat{\mathbf{y}}^{(1)},...,\hat{\mathbf{y}}^{(M)}\} \to \hat{\mathbf{y}}, \boldsymbol{\sigma}$
+};
+
+% ============================================================
+% INNOVATION 1: AUAA
+% ============================================================
+\node [block, auaaColor, below left=0.6cm and -1.1cm of mcdropout, minimum width=4.6cm, minimum height=1.6cm] (auaa) {
+    \textbf{Innovation 1: AUAA}\\[3pt]
+    $\boldsymbol{\alpha}_t = \text{softmax}\!\left(\frac{\mathbf{QK}^T}{\sqrt{d_k}}\right) \odot \frac{1}{1+\boldsymbol{\sigma}_t}$\\[3pt]
+    {\scriptsize Uncertainty gates attention weights}
+};
+
+% ============================================================
+% INNOVATION 2: Dynamic Weight Adapter
+% ============================================================
+\node [block, adapterColor, below right=0.6cm and -1.1cm of mcdropout, minimum width=4.6cm, minimum height=1.6cm] (adapter) {
+    \textbf{Innovation 2: Dynamic Weight Adapter}\\[3pt]
+    $s_t = \alpha_t \cdot \mathbf{e}_t + (1-\alpha_t) \cdot \mathbf{u}_t$\\[3pt]
+    {\scriptsize GRU-context learns $\alpha_t$ over time}
+};
+
+% ============================================================
+% INNOVATION 3: Feature Attribution
+% ============================================================
+\node [block, outputColor, below=1.0cm of adapter, minimum width=4.6cm, minimum height=1.4cm, xshift=-2.2cm] (attribution) {
+    \textbf{Innovation 3: Feature Attribution}\\[3pt]
+    $\mathbf{w}_f = \text{softmax}(\mathbf{V}\!\cdot\!\tanh(\mathbf{Wx}+\mathbf{b}))$\\[3pt]
+    {\scriptsize Per-sensor importance + Chebyshev bound}
+};
+
+% ============================================================
+% OUTPUT
+% ============================================================
+\node [block, outputColor, below=0.7cm of auaa, minimum width=4.6cm, minimum height=1.3cm, align=center] (output) {
+    \textbf{Output}\\[3pt]
+    {\scriptsize Anomaly Score $s_t$ \quad | \quad Attribution per sensor}\\[3pt]
+    {\scriptsize $P(\text{FP}) \leq 1/k^2$ (Chebyshev guarantee)}
+};
+
+% ============================================================
+% ARROWS (main flow)
+% ============================================================
+\draw [arrow] (input) -- (features);
+\draw [arrow] (features) -- (tcn);
+\draw [arrow] (tcn) -- (mcdropout);
+
+% TCN splits into two streams
+\draw [arrow] (mcdropout.south) -- ++(0,-0.25) -| (auaa.north);
+\draw [arrow] (mcdropout.south) -- ++(0,-0.25) -| (adapter.north);
+
+% AUAA feeds into scoring
+\draw [arrow] (auaa.south) -- (output.north);
+
+% Adapter feeds into attribution
+\draw [arrow] (adapter.south) |- (attribution.east);
+\draw [arrow] (adapter.south) |- (output.east);
+
+% Attribution to output
+\draw [arrow] (attribution.west) -| (output.south);
+
+% ============================================================
+% FEEDBACK LOOPS (highlighting the integration)
+% ============================================================
+
+% Uncertainty feedback loop (AUAA -> TCN attention)
+\draw [feedbackArrow, red!80] 
+    (auaa.west) -- ++(-0.8,0) |- 
+    node [pos=0.75, left, font=\tiny\bfseries, text=red!80] {uncertainty}
+    node [pos=0.75, right, font=\tiny\bfseries, text=red!80] {$\rightarrow$ attention}
+    (tcn.west);
+
+% Dynamic weight feedback (GRU memory loop)
+\draw [feedbackArrow] 
+    ($(adapter.east)+(0,0.1)$) -- ++(0.8,0) -- 
+    node [pos=0.5, right, font=\tiny\bfseries, text=red!80] {GRU}
+    node [pos=0.5, left, font=\tiny\bfseries, text=red!80] {memory}
+    ++(0,1.0) -- 
+    ($(adapter.east)+(0,1.0)$);
+
+% ============================================================
+% BOXES around innovations with labels
+% ============================================================
+\node [callout, fit=(auaa), inner sep=10pt, label={[highlight, anchor=south east]north east:{\textbf{Gap 1:}} Sensor Reliability}] {};
+\node [callout, fit=(adapter), inner sep=10pt, label={[highlight, anchor=south west]north west:{\textbf{Gap 2:}} Context Scoring}] {};
+\node [callout, fit=(attribution), inner sep=10pt, label={[highlight, anchor=south west]north west:{\textbf{Gap 3:}} Actionable Output}] {};
+
+% ============================================================
+% COMPARISON TABLE (mini) at bottom right
+% ============================================================
+\node [rectangle, fill=gray!5, draw=gray!30, rounded corners=2pt, 
+       below=1.8cm of output, xshift=3.5cm, minimum width=4.2cm, inner sep=5pt, font=\tiny] (table) {
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabular}{lcc}
+    \textbf{Component} & \textbf{$\Delta$MSE} & \textbf{Cumul.} \\
+    \hline
+    Base TCN & --- & 0.000327 \\
+    + MC Dropout & -5\% & 0.000311 \\
+    + AUAA (★1) & -25\% & 0.000245 \\
+    + Full (★1+2+3) & -40\% & \textbf{0.000196} \\
+    \end{tabular}
+};
+
+% Legend
+\node [font=\footnotesize, below=0.1cm of table, text=gray] {★ innovation components};
+
+% ============================================================
+% KEY INSIGHT TEXT
+% ============================================================
+\node [font=\small\itshape, text=red!50!black, below=0.5cm of output, xshift=-2.5cm] (insight) {
+    \textbf{Key insight:} uncertainty is not just a score --- it reshapes attention
+};
+
+% Title
+\node [font=\large\bfseries, above=0.3cm of input] {
+    Uncertainty-Calibrated TCN with Adaptive Attention for Sensor Anomaly Detection
+};
+
+\end{tikzpicture}
+\end{document}

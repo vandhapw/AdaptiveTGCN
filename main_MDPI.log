@@ -1,6 +1,6 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.3.5)  2 MAY 2026 19:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.3.5)  2 MAY 2026 23:58
 entering extended mode
- \write18 enabled.
+ restricted \write18 enabled.
  %&-line parsing enabled.
 **./main_MDPI.tex
 (main_MDPI.tex
@@ -1597,8 +1597,8 @@ Package epstopdf Info: Source file: <Definitions/logo-mdpi.eps>
 >
 (epstopdf)                    date: 2026-05-02 19:16:27
 (epstopdf)                    size: 13253 bytes
-(epstopdf)             Command: <miktex-epstopdf-unrestricted --outfile=Definit
-ions/logo-mdpi-eps-converted-to.pdf Definitions/logo-mdpi.eps>
+(epstopdf)             Command: <miktex-epstopdf --outfile=Definitions/logo-mdp
+i-eps-converted-to.pdf Definitions/logo-mdpi.eps>
 (epstopdf)             \includegraphics on input line 49.
 Package epstopdf Info: Output file is already uptodate.
 <Definitions/logo-mdpi-eps-converted-to.pdf, id=157, 74.2775pt x 49.18375pt>
@@ -1697,6 +1697,20 @@ pl/m/n/10 (-20) , \OML/zplm/m/it/10 andattributiontomatchtheoperationalcharacte
 risticsofphysicalsensordeployments\OT1/ppl/m/n/10 (-20) .$ 
  []
 
+<figures/architecture_diagram.png, id=192, 1352.80406pt x 1127.71312pt>
+File: figures/architecture_diagram.png Graphic file (type png)
+<use figures/architecture_diagram.png>
+Package pdftex.def Info: figures/architecture_diagram.png  used on input line 8
+1.
+(pdftex.def)             Requested size: 362.80608pt x 302.43892pt.
+LaTeX Font Info:    Font shape `U/msa/m/n' will be
+(Font)              scaled to size 9.37807pt on input line 82.
+LaTeX Font Info:    Font shape `U/msa/m/n' will be
+(Font)              scaled to size 7.29405pt on input line 82.
+LaTeX Font Info:    Font shape `U/msb/m/n' will be
+(Font)              scaled to size 9.37807pt on input line 82.
+LaTeX Font Info:    Font shape `U/msb/m/n' will be
+(Font)              scaled to size 7.29405pt on input line 82.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 18.18796pt, for example:
@@ -1705,16 +1719,24 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [2]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 18.18796pt, for example:
+(fancyhdr)                \setlength{\headheight}{18.18796pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
+
+[3 <./figures/architecture_diagram.png (PNG copy)>]
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.92 ...esian approximation~\\cite{gal2016dropout_
+l.101 ...sian approximation~\\cite{gal2016dropout_
                                                   bayesian} provides a light...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Extra }, or forgotten $.
-l.92 ...roximation~\\cite{gal2016dropout_bayesian}
+l.101 ...oximation~\\cite{gal2016dropout_bayesian}
                                                    provides a lightweight me...
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -1725,13 +1747,13 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.93 
-     
+l.102 
+      
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (557.13556pt too wide) in paragraph at lines 92--93
+Overfull \hbox (557.13556pt too wide) in paragraph at lines 101--102
 \T1/ppl/m/n/10 (-20) citegal2016dropout$[]\OML/zplm/m/it/10 ayesianprovidesalig
 htweightmechanismforestimatingpredictiveuncertaintyfromdeterministicarchitectur
 es\OT1/ppl/m/n/10 (-20) , \OML/zplm/m/it/10 whiledeepensembles \OT1/zplm/m/n/10
@@ -1746,17 +1768,17 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
-[3]
+[4]
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.161 ... data distribution. \\cref{table:dataset_
+l.170 ... data distribution. \\cref{table:dataset_
                                                   stats} summarizes the stat...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Extra }, or forgotten $.
-l.161 ...distribution. \\cref{table:dataset_stats}
+l.170 ...distribution. \\cref{table:dataset_stats}
                                                    summarizes the statistica...
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -1767,20 +1789,12 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.162 
+l.171 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-(tables/dataset_stats.tex
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 18.18796pt, for example:
-(fancyhdr)                \setlength{\headheight}{18.18796pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
-
-[4])
+(tables/dataset_stats.tex)
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 18.18796pt, for example:
@@ -1797,16 +1811,24 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [6]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 18.18796pt, for example:
+(fancyhdr)                \setlength{\headheight}{18.18796pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
+
+[7]
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.256 ...hm is presented in \\cref{alg:stochastic_
+l.265 ...hm is presented in \\cref{alg:stochastic_
                                                   tcn}.
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Extra }, or forgotten $.
-l.256 ...s presented in \\cref{alg:stochastic_tcn}
+l.265 ...s presented in \\cref{alg:stochastic_tcn}
                                                   .
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -1817,7 +1839,7 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.257 
+l.266 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -1826,13 +1848,13 @@ you left one out. Proceed, with fingers crossed.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.267 ...turation artifacts. \\cref{table:dataset_
+l.276 ...turation artifacts. \\cref{table:dataset_
                                                   stats} reports statistics ...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Extra }, or forgotten $.
-l.267 ...on artifacts. \\cref{table:dataset_stats}
+l.276 ...on artifacts. \\cref{table:dataset_stats}
                                                    reports statistics before...
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -1843,13 +1865,13 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.268 
+l.277 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (786.76385pt too wide) in paragraph at lines 267--268
+Overfull \hbox (786.76385pt too wide) in paragraph at lines 276--277
 \T1/ppl/m/n/10 (-20) creftable:dataset$[]\OML/zplm/m/it/10 tatsreportsstatistic
 sbeforeandafterfiltering \OT1/zplm/m/n/10 : \OML/zplm/m/it/10 maximumCO[]values
 dropfrom\OT1/ppl/m/n/10 (-20) 9999\OML/zplm/m/it/10 to\OT1/ppl/m/n/10 (-20) 260
@@ -1867,7 +1889,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
-[7]
+[8]
 
 ! LaTeX Error: There's no line here to end.
 
@@ -1875,7 +1897,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.277 \\c
+l.286 \\c
          ref{table:forecasting} reports forecasting performance across all m...
 
 Your command was ignored.
@@ -1889,7 +1911,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.300 \\c
+l.309 \\c
          ref{table:ablation} presents the ablation results decomposing each ...
 
 Your command was ignored.
@@ -1903,7 +1925,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
-[8]
+[9]
 
 ! LaTeX Error: There's no line here to end.
 
@@ -1911,7 +1933,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.347 \\c
+l.356 \\c
          ref{table:attribution} presents the per-sensor attribution distribu...
 
 Your command was ignored.
@@ -1921,13 +1943,13 @@ or  <return>  to continue without it.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.370 ...{MC Sample Sensitivity.} \\cref{table:mc_
+l.379 ...{MC Sample Sensitivity.} \\cref{table:mc_
                                                   sensitivity} reports perfo...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Extra }, or forgotten $.
-l.370 ...ensitivity.} \\cref{table:mc_sensitivity}
+l.379 ...ensitivity.} \\cref{table:mc_sensitivity}
                                                    reports performance as a ...
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -1938,20 +1960,20 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.371 
+l.380 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (81.81088pt too wide) in paragraph at lines 370--371
+Overfull \hbox (81.81088pt too wide) in paragraph at lines 379--380
 \T1/ppl/m/n/10 (-20) creftable:mc$[]\OML/zplm/m/it/10 ensitivityreportsperforma
 nceasafunctionofMCsamplecount\OT1/ppl/m/n/10 (-20) .\OML/zplm/m/it/10 Performan
 ceconvergesaround$\T1/ppl/m/n/10 (-20) M=20$\OT1/zplm/m/n/10 :
  []
 
 
-Overfull \hbox (750.31725pt too wide) in paragraph at lines 370--371
+Overfull \hbox (750.31725pt too wide) in paragraph at lines 379--380
 \OML/zplm/m/it/10 MSEimprovesfrom\OT1/ppl/m/n/10 (-20) 0.000215\OT1/zplm/m/n/10
  ($\T1/ppl/m/n/10 (-20) M=5$\OT1/zplm/m/n/10 )\OML/zplm/m/it/10 to\OT1/ppl/m/n/
 10 (-20) 0.000200\OT1/zplm/m/n/10 ($\T1/ppl/m/n/10 (-20) M=20$\OT1/zplm/m/n/10 
@@ -1973,14 +1995,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
-[9]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 18.18796pt, for example:
-(fancyhdr)                \setlength{\headheight}{18.18796pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
-
 [10]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1990,16 +2004,15 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [11]
-LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 9.37807pt on input line 437.
-LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 7.29405pt on input line 437.
-LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 9.37807pt on input line 437.
-LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 7.29405pt on input line 437.
 
-Overfull \hbox (8.40965pt too wide) in paragraph at lines 437--437
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 18.18796pt, for example:
+(fancyhdr)                \setlength{\headheight}{18.18796pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
+
+[12]
+Overfull \hbox (8.40965pt too wide) in paragraph at lines 446--446
 \T1/ppl/m/n/9 (-20) com / vandhapw / datasets / refs / heads / main / df _ norm
 al . csv$[][]. Code at: [][]$https : / / github . com / vandhapw /
  []
@@ -2011,7 +2024,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
-[12] (main_MDPI.bbl) 
+[13] (main_MDPI.bbl) 
 AED: lastpage setting LastPage
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2020,7 +2033,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
-[13
+[14
 
 ] (main_MDPI.aux)
  ***********
@@ -2032,19 +2045,19 @@ Package rerunfilecheck Info: File `main_MDPI.out' has not changed.
  )
 (\end occurred inside a group at level 6)
 
-### simple group (level 6) entered at line 370 ({)
-### simple group (level 5) entered at line 267 ({)
-### simple group (level 4) entered at line 256 ({)
-### simple group (level 3) entered at line 161 ({)
-### simple group (level 2) entered at line 92 ({)
+### simple group (level 6) entered at line 379 ({)
+### simple group (level 5) entered at line 276 ({)
+### simple group (level 4) entered at line 265 ({)
+### simple group (level 3) entered at line 170 ({)
+### simple group (level 2) entered at line 101 ({)
 ### simple group (level 1) entered at line 65 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 37748 strings out of 474485
- 746070 string characters out of 5743735
+ 37824 strings out of 474485
+ 747231 string characters out of 5743735
  1954542 words of memory out of 5000000
- 58777 multiletter control sequences out of 15000+600000
- 641782 words of font info for 442 fonts, out of 8000000 for 9000
+ 58815 multiletter control sequences out of 15000+600000
+ 649108 words of font info for 477 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  123i,13n,124p,1474b,1275s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\upsil\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
@@ -2061,9 +2074,9 @@ bm10.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palatino
 /uplb8a.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/type1/urw/palat
 ino/uplr8a.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/type1/urw/pa
 latino/uplri8a.pfb>
-Output written on main_MDPI.pdf (13 pages, 268680 bytes).
+Output written on main_MDPI.pdf (14 pages, 416153 bytes).
 PDF statistics:
- 406 PDF objects out of 1000 (max. 8388607)
- 84 named destinations out of 1000 (max. 500000)
- 114031 words of extra memory for PDF output out of 128383 (max. 10000000)
+ 415 PDF objects out of 1000 (max. 8388607)
+ 86 named destinations out of 1000 (max. 500000)
+ 120180 words of extra memory for PDF output out of 128383 (max. 10000000)
 
