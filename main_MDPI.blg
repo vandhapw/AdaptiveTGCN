@@ -1,0 +1,53 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main_MDPI.aux
+Reallocating 'name_of_file' (item size: 1) to 17 items.
+The style file: Definitions/mdpi.bst
+Reallocating 'name_of_file' (item size: 1) to 16 items.
+Database file #1: 2209-hiper-chad.bib
+Warning--empty journal in coleman_sensing_2018
+Warning--empty journal in ghimire_electricity_2025
+Warning--empty journal in cui_sde-hnn_2025
+Warning--can't use both volume and number fields in tuli2022tranad
+You've used 12 entries,
+            2887 wiz_defined-function locations,
+            636 strings with 6838 characters,
+and the built_in function-call counts, 5750 in all, are:
+= -- 511
+> -- 353
+< -- 9
++ -- 153
+- -- 94
+* -- 443
+:= -- 838
+add.period$ -- 41
+call.type$ -- 12
+change.case$ -- 12
+chr.to.int$ -- 12
+cite$ -- 16
+duplicate$ -- 269
+empty$ -- 457
+format.name$ -- 120
+if$ -- 1270
+int.to.chr$ -- 1
+int.to.str$ -- 12
+missing$ -- 11
+newline$ -- 66
+num.names$ -- 36
+pop$ -- 150
+preamble$ -- 0
+purify$ -- 12
+quote$ -- 0
+skip$ -- 207
+stack$ -- 0
+substring$ -- 264
+swap$ -- 82
+text.length$ -- 8
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 84
+warning$ -- 4
+while$ -- 45
+width$ -- 0
+write$ -- 158
+(There were 4 warnings)

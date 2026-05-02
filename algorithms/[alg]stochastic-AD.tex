@@ -1,6 +1,7 @@
-\begin{Algorithm}[H]
-\caption{Stochastic TCN-based Anomaly Detection}
+\vspace{6pt}
+\noindent\textbf{Algorithm~1:} Stochastic TCN-based Anomaly Detection
 \label{alg:stochastic_tcn}
+\vspace{4pt}
 
 \noindent \textbf{Input:} Trained TCN model $f_{\theta}$, input sequence $\mathbf{X}$, thresholds $\tau_{95}, \tau_{99}$\\
 \textbf{Output:} Anomaly flags $\mathbf{A}_{95}, \mathbf{A}_{99}$
@@ -27,4 +28,4 @@ $\hat{\mathbf{y}}, \boldsymbol{\sigma} \gets \text{MC-Predict}(f_{\theta}, \math
 
 \medskip
 \noindent \textbf{return} $\mathbf{A}_{95}, \mathbf{A}_{99}$
-\end{Algorithm}
+\vspace{6pt}

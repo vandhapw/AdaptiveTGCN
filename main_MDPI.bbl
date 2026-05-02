@@ -1,0 +1,92 @@
+\begin{thebibliography}{999}
+
+\bibitem[Coleman and Meggers()]{coleman_sensing_2018}
+Coleman, J.R.; Meggers, F.
+\newblock Sensing of Indoor Air Quality—Characterization of Spatial and
+  Temporal Pollutant Evolution Through Distributed Sensing.
+\newblock {\em 4},~28.
+\newblock {\url{https://doi.org/10.3389/fbuil.2018.00028}}.
+
+\bibitem[Chandola et~al.(2009)Chandola, Banerjee, and
+  Kumar]{chandola2009survey}
+Chandola, V.; Banerjee, A.; Kumar, V.
+\newblock Anomaly Detection: A Survey.
+\newblock {\em ACM Computing Surveys} {\bf 2009}, {\em 41},~1--58.
+
+\bibitem[Sánchez-Ferrera et~al.()Sánchez-Ferrera, Calvo, and
+  Lozano]{sanchez-ferrera_review_2025}
+Sánchez-Ferrera, A.; Calvo, B.; Lozano, J.A.
+\newblock A Review on Self-Supervised Learning for Time Series Anomaly
+  Detection: Recent Advances and Open Challenges,
+  \href{http://arxiv.org/abs/2501.15196 [stat]}{{\normalfont [2501.15196
+  [stat]]}}.
+\newblock {\url{https://doi.org/10.48550/arXiv.2501.15196}}.
+
+\bibitem[Ghimire et~al.()Ghimire, Deo, Casillas-Pérez, Salcedo-Sanz, Acharya,
+  and Dinh]{ghimire_electricity_2025}
+Ghimire, S.; Deo, R.C.; Casillas-Pérez, D.; Salcedo-Sanz, S.; Acharya, R.;
+  Dinh, T.
+\newblock Electricity demand uncertainty modeling with Temporal Convolution
+  Neural Network models.
+\newblock {\em 209},~115097.
+\newblock {\url{https://doi.org/10.1016/j.rser.2024.115097}}.
+
+\bibitem[Cui et~al.()Cui, Deng, Hu, and Zhu]{cui_sde-hnn_2025}
+Cui, P.; Deng, Z.; Hu, W.; Zhu, J.
+\newblock {SDE}-{HNN}: Accurate and Well-Calibrated Forecasting Using
+  Stochastic Differential Equations.
+\newblock {\em 19},~1--23.
+\newblock {\url{https://doi.org/10.1145/3691346}}.
+
+\bibitem[Xu et~al.(2022)Xu, Wu, Wang, and Long]{xu2022anomalytransformer}
+Xu, J.; Wu, H.; Wang, J.; Long, M.
+\newblock Anomaly Transformer: Time Series Anomaly Detection with Association
+  Discrepancy.
+\newblock In Proceedings of the Proceedings of the 10th International
+  Conference on Learning Representations (ICLR),  2022.
+
+\bibitem[Bai et~al.(2018)Bai, Kolter, and Koltun]{bai2018tcn}
+Bai, S.; Kolter, J.Z.; Koltun, V.
+\newblock An Empirical Evaluation of Generic Convolutional and Recurrent
+  Networks for Sequence Modeling.
+\newblock {\em {arXiv} preprint arXiv:1803.01271} {\bf 2018}.
+
+\bibitem[Goh et~al.(2017)Goh, Adepu, Junejo, and Mathur]{goh2017dataset}
+Goh, J.; Adepu, S.; Junejo, K.N.; Mathur, A.
+\newblock Anomaly detection in cyber-physical systems using recurrent neural
+  networks.
+\newblock In Proceedings of the 2017 IEEE 18th International Symposium on High
+  Assurance Systems Engineering (HASE). IEEE,  2017, pp. 140--145.
+
+\bibitem[Tuli et~al.(2022)Tuli, Casale, and Jennings]{tuli2022tranad}
+Tuli, S.; Casale, G.; Jennings, N.R.
+\newblock TranAD: Deep Transformer Networks for Anomaly Detection in
+  Multivariate Time Series Data.
+\newblock In Proceedings of the Proceedings of the VLDB Endowment,  2022,
+  Vol.~15, pp. 1201--1214.
+
+\bibitem[Lakshminarayanan et~al.(2017)Lakshminarayanan, Pritzel, and
+  Blundell]{lakshminarayanan2017ensembles}
+Lakshminarayanan, B.; Pritzel, A.; Blundell, C.
+\newblock Simple and Scalable Predictive Uncertainty Estimation using Deep
+  Ensembles.
+\newblock In Proceedings of the Advances in Neural Information Processing
+  Systems (NeurIPS),  2017, Vol.~30, pp. 6402--6413.
+
+\bibitem[Vaswani et~al.(2017)Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez,
+  Kaiser, and Polosukhin]{vaswani2017attention}
+Vaswani, A.; Shazeer, N.; Parmar, N.; Uszkoreit, J.; Jones, L.; Gomez, A.N.;
+  Kaiser, {\L}.; Polosukhin, I.
+\newblock Attention is all you need.
+\newblock In Proceedings of the Advances in Neural Information Processing
+  Systems,  2017, Vol.~30, pp. 5998--6008.
+
+\bibitem[Ester et~al.(1996)Ester, Kriegel, Sander, and Xu]{ester1996dbscan}
+Ester, M.; Kriegel, H.P.; Sander, J.; Xu, X.
+\newblock A Density-Based Algorithm for Discovering Clusters in Large Spatial
+  Databases with Noise.
+\newblock In Proceedings of the Proceedings of the 2nd International Conference
+  on Knowledge Discovery and Data Mining (KDD-96). {AAAI Press},  1996, pp.
+  226--231.
+
+\end{thebibliography}

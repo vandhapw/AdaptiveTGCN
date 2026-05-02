@@ -24,7 +24,6 @@
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{microtype}
-\usepackage[capitalize]{cleveref}
 
 % === TITLE AND AUTHORS ===
 \Title{Uncertainty-Calibrated Temporal Convolutional Networks with Adaptive Attention for Multivariate Sensor Anomaly Detection}
@@ -47,6 +46,8 @@ $^{3}$ \quad Division of Computer Engineering and AI, Pukyong National Universit
 
 \keyword{anomaly detection; temporal convolutional network; uncertainty quantification; attention mechanism; sensor networks; indoor air quality}
 
+\begin{document}
+
 
 % ============================================================
 \section{Introduction}
@@ -61,7 +62,7 @@ Three sensor-specific detection gaps motivate this work:
 
 \textbf{Gap 3 — Inactionable anomaly detection output.} Binary anomaly flags without sensor-level attribution leave facility operators unable to determine whether a detected anomaly reflects a genuine environmental hazard, a degrading CO\textsubscript{2} sensor requiring recalibration, or a VOC spike from cleaning activities~\cite{xu2022anomalytransformer}. For anomaly detection to inform maintenance decisions, it must identify \textit{which sensors} contribute to each anomaly and provide confidence-calibrated uncertainty estimates rather than only point predictions.
 
-The Temporal Convolutional Network (TCN) architecture~\cite{bai2018tcn} provides an effective backbone for sequence modeling through dilated causal convolutions, matching or exceeding recurrent models on time-series benchmarks. Monte Carlo (MC) dropout~\cite{gal2016dropout} enables uncertainty estimation from deterministic architectures without requiring explicit Bayesian inference. We argue that neither technique alone addresses sensor-network-specific challenges; rather, the key contribution lies in \textit{how} uncertainty signals are integrated into attention computation, anomaly scoring, and attribution to match the operational characteristics of physical sensor deployments.
+The Temporal Convolutional Network (TCN) architecture~\cite{bai2018tcn} provides an effective backbone for sequence modeling through dilated causal convolutions, matching or exceeding recurrent models on time-series benchmarks. Monte Carlo (MC) dropout~\\cite{gal2016dropout_bayesian} enables uncertainty estimation from deterministic architectures without requiring explicit Bayesian inference. We argue that neither technique alone addresses sensor-network-specific challenges; rather, the key contribution lies in \textit{how} uncertainty signals are integrated into attention computation, anomaly scoring, and attribution to match the operational characteristics of physical sensor deployments.
 
 We present an uncertainty-calibrated TCN framework for multivariate sensor anomaly detection, making three contributions tightly coupled to the identified gaps:
 
@@ -88,7 +89,7 @@ Despite this progress, existing TCN-based detectors share a common limitation: t
 
 \subsection{Uncertainty Quantification in Time Series}
 
-Uncertainty quantification (UQ) transforms anomaly detection from threshold-based heuristics into principled, confidence-aware decisions. Dropout as a Bayesian approximation~\cite{gal2016dropout} provides a lightweight mechanism for estimating predictive uncertainty from deterministic architectures, while deep ensembles~\cite{lakshminarayanan2017ensembles} offer an alternative with stronger calibration at higher computational cost.
+Uncertainty quantification (UQ) transforms anomaly detection from threshold-based heuristics into principled, confidence-aware decisions. Dropout as a Bayesian approximation~\\cite{gal2016dropout_bayesian} provides a lightweight mechanism for estimating predictive uncertainty from deterministic architectures, while deep ensembles~\cite{lakshminarayanan2017ensembles} offer an alternative with stronger calibration at higher computational cost.
 
 MC dropout has been validated across diverse time-series domains: electricity demand forecasting with TCNs~\cite{ghimire_electricity_2025}, stochastic differential equation-based hydrological forecasting~\cite{cui_sde-hnn_2025}, and multivariate imputation. These works demonstrate that MC dropout provides meaningful uncertainty estimates, but they apply uncertainty \textit{post hoc}—as a separate scoring term rather than feeding it back into the model's internal representations.
 
@@ -157,7 +158,7 @@ We construct a windowed feature representation for each sensor $f$ at time $t$ u
 
 where $\Delta_f(t) = x_f(t) - x_f(t-1)$ captures first-order dynamics, $\mu_f^W(t)$ is the rolling mean, and $\sigma_f^W(t)$ is the rolling standard deviation over the window. Overlapping windows prevent boundary detection gaps.
 
-\textbf{DBSCAN-based Outlier Filtering.} Raw sensor data contains saturation artifacts (e.g., value 9999 for CO\textsubscript{2} and VOC sensors during calibration cycles or communication errors). We apply DBSCAN clustering~\cite{ester1996dbscan} with neighborhood radius $\varepsilon$ and minimum cluster size $\text{MinPts}$ to identify and remove these noise points while preserving the core data distribution. \Cref{table:dataset_stats} summarizes the statistical characteristics before and after filtering.
+\textbf{DBSCAN-based Outlier Filtering.} Raw sensor data contains saturation artifacts (e.g., value 9999 for CO\textsubscript{2} and VOC sensors during calibration cycles or communication errors). We apply DBSCAN clustering~\cite{ester1996dbscan} with neighborhood radius $\varepsilon$ and minimum cluster size $\text{MinPts}$ to identify and remove these noise points while preserving the core data distribution. \\cref{table:dataset_stats} summarizes the statistical characteristics before and after filtering.
 
 \input{tables/dataset_stats}
 
@@ -252,7 +253,7 @@ We implement four thresholding strategies:
     \item \textbf{Distribution-free:} $\tau_{\text{dist}}$ based on the assumed contamination rate $\gamma$.
 \end{enumerate}
 
-The complete detection algorithm is presented in \cref{alg:stochastic_tcn}.
+The complete detection algorithm is presented in \\cref{alg:stochastic_tcn}.
 
 \input{algorithms/[alg]stochastic-AD}
 
@@ -263,7 +264,7 @@ The complete detection algorithm is presented in \cref{alg:stochastic_tcn}.
 
 We evaluate on an indoor air quality (IAQ) dataset collected from sensors deployed in a laboratory environment. The dataset contains five sensor channels—NDIR CO\textsubscript{2}, metal-oxide VOC, thermistor temperature, capacitive humidity, and optical PM\textsubscript{2.5} dust—recorded at 1-minute resolution from March 8 to July 9, 2024, yielding 178,560 total observations. The dataset is publicly available.
 
-DBSCAN preprocessing successfully filters sensor saturation artifacts. \Cref{table:dataset_stats} reports statistics before and after filtering: maximum CO\textsubscript{2} values drop from 9999 to 2606 ppm and maximum VOC from 9999 to 2725 ppb, while distribution medians are preserved, confirming that only outlier saturation events are removed. Features are subsequently min-max normalized to $[0, 1]$.
+DBSCAN preprocessing successfully filters sensor saturation artifacts. \\cref{table:dataset_stats} reports statistics before and after filtering: maximum CO\textsubscript{2} values drop from 9999 to 2606 ppm and maximum VOC from 9999 to 2725 ppb, while distribution medians are preserved, confirming that only outlier saturation events are removed. Features are subsequently min-max normalized to $[0, 1]$.
 
 \subsection{Experimental Configuration}
 
@@ -273,7 +274,7 @@ Baselines include: RNN, GRU, LSTM, Transformer (standard encoder with 4 heads), 
 
 \subsection{Forecasting Performance}
 
-\Cref{table:forecasting} reports forecasting performance across all models. The Base TCN substantially outperforms recurrent baselines: MSE 0.000327 vs.~0.007100 (RNN), 0.003400 (GRU), 0.002700 (LSTM), and 0.001600 (Transformer), with corresponding R\textsuperscript{2} improvements from 0.6549 to 0.9753. The TCN-Stochastic achieves identical reconstruction metrics to the Base TCN, confirming that MC dropout's primary contribution is uncertainty estimation rather than improved point predictions. Our Full Enhanced model operates under composite optimization and achieves the best performance across all metrics: MSE 0.000196, R\textsuperscript{2} 0.9953, and SMAPE 1.87\%, representing a 40\% MSE reduction over the Base TCN.
+\\cref{table:forecasting} reports forecasting performance across all models. The Base TCN substantially outperforms recurrent baselines: MSE 0.000327 vs.~0.007100 (RNN), 0.003400 (GRU), 0.002700 (LSTM), and 0.001600 (Transformer), with corresponding R\textsuperscript{2} improvements from 0.6549 to 0.9753. The TCN-Stochastic achieves identical reconstruction metrics to the Base TCN, confirming that MC dropout's primary contribution is uncertainty estimation rather than improved point predictions. Our Full Enhanced model operates under composite optimization and achieves the best performance across all metrics: MSE 0.000196, R\textsuperscript{2} 0.9953, and SMAPE 1.87\%, representing a 40\% MSE reduction over the Base TCN.
 
 \begin{table}[H]
 \centering
@@ -296,7 +297,7 @@ TCN-Stochastic & 0.000327 & 0.018083 & 0.014361 & 2.44\% & 0.9753 \\
 
 \subsection{Ablation Studies}
 
-\Cref{table:ablation} presents the ablation results decomposing each component's contribution. Starting from the Base TCN (MSE 0.000327, R\textsuperscript{2} 0.9753), adding MC Dropout yields a 5.0\% MSE reduction (MSE 0.000311, R\textsuperscript{2} 0.9803). Incorporating AUAA provides the single largest gain: a 25.0\% cumulative MSE reduction (MSE 0.000245, R\textsuperscript{2} 0.9903). The Full Enhanced model, which adds the Dynamic Weight Adapter and Feature Attribution module, achieves a 40.0\% total MSE reduction (MSE 0.000196, R\textsuperscript{2} 0.9953).
+\\cref{table:ablation} presents the ablation results decomposing each component's contribution. Starting from the Base TCN (MSE 0.000327, R\textsuperscript{2} 0.9753), adding MC Dropout yields a 5.0\% MSE reduction (MSE 0.000311, R\textsuperscript{2} 0.9803). Incorporating AUAA provides the single largest gain: a 25.0\% cumulative MSE reduction (MSE 0.000245, R\textsuperscript{2} 0.9903). The Full Enhanced model, which adds the Dynamic Weight Adapter and Feature Attribution module, achieves a 40.0\% total MSE reduction (MSE 0.000196, R\textsuperscript{2} 0.9953).
 
 Three key findings emerge. First, AUAA's 25\% standalone improvement is substantially larger than MC dropout alone (5\%), confirming that uncertainty-aware attention provides qualitatively different benefits beyond dropout regularization—it actively reshapes information flow rather than merely perturbing it. Second, the dynamic weight adapter contributes 15 percentage points beyond AUAA, validating the context-dependence hypothesis: fixed weighting leaves performance on the table. Third, all improvements are monotonic and cumulative, with no negative interactions between components.
 
@@ -318,7 +319,7 @@ TCN + MC + AUAA & 0.000245 & 0.9903 & 2.16\% & $-25.0\%$ \\
 
 \subsection{Cross-Dataset Validation on SWaT}
 
-We evaluate generalization on the Secure Water Treatment (SWaT) industrial control benchmark, which contains 51 sensor/actuator features and labeled cyber-physical attack periods~\cite{goh2017dataset}. The model is trained on the first 50,000 normal-operation samples and evaluated on the subsequent 50,000 labeled samples. \Cref{table:swat} reports the results.
+We evaluate generalization on the Secure Water Treatment (SWaT) industrial control benchmark, which contains 51 sensor/actuator features and labeled cyber-physical attack periods~\cite{goh2017dataset}. The model is trained on the first 50,000 normal-operation samples and evaluated on the subsequent 50,000 labeled samples. \\cref{table:swat} reports the results.
 
 The Full Enhanced model achieves F1=0.81, Precision=0.79, and Recall=0.83, representing a +2.5\% F1 improvement over the baseline stochastic TCN. This cross-domain transfer—from environmental IAQ monitoring to industrial process control—demonstrates that the sensor-specific architectural adaptations capture general properties of multi-sensor networks, not IAQ-specific heuristics.
 
@@ -343,7 +344,7 @@ Applying the 95th percentile threshold on the validation set (750 sliding window
 
 \subsection{Per-Sensor Attribution Distribution}
 
-\Cref{table:attribution} presents the per-sensor attribution distribution. The feature-importance learner produces well-balanced attributions: Humidity (21.0\%), VOC (20.5\%), CO\textsubscript{2} (20.4\%), Dust (19.2\%), and Temperature (18.9\%). The near-uniform distribution confirms that all five sensor channels contribute meaningfully to anomaly decisions, validating the multi-sensor approach.
+\\cref{table:attribution} presents the per-sensor attribution distribution. The feature-importance learner produces well-balanced attributions: Humidity (21.0\%), VOC (20.5\%), CO\textsubscript{2} (20.4\%), Dust (19.2\%), and Temperature (18.9\%). The near-uniform distribution confirms that all five sensor channels contribute meaningfully to anomaly decisions, validating the multi-sensor approach.
 
 \begin{table}[H]
 \centering
@@ -366,7 +367,7 @@ Temperature & 18.9\% \\
 
 \textbf{Computational Cost.} The Full Enhanced model adds approximately 15\% more parameters relative to the Base TCN, primarily from the AUAA module (4 attention heads, 64-dim hidden) and the Dynamic Weight Adapter (context GRU, learned gating). Despite this increase, per-batch inference latency remains under 50~ms at $M=20$, suitable for real-time deployment with 1-minute sensor sampling intervals.
 
-\textbf{MC Sample Sensitivity.} \Cref{table:mc_sensitivity} reports performance as a function of MC sample count. Performance converges around $M=20$: MSE improves from 0.000215 ($M=5$) to 0.000200 ($M=20$) and R\textsuperscript{2} from 0.9921 to 0.9947. Beyond $M=20$, gains diminish sharply (MSE 0.000195 at $M=100$, R\textsuperscript{2} 0.9954) while computational cost scales linearly. We recommend $M=20$ for operational deployment and $M=50$ for offline evaluation.
+\textbf{MC Sample Sensitivity.} \\cref{table:mc_sensitivity} reports performance as a function of MC sample count. Performance converges around $M=20$: MSE improves from 0.000215 ($M=5$) to 0.000200 ($M=20$) and R\textsuperscript{2} from 0.9921 to 0.9947. Beyond $M=20$, gains diminish sharply (MSE 0.000195 at $M=100$, R\textsuperscript{2} 0.9954) while computational cost scales linearly. We recommend $M=20$ for operational deployment and $M=50$ for offline evaluation.
 
 \begin{table}[H]
 \centering
