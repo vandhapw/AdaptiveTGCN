@@ -1,28 +1,30 @@
-\begin{algorithm}[H]
-\footnotesize
-\caption{Stochastic TCN Anomaly Detection}
+\begin{Algorithm}[H]
+\caption{Stochastic TCN-based Anomaly Detection}
 \label{alg:stochastic_tcn}
-\begin{algorithmic}
-\Require Trained model $f_{\theta}$, input $\mathbf{X}$, thresholds $\tau_{95}, \tau_{99}$
-\Ensure Anomaly flags $\mathbf{A}_{95}, \mathbf{A}_{99}$
 
-\State \textbf{Monte Carlo inference:}
-\State $\hat{\mathbf{y}}, \sigma \gets \text{MC-Predict}(f_{\theta}, \mathbf{X}, N=50)$
+\noindent \textbf{Input:} Trained TCN model $f_{\theta}$, input sequence $\mathbf{X}$, thresholds $\tau_{95}, \tau_{99}$\\
+\textbf{Output:} Anomaly flags $\mathbf{A}_{95}, \mathbf{A}_{99}$
 
-\State \textbf{Error calculation:}
-\For{each feature $i \in \{1,\dots,5\}$}
-    \State $e_i \gets |y_i - \hat{y}_i|$
-\EndFor
+\medskip
+\noindent \textbf{1. Monte Carlo Prediction:}\\
+$\hat{\mathbf{y}}, \boldsymbol{\sigma} \gets \text{MC-Predict}(f_{\theta}, \mathbf{X}, N=50)$
 
-\State \textbf{Anomaly detection:}
-\For{each feature $i$ and timestep $t$}
-    \State $\mathbf{A}_{95}[i,t] \gets \mathbb{1}[\,e_i(t) > \tau_{95}\,]$
-    \State $\mathbf{A}_{99}[i,t] \gets \mathbb{1}[\,e_i(t) > \tau_{99}\,]$
-    \If{$e_i(t) > \hat{y}_i(t) + 2\sigma_i(t)$}
-        \State Flag as high-confidence anomaly $\checkmark$
-    \EndIf
-\EndFor
+\medskip
+\noindent \textbf{2. Error Calculation:}\\
+\textbf{for} each feature $i \in \{1,\dots,5\}$ \textbf{do}\\
+\quad $e_i \gets |y_i - \hat{y}_i|$\\
+\textbf{end for}
 
-\State \Return $\mathbf{A}_{95}, \mathbf{A}_{99}$
-\end{algorithmic}
-\end{algorithm}
+\medskip
+\noindent \textbf{3. Anomaly Detection:}\\
+\textbf{for} each feature $i$ and timestep $t$ \textbf{do}\\
+\quad $\mathbf{A}_{95}[i,t] \gets \mathbf{1}_{[\,e_i(t) > \tau_{95}\,]}$\\
+\quad $\mathbf{A}_{99}[i,t] \gets \mathbf{1}_{[\,e_i(t) > \tau_{99}\,]}$\\
+\quad \textbf{if} $e_i(t) > \hat{y}_i(t) + 2\sigma_i(t)$ \textbf{then}\\
+\quad\quad Mark as high-confidence anomaly\\
+\quad \textbf{end if}\\
+\textbf{end for}
+
+\medskip
+\noindent \textbf{return} $\mathbf{A}_{95}, \mathbf{A}_{99}$
+\end{Algorithm}
