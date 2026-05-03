@@ -22,6 +22,7 @@
 \newlabel{fig:architecture@cref}{{[figure][1][]1}{[1][2][]3}}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Related Works}{3}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Deep Anomaly Detection in Multivariate Time Series}{3}{subsection.2.1}\protected@file@percent }
+\citation{gal2016dropout_bayesian}
 \citation{lakshminarayanan2017ensembles}
 \citation{ghimire_electricity_2025}
 \citation{cui_sde-hnn_2025}
@@ -29,24 +30,21 @@
 \citation{xu2022anomalytransformer}
 \citation{ghimire_electricity_2025}
 \citation{cui_sde-hnn_2025}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Uncertainty Quantification in Time Series}{4}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Attention Mechanisms for Temporal Data}{4}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Interpretable Anomaly Detection}{4}{subsection.2.4}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of the proposed framework with existing approaches across key dimensions.}}{4}{table.caption.2}\protected@file@percent }
 \newlabel{table:positioning}{{1}{4}{Comparison of the proposed framework with existing approaches across key dimensions}{table.caption.2}{}}
 \newlabel{table:positioning@cref}{{[table][1][]1}{[1][4][]4}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{4}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Problem Statement and Sensor-Specific Formulation}{4}{subsection.3.1}\protected@file@percent }
+\newlabel{eq:sensor_model}{{1}{4}{Problem Statement and Sensor-Specific Formulation}{equation.3.1}{}}
+\newlabel{eq:sensor_model@cref}{{[equation][1][]1}{[1][4][]4}}
 \citation{ester1996dbscan}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{5}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Problem Statement and Sensor-Specific Formulation}{5}{subsection.3.1}\protected@file@percent }
-\newlabel{eq:sensor_model}{{1}{5}{Problem Statement and Sensor-Specific Formulation}{equation.3.1}{}}
-\newlabel{eq:sensor_model@cref}{{[equation][1][]1}{[1][5][]5}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Feature Engineering and Preprocessing}{5}{subsection.3.2}\protected@file@percent }
 \newlabel{eq:feature_rep}{{2}{5}{Feature Engineering and Preprocessing}{equation.3.2}{}}
 \newlabel{eq:feature_rep@cref}{{[equation][2][]2}{[1][5][]5}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Dataset statistics before and after DBSCAN-based outlier filtering.}}{6}{table.caption.3}\protected@file@percent }
-\newlabel{table:dataset_stats}{{2}{6}{Dataset statistics before and after DBSCAN-based outlier filtering}{table.caption.3}{}}
-\newlabel{table:dataset_stats@cref}{{[table][2][]2}{[1][5][]6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Uncertainty-Calibrated TCN Architecture}{6}{subsection.3.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Dataset statistics before and after DBSCAN-based outlier filtering.}}{5}{table.caption.3}\protected@file@percent }
+\newlabel{table:dataset_stats}{{2}{5}{Dataset statistics before and after DBSCAN-based outlier filtering}{table.caption.3}{}}
+\newlabel{table:dataset_stats@cref}{{[table][2][]2}{[1][5][]5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Uncertainty-Calibrated TCN Architecture}{5}{subsection.3.3}\protected@file@percent }
 \newlabel{eq:mc_moments}{{3}{6}{Uncertainty-Calibrated TCN Architecture}{equation.3.3}{}}
 \newlabel{eq:mc_moments@cref}{{[equation][3][]3}{[1][6][]6}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Adaptive Uncertainty-Aware Attention (AUAA)}{6}{subsection.3.4}\protected@file@percent }
@@ -54,11 +52,11 @@
 \newlabel{eq:auaa_attention@cref}{{[equation][4][]4}{[1][6][]6}}
 \newlabel{eq:auaa_gate}{{5}{6}{Adaptive Uncertainty-Aware Attention (AUAA)}{equation.3.5}{}}
 \newlabel{eq:auaa_gate@cref}{{[equation][5][]5}{[1][6][]6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Dynamic Weight Adapter for Anomaly Scoring}{7}{subsection.3.5}\protected@file@percent }
-\newlabel{eq:dynamic_weight}{{6}{7}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.6}{}}
-\newlabel{eq:dynamic_weight@cref}{{[equation][6][]6}{[1][7][]7}}
-\newlabel{eq:hybrid_score}{{7}{7}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.7}{}}
-\newlabel{eq:hybrid_score@cref}{{[equation][7][]7}{[1][7][]7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Dynamic Weight Adapter for Anomaly Scoring}{6}{subsection.3.5}\protected@file@percent }
+\newlabel{eq:dynamic_weight}{{6}{6}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.6}{}}
+\newlabel{eq:dynamic_weight@cref}{{[equation][6][]6}{[1][6][]6}}
+\newlabel{eq:hybrid_score}{{7}{6}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.7}{}}
+\newlabel{eq:hybrid_score@cref}{{[equation][7][]7}{[1][6][]6}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Feature-Level Anomaly Attribution}{7}{subsection.3.6}\protected@file@percent }
 \newlabel{eq:feature_importance}{{8}{7}{Feature-Level Anomaly Attribution}{equation.3.8}{}}
 \newlabel{eq:feature_importance@cref}{{[equation][8][]8}{[1][7][]7}}
@@ -67,14 +65,14 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Composite Loss Function}{7}{subsection.3.7}\protected@file@percent }
 \newlabel{eq:loss}{{10}{7}{Composite Loss Function}{equation.3.10}{}}
 \newlabel{eq:loss@cref}{{[equation][10][]10}{[1][7][]7}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Anomaly Detection Pipeline}{8}{subsection.3.8}\protected@file@percent }
-\newlabel{alg:stochastic_tcn}{{3.8}{8}{Anomaly Detection Pipeline}{Item.10}{}}
-\newlabel{alg:stochastic_tcn@cref}{{[subsection][8][3]3.8}{[1][8][]8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Anomaly Detection Pipeline}{7}{subsection.3.8}\protected@file@percent }
+\newlabel{alg:stochastic_tcn}{{3.8}{7}{Anomaly Detection Pipeline}{Item.10}{}}
+\newlabel{alg:stochastic_tcn@cref}{{[subsection][8][3]3.8}{[1][7][]7}}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Experimental Results}{8}{section.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Dataset and Preprocessing}{8}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Experimental Configuration}{8}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Forecasting Performance}{8}{subsection.4.3}\protected@file@percent }
 \citation{goh2017dataset}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Forecasting Performance}{9}{subsection.4.3}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Forecasting performance across baseline models and the proposed Full Enhanced framework.}}{9}{table.caption.4}\protected@file@percent }
 \newlabel{table:forecasting}{{3}{9}{Forecasting performance across baseline models and the proposed Full Enhanced framework}{table.caption.4}{}}
 \newlabel{table:forecasting@cref}{{[table][3][]3}{[1][9][]9}}
@@ -92,14 +90,16 @@
 \newlabel{table:attribution}{{6}{10}{Per-sensor anomaly attribution distribution from the feature-importance learner}{table.caption.7}{}}
 \newlabel{table:attribution@cref}{{[table][6][]6}{[1][10][]10}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Additional Analyses}{10}{subsection.4.8}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Monte Carlo sample count sensitivity analysis.}}{11}{table.caption.8}\protected@file@percent }
-\newlabel{table:mc_sensitivity}{{7}{11}{Monte Carlo sample count sensitivity analysis}{table.caption.8}{}}
-\newlabel{table:mc_sensitivity@cref}{{[table][7][]7}{[1][10][]11}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Monte Carlo sample count sensitivity analysis.}}{10}{table.caption.8}\protected@file@percent }
+\newlabel{table:mc_sensitivity}{{7}{10}{Monte Carlo sample count sensitivity analysis}{table.caption.8}{}}
+\newlabel{table:mc_sensitivity@cref}{{[table][7][]7}{[1][10][]10}}
+\citation{gal2016dropout_bayesian,lakshminarayanan2017ensembles}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{11}{section.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Interpretation of Results}{11}{subsection.5.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Comparison with Prior Stochastic TCN Frameworks}{11}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Sensor-Specific Design Justification}{11}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Limitations and Future Work}{12}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Uncertainty Calibration}{11}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Sensor-Specific Design Justification}{11}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Design Extensions and Deployment Considerations}{12}{subsection.5.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}Conclusions}{12}{section.6}\protected@file@percent }
 \bibdata{2209-hiper-chad}
 \bibcite{coleman_sensing_2018}{{1}{}{{Coleman and Meggers}}{{}}}
@@ -111,9 +111,10 @@
 \bibcite{bai2018tcn}{{7}{2018}{{Bai et~al.}}{{Bai, Kolter, and Koltun}}}
 \bibcite{goh2017dataset}{{8}{2017}{{Goh et~al.}}{{Goh, Adepu, Junejo, and Mathur}}}
 \bibcite{tuli2022tranad}{{9}{2022}{{Tuli et~al.}}{{Tuli, Casale, and Jennings}}}
-\bibcite{lakshminarayanan2017ensembles}{{10}{2017}{{Lakshminarayanan et~al.}}{{Lakshminarayanan, Pritzel, and Blundell}}}
-\bibcite{vaswani2017attention}{{11}{2017}{{Vaswani et~al.}}{{Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, and Polosukhin}}}
-\bibcite{ester1996dbscan}{{12}{1996}{{Ester et~al.}}{{Ester, Kriegel, Sander, and Xu}}}
+\bibcite{gal2016dropout_bayesian}{{10}{2016}{{Gal and Ghahramani}}{{}}}
+\bibcite{lakshminarayanan2017ensembles}{{11}{2017}{{Lakshminarayanan et~al.}}{{Lakshminarayanan, Pritzel, and Blundell}}}
+\bibcite{vaswani2017attention}{{12}{2017}{{Vaswani et~al.}}{{Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, and Polosukhin}}}
+\bibcite{ester1996dbscan}{{13}{1996}{{Ester et~al.}}{{Ester, Kriegel, Sander, and Xu}}}
 \@writefile{toc}{\contentsline {section}{\numberline {7}References}{14}{section.7}\protected@file@percent }
 \newlabel{LastPage}{{}{14}{}{page.14}{}}
 \xdef\lastpage@lastpage{14}

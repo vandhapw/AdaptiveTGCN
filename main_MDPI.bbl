@@ -65,6 +65,12 @@ Tuli, S.; Casale, G.; Jennings, N.R.
 \newblock In Proceedings of the Proceedings of the VLDB Endowment,  2022,
   Vol.~15, pp. 1201--1214.
 
+\bibitem[Gal and Ghahramani(2016)]{gal2016dropout_bayesian}
+Gal, Y.; Ghahramani, Z.
+\newblock Dropout as a Bayesian Approximation: Representing Model Uncertainty
+  in Deep Learning.
+\newblock {\em JMLR: W\&CP} {\bf 2016}, {\em 48}.
+
 \bibitem[Lakshminarayanan et~al.(2017)Lakshminarayanan, Pritzel, and
   Blundell]{lakshminarayanan2017ensembles}
 Lakshminarayanan, B.; Pritzel, A.; Blundell, C.

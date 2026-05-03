@@ -9,45 +9,45 @@ Warning--empty journal in coleman_sensing_2018
 Warning--empty journal in ghimire_electricity_2025
 Warning--empty journal in cui_sde-hnn_2025
 Warning--can't use both volume and number fields in tuli2022tranad
-You've used 12 entries,
+You've used 13 entries,
             2887 wiz_defined-function locations,
-            636 strings with 6838 characters,
-and the built_in function-call counts, 5750 in all, are:
-= -- 511
-> -- 353
-< -- 9
-+ -- 153
-- -- 94
-* -- 443
-:= -- 838
-add.period$ -- 41
-call.type$ -- 12
-change.case$ -- 12
-chr.to.int$ -- 12
-cite$ -- 16
-duplicate$ -- 269
-empty$ -- 457
-format.name$ -- 120
-if$ -- 1270
+            643 strings with 7070 characters,
+and the built_in function-call counts, 6055 in all, are:
+= -- 538
+> -- 369
+< -- 10
++ -- 160
+- -- 98
+* -- 466
+:= -- 885
+add.period$ -- 44
+call.type$ -- 13
+change.case$ -- 13
+chr.to.int$ -- 13
+cite$ -- 17
+duplicate$ -- 287
+empty$ -- 482
+format.name$ -- 128
+if$ -- 1334
 int.to.chr$ -- 1
-int.to.str$ -- 12
-missing$ -- 11
-newline$ -- 66
-num.names$ -- 36
-pop$ -- 150
+int.to.str$ -- 13
+missing$ -- 12
+newline$ -- 71
+num.names$ -- 39
+pop$ -- 158
 preamble$ -- 0
-purify$ -- 12
+purify$ -- 13
 quote$ -- 0
-skip$ -- 207
+skip$ -- 219
 stack$ -- 0
-substring$ -- 264
-swap$ -- 82
+substring$ -- 266
+swap$ -- 86
 text.length$ -- 8
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 84
+type$ -- 91
 warning$ -- 4
-while$ -- 45
+while$ -- 47
 width$ -- 0
-write$ -- 158
+write$ -- 170
 (There were 4 warnings)
