@@ -51,6 +51,12 @@ Bai, S.; Kolter, J.Z.; Koltun, V.
   Networks for Sequence Modeling.
 \newblock {\em {arXiv} preprint arXiv:1803.01271} {\bf 2018}.
 
+\bibitem[Gal and Ghahramani(2016)]{gal2016dropout_bayesian}
+Gal, Y.; Ghahramani, Z.
+\newblock Dropout as a Bayesian Approximation: Representing Model Uncertainty
+  in Deep Learning.
+\newblock {\em JMLR: W\&CP} {\bf 2016}, {\em 48}.
+
 \bibitem[Goh et~al.(2017)Goh, Adepu, Junejo, and Mathur]{goh2017dataset}
 Goh, J.; Adepu, S.; Junejo, K.N.; Mathur, A.
 \newblock Anomaly detection in cyber-physical systems using recurrent neural
@@ -64,12 +70,6 @@ Tuli, S.; Casale, G.; Jennings, N.R.
   Multivariate Time Series Data.
 \newblock In Proceedings of the Proceedings of the VLDB Endowment,  2022,
   Vol.~15, pp. 1201--1214.
-
-\bibitem[Gal and Ghahramani(2016)]{gal2016dropout_bayesian}
-Gal, Y.; Ghahramani, Z.
-\newblock Dropout as a Bayesian Approximation: Representing Model Uncertainty
-  in Deep Learning.
-\newblock {\em JMLR: W\&CP} {\bf 2016}, {\em 48}.
 
 \bibitem[Lakshminarayanan et~al.(2017)Lakshminarayanan, Pritzel, and
   Blundell]{lakshminarayanan2017ensembles}
