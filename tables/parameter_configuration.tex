@@ -9,17 +9,28 @@
 Number of TCN Layers & 3 \\
 Number of Filters per Layer & 64 \\
 Kernel Size & 2 \\
-Layer Dilatation & 1, 2, 4 \\
+Layer Dilation & 1, 2, 4 \\
 Dropout Rate & 0.2 \\
-Loss Function & MSELoss \\
+Loss Function & $L = L_{MSE} + 0.1 \cdot L_{unc} + 0.05 \cdot L_{cal}$ \\
 Optimizer & Adam \\
-Learning Rate & $1 \times 10^{-3}$ \\
-Scheduler & Unused \\
+Learning Rate & $3 \times 10^{-4}$ \\
+Scheduler & ReduceLROnPlateau (factor=0.5, patience=5) \\
 Batch Size & 16 \\
 Maximum Number of Epochs & 100 \\
-Patience (Early Stopping) & 10 \\
+Patience (Early Stopping) & 15 \\
 Weight Initialization & Normal(0, 0.01) \\
-Additional Regularisation & Weight Norm, Dropout \\
+Additional Regularization & Weight Norm, Dropout, Stochastic Depth \\
+Window Size (Enhanced) & 60 \\
+Stride (Enhanced) & 3 \\
+MC Dropout Samples & 50 \\
+DBSCAN (eps, min\_samples) & (0.5, 5) \\
+Attention Heads & 4 \\
+Stochastic Depth Base Prob & 0.1 \\
+Residual Scale Init & 0.5 \\
+Residual Prediction & Enabled (zero-init FC) \\
+Correlation Noise Scale & 0.1 \\
+DWA Hidden Dim & 32 \\
+FI Hidden Dim & 32 \\
 \bottomrule
 \end{tabularx}
 \end{table}

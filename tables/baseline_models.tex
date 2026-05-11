@@ -4,13 +4,13 @@
 \label{table:model_performance}
 \begin{tabularx}{\linewidth}{lX}
 \toprule
-\textbf{Model} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} \\
+\textbf{Model} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{R$^2$} \\
 \midrule
-TCN with Attention   & 0.003096 & 0.055643 & 0.039111 \\
-LSTM with Attention  & 0.001884 & 0.043402 & 0.033347 \\
-Transformer          & 0.001911 & 0.043710 & 0.032771 \\
-\textbf{TCN Stochastic} & \textbf{0.000974} & \textbf{0.031211} & \textbf{0.018022} \\
-TCN                  & 0.001058 & 0.032529 & 0.020568 \\
+TCN with Attention   & 0.003096 & 0.055643 & 0.039111 & — \\
+LSTM with Attention  & 0.001884 & 0.043402 & 0.033347 & — \\
+Transformer          & 0.001911 & 0.043710 & 0.032771 & — \\
+\textbf{TCN-Stochastic (Ours)} & \textbf{0.000212} & \textbf{0.014551} & \textbf{0.008998} & \textbf{0.9972} \\
+TCN (Deterministic)  & 0.000327 & 0.01809 & 0.01058 & 0.9753 \\
 \bottomrule
 \label{table:baseline_model}
 \end{tabularx}

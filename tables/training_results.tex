@@ -1,0 +1,27 @@
+\begin{table}[h]
+\centering
+\caption{Training Configuration and Anomaly Detection Results}
+\label{table:training_results}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Parameter} & \textbf{Value} \\ \hline
+Training Samples & 41,602 \\ \hline
+Validation Samples & 8,914 \\ \hline
+Input Dimensions & (60 timesteps $\times$ 40 features) \\ \hline
+Maximum Epochs & 100 \\ \hline
+Early Stopping Epoch & 55 \\ \hline
+Best Validation Loss & 0.000274 \\ \hline
+Final Training Loss & 0.000252 \\ \hline
+Initial Validation Loss & 0.000330 \\ \hline
+Loss Improvement & 16.97\% \\ \hline
+Training Device & CPU \\ \hline
+Batch Size & 16 \\ \hline
+Learning Rate & $3 \times 10^{-4}$ \\ \hline
+Optimizer & Adam \\ \hline
+Patience & 15 \\ \hline
+Anomalies Detected & 475 \\ \hline
+Anomaly Rate & 5.33\% \\ \hline
+Detection Method & Adaptive threshold \\ \hline
+Model Parameters & 77,002 \\ \hline
+\end{tabular}
+\end{table}
