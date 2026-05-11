@@ -121,5 +121,75 @@ The experimental results depicted in Figure \ref{fig:uncertainty_windowidx}(a) s
 \label{fig:dbscan_preprocessing}
 \end{figure}
 
+\subsection{Uncertainty Quantification and Calibration}
+\indent
+The Monte Carlo Dropout mechanism enables the model to produce uncertainty estimates alongside point predictions. Figure~\ref{fig:mc_uncertainty_visualization} illustrates the uncertainty quantification results, showing that the 95\% confidence intervals narrow during stable periods and expand proportionally during anomalous regions. This adaptive behavior ensures that the model signals reduced confidence precisely when predictions are less reliable, providing actionable uncertainty information for decision-making in safety-critical indoor air quality monitoring.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{images/mc_uncertainty_visualization.png}
+\caption{Monte Carlo Dropout uncertainty visualization. The 95\% confidence intervals (orange shading) expand during anomalous regions (red background), indicating that the model correctly identifies uncertain predictions. The mean prediction closely tracks the ground truth during normal operation.}
+\label{fig:mc_uncertainty_visualization}
+\end{figure}
+
+\indent
+To validate the quality of uncertainty calibration, Figure~\ref{fig:calibration_curve} presents the calibration curve comparing expected confidence levels against observed coverage. A well-calibrated model should lie close to the diagonal. The TCN-Stochastic Enhanced model demonstrates reasonable calibration at lower confidence levels, with slight deviations at higher confidence levels where the predicted intervals are somewhat too narrow.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\linewidth]{images/calibration_curve.png}
+\caption{Uncertainty calibration curve. The model shows reasonable calibration, with observed coverage closely matching expected confidence levels. Deviations at high confidence levels indicate slightly overconfident predictions, a known limitation of MC Dropout~\cite{gal2016dropout_bayesian, lakshminarayanan2017ensembles}.}
+\label{fig:calibration_curve}
+\end{figure}
+
+\subsection{Threshold Comparison and Error Analysis}
+\indent
+The choice of anomaly thresholding strategy significantly impacts detection performance. Figure~\ref{fig:error_distribution_thresholds} shows the reconstruction error distribution with all four thresholding strategies overlaid. The Chebyshev threshold provides the most conservative bound, while the adaptive threshold leverages the learned dynamic weights to adjust sensitivity. Figure~\ref{fig:threshold_comparison} provides a side-by-side comparison of threshold values and corresponding detection counts across methods.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{images/error_distribution_thresholds.png}
+\caption{Reconstruction error distribution with anomaly detection thresholds. Normal windows (blue) cluster at low error values, while anomalous windows (red) exhibit a long-tail distribution. The Chebyshev threshold ($\tau_{\text{Cheb}}$) provides the most conservative bound with a guaranteed false positive rate of at most 5\%.}
+\label{fig:error_distribution_thresholds}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{images/threshold_comparison.png}
+\caption{Comparison of thresholding strategies. (a) Threshold values by method, showing the conservative nature of the Chebyshev bound. (b) Detection counts: anomalies correctly detected (red) vs. false positives on normal windows (gray), illustrating the precision--recall trade-off.}
+\label{fig:threshold_comparison}
+\end{figure}
+
+\indent
+Figure~\ref{fig:feature_wise_error_analysis} presents the per-feature reconstruction error distribution for normal and anomalous windows. For normal windows, all features show similar low error levels. For anomalous windows, VOC and CO\textsubscript{2} exhibit the highest median errors, consistent with the feature attribution results showing these sensors contribute most to anomaly detection.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{images/feature_wise_error_analysis.png}
+\caption{Per-feature reconstruction error distributions. (a) Normal windows show uniformly low errors across all sensors. (b) Anomalous windows exhibit elevated errors with VOC and CO\textsubscript{2} showing the highest median, confirming their dominant role in anomaly triggering.}
+\label{fig:feature_wise_error_analysis}
+\end{figure}
+
+\subsection{Anomaly Score Discrimination}
+\indent
+The effectiveness of the hybrid anomaly score in separating normal from anomalous windows is visualized in Figure~\ref{fig:anomaly_score_distribution}. The score distributions for the two classes are well-separated, with the adaptive threshold positioned at the intersection, minimizing both false positives and false negatives. The right-skewed distribution of normal scores and the broader distribution of anomalous scores confirm the discriminative power of the combined reconstruction error and uncertainty signal.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\linewidth]{images/anomaly_score_distribution.png}
+\caption{Anomaly score distribution for normal vs. anomalous windows. The well-separated distributions demonstrate that the hybrid scoring mechanism effectively discriminates between the two classes. The adaptive threshold ($\tau = 0.000437$) sits at the decision boundary, balancing precision and recall.}
+\label{fig:anomaly_score_distribution}
+\end{figure}
+
+\indent
+The relationship between predictive uncertainty and reconstruction error is further examined in Figure~\ref{fig:uncertainty_vs_error_scatter}. For normal windows, uncertainty and error exhibit a weak positive correlation, indicating that the model's uncertainty estimates carry some information about prediction quality. Anomalous windows cluster in the high-error, high-uncertainty region, confirming that both signals contribute complementary information for anomaly detection.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\linewidth]{images/uncertainty_vs_error_scatter.png}
+\caption{Uncertainty vs. reconstruction error scatter plot. Normal windows (blue) cluster at low values with weak correlation. Anomalous windows (red crosses) occupy the high-error, high-uncertainty region, demonstrating that both signals provide complementary discrimination.}
+\label{fig:uncertainty_vs_error_scatter}
+\end{figure}
+
 % The experimental results depicted in the Uncertainty Distribution and Uncertainty versus error correlation in Figure \ref{fig:uncertainty_windowidx} (a), visually capture how the TCN-Stochastic model assigns predictive confidence across hundreds of temporal windows. Most of the predictions exhibited very low uncertainty
 % $(\sigma < 0.001)$, indicating the model frequently produces highly confident reconstructions of normal data patterns. The unimodal, right-skewed distribution attests to the robustness of the model and the low prevalence of ambiguous or unreliable outputs in standard operational conditions. The scatter plot empirically examines the relationship between the predictive uncertainty and actual model error. Each point represents a prediction window, with its position and color corresponding to the mean prediction uncertainty and reconstruction error for that instance. The positive regression trend reveals that elevated uncertainty scores are frequently associated with increased prediction errors. Windows with high uncertainty and high error are strong candidates for anomalous behavior. Panels (b) and (c) provide a detailed illustration of the anomaly detection results obtained from the time-series data after zooming in on the segment corresponding to the identified anomaly window index, thereby allowing closer examination of the abnormal behavior within the data sequence. Specifically, panel (b) highlights how the reconstruction error sharply increases at the anomaly window, surpassing the detection threshold and confirming the presence of an anomalous event. The surrounding temporal context is also visualized to show how the anomaly emerges relative to its neighboring windows. Complementing this, panel (c) presents the outcome of the feature attribution analysis, which quantifies the relative contribution of each input variable to the detected anomaly at specific window index. The feature that showed the highest importance in relation to the detected anomaly was VOC. The importance metric for VOC was substantially higher than all other features, indicating that variations in VOC levels contributed most strongly to the anomaly observed at the specified window index. CO\textsubscript{2} also shows a notable level of importance, but it is secondary compared to VOC, while temperature, humidity, and dust have only marginal influence. This suggests that the anomaly is primarily driven by abnormal behavior of the VOC feature, with CO\textsubscript{2} playing a supporting role.
