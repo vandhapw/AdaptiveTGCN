@@ -94,15 +94,15 @@ We validate through four-month IAQ sensor data, comprehensive ablation studies i
 
 \subsection{Deep Anomaly Detection in Multivariate Time Series}
 
-Multivariate time-series anomaly detection has evolved from classical statistical methods toward deep architectures that learn normal behavioral patterns and identify deviations. Foundational sequence models—LSTM, GRU, and the TCN~\cite{bai2018tcn}—established the architectural vocabulary for temporal modeling. The TCN, in particular, demonstrated that dilated causal convolutions provide a competitive alternative to recurrence, with advantages in training stability and parallel computation.
+Multivariate time-series anomaly detection has evolved from classical statistical methods~\cite{chandola2009survey, aggarwal2017outlier} toward deep architectures that learn normal behavioral patterns and identify deviations~\cite{wang2025survey, liu2021anomaly}. Foundational sequence models—LSTM~\cite{hochreiter1997lstm}, GRU~\cite{cho2014gru}, and the TCN~\cite{bai2018tcn}—established the architectural vocabulary for temporal modeling. The TCN, in particular, demonstrated that dilated causal convolutions provide a competitive alternative to recurrence~\cite{zamanzadeh2023tcn_survey, oord2016wavenet}, with advantages in training stability and parallel computation.
 
-Recent work has extended TCNs with complementary techniques: TCN-AE architectures leverage autoencoding for unsupervised detection; TCN-GRU hybrids combine convolutional and recurrent processing; and attention-augmented TCNs incorporate self-attention for industrial monitoring applications. Transformer-based detectors such as TranAD~\cite{tuli2022tranad} and Anomaly Transformer~\cite{xu2022anomalytransformer} introduce self-attention for anomaly scoring but do not incorporate predictive uncertainty into the attention mechanism itself.
+Recent work has extended TCNs with complementary techniques: TCN-AE architectures leverage autoencoding for unsupervised detection~\cite{thill2021temporal}; TCN-GRU hybrids~\cite{guo2024research, yang2025tcn} combine convolutional and recurrent processing; and attention-augmented TCNs~\cite{wang2025tcntransformer, mehta_nac-tcn_2023} incorporate self-attention for industrial monitoring applications. Transformer-based detectors such as TranAD~\cite{tuli2022tranad} and Anomaly Transformer~\cite{xu2022anomalytransformer} introduce self-attention for anomaly scoring but do not incorporate predictive uncertainty into the attention mechanism itself.
 
 Despite this progress, existing TCN-based detectors treat sensor readings as generic multivariate inputs without modeling sensor-specific reliability characteristics. Our work explicitly couples uncertainty estimation to attention computation and anomaly scoring, adapting model behavior to the varying reliability of individual sensor channels.
 
-Uncertainty quantification (UQ) transforms anomaly detection from threshold-based heuristics into confidence-aware decisions. Dropout as a Bayesian approximation~\cite{gal2016dropout_bayesian} provides a lightweight mechanism for estimating predictive uncertainty from deterministic architectures, while deep ensembles~\cite{lakshminarayanan2017ensembles} offer an alternative with stronger calibration at higher computational cost. MC dropout has been validated across diverse time-series domains: electricity demand forecasting with TCNs~\cite{ghimire_electricity_2025}, stochastic differential equation-based hydrological forecasting~\cite{cui_sde-hnn_2025}, and multivariate imputation. These works demonstrate that MC dropout provides meaningful uncertainty estimates, but they apply uncertainty \textit{post hoc}---as a separate scoring term rather than feeding it back into the model's internal representations. Our framework advances this line of work by closing the loop: uncertainty estimates modulate attention weights and condition the dynamic scoring function, creating integration between UQ and model computation motivated by sensor-specific reliability concerns.
+Uncertainty quantification (UQ) transforms anomaly detection from threshold-based heuristics into confidence-aware decisions~\cite{siddique2022survey, blasco2024survey}. Dropout as a Bayesian approximation~\cite{gal2016dropout_bayesian} provides a lightweight mechanism for estimating predictive uncertainty from deterministic architectures, while deep ensembles~\cite{lakshminarayanan2017ensembles} offer an alternative with stronger calibration at higher computational cost. Heteroscedastic approaches~\cite{nix1994estimating, kendall2017uncertainties} model data-dependent noise explicitly. MC dropout has been validated across diverse time-series domains: electricity demand forecasting with TCNs~\cite{ghimire_electricity_2025}, stochastic differential equation-based hydrological forecasting~\cite{cui_sde-hnn_2025}, and multivariate imputation~\cite{wang2024deep}. These works demonstrate that MC dropout provides meaningful uncertainty estimates, but they apply uncertainty \textit{post hoc}---as a separate scoring term rather than feeding it back into the model's internal representations. Our framework advances this line of work by closing the loop: uncertainty estimates modulate attention weights and condition the dynamic scoring function, creating integration between UQ and model computation motivated by sensor-specific reliability concerns.
 
-For attention mechanisms in temporal data, the Transformer's self-attention~\cite{vaswani2017attention} enables direct computation of pairwise token relationships and captures long-range dependencies that convolutional filters may miss. Standard attention assumes all input positions are equally trustworthy---an assumption violated by physical sensor data where individual measurements carry sensor-specific uncertainty. Conformal prediction frameworks offer a statistical approach to uncertainty-aware decision-making but operate at the output level. Our AUAA mechanism integrates uncertainty directly into attention computation, enabling the model to learn which temporal patterns deserve attention based on the estimated reliability of the underlying sensor measurements. Interpretability remains a critical gap in practical anomaly detection. Methods such as SHAP and LIME provide post-hoc explanations but add computational overhead. Our feature-importance learner is trained jointly with the detection model, producing sensor-specific attributions as a native output without additional post-processing.
+For attention mechanisms in temporal data, the Transformer's self-attention~\cite{vaswani2017attention} enables direct computation of pairwise token relationships and captures long-range dependencies that convolutional filters may miss. Channel attention mechanisms such as SE-Net~\cite{hu2018squeeze} and CBAM~\cite{woo2018cbam} have shown effectiveness in computer vision but have not been adapted for uncertainty-modulated temporal modeling. Standard attention assumes all input positions are equally trustworthy---an assumption violated by physical sensor data where individual measurements carry sensor-specific uncertainty. Conformal prediction frameworks offer a statistical approach to uncertainty-aware decision-making but operate at the output level. Our AUAA mechanism integrates uncertainty directly into attention computation, enabling the model to learn which temporal patterns deserve attention based on the estimated reliability of the underlying sensor measurements. Interpretability remains a critical gap in practical anomaly detection~\cite{pang2021deep_survey}. Methods such as SHAP~\cite{lundberg2017shap} provide post-hoc explanations but add computational overhead. Our feature-importance learner is trained jointly with the detection model, producing sensor-specific attributions as a native output without additional post-processing.
 
 \begin{table}[H]
 \centering
@@ -136,7 +136,7 @@ x_f(t) = \mu_f(t) + \eta_f(t), \quad \eta_f(t) \sim \mathcal{N}(0, \sigma_f^2(t)
 \label{eq:sensor_model}
 \end{equation}
 
-where $\mu_f(t)$ is the true physical quantity and $\sigma_f^2(t)$ is the time-varying sensor-specific noise variance that may fluctuate due to aging, environmental interference, or calibration drift. Three sensor-specific challenges arise from this formulation:
+where $\mu_f(t)$ is the true physical quantity and $\sigma_f^2(t)$ is the time-varying sensor-specific noise variance that may fluctuate due to aging, environmental interference, or calibration drift. Three sensor-specific challenges arise from this formulation~\cite{kirkham2020building, abid2021iaq_deep}:
 
 \begin{enumerate}[leftmargin=*, nosep]
     \item \textbf{Heterogeneous noise profiles.} Different sensor technologies exhibit distinct noise characteristics: NDIR CO\textsubscript{2} sensors suffer low-frequency drift from optical path contamination, electrochemical VOC sensors display sensitivity degradation over weeks, and optical dust sensors produce transient saturation spikes during high-concentration events. A model that treats all sensor channels identically cannot adapt to these per-sensor reliability differences.
@@ -163,9 +163,9 @@ where $\Delta_f(t) = x_f(t) - x_f(t-1)$ captures first-order dynamics, $\mu_f^W(
 
 \subsection{Uncertainty-Calibrated TCN Architecture}
 
-\textbf{TCN Backbone.} The core of our framework is a three-layer Temporal Convolutional Network with 64 channels per layer, kernel size 2, and exponentially increasing dilation factors $\{1, 2, 4\}$. The receptive field is $RF = \sum_{l=1}^{L} (k-1) \cdot d_l$, where $L=3$, $k=2$, ensuring coverage of the full input window. Each layer applies causal (left-padded) convolution to prevent information leakage from future timesteps, followed by weight normalization and ReLU activation.
+\textbf{TCN Backbone.} The core of our framework is a three-layer Temporal Convolutional Network~\cite{bai2018tcn, zamanzadeh2023tcn_survey} with 64 channels per layer, kernel size 2, and exponentially increasing dilation factors $\{1, 2, 4\}$. The receptive field is $RF = \sum_{l=1}^{L} (k-1) \cdot d_l$, where $L=3$, $k=2$, ensuring coverage of the full input window. Each layer applies causal (left-padded) convolution~\cite{mehta_nac-tcn_2023} to prevent information leakage from future timesteps, followed by weight normalization~\cite{salimans2016weightnorm} and ReLU activation.
 
-\textbf{Stochastic Depth Integration.} During training, each TCN block $l$ is randomly dropped with probability $p_l = 0.1 \times (l/L)$, following the stochastic depth recipe. At inference, all blocks participate deterministically, and MC dropout is activated across all layers with dropout rate 0.2. Running $M$ stochastic forward passes yields an ensemble of predictions $\{\hat{\mathbf{y}}^{(m)}\}_{m=1}^{M}$ from which we compute:
+\textbf{Stochastic Depth Integration.} During training, each TCN block $l$ is randomly dropped with probability $p_l = 0.1 \times (l/L)$, following the stochastic depth recipe~\cite{huang2016stochastic_depth}. At inference, all blocks participate deterministically, and MC dropout is activated across all layers with dropout rate 0.2. Running $M$ stochastic forward passes yields an ensemble of predictions $\{\hat{\mathbf{y}}^{(m)}\}_{m=1}^{M}$ from which we compute:
 
 \begin{equation}
 \hat{\mathbf{y}}_t = \frac{1}{M}\sum_{m=1}^{M} \hat{\mathbf{y}}_t^{(m)}, \quad \boldsymbol{\sigma}_t = \sqrt{\frac{1}{M}\sum_{m=1}^{M} (\hat{\mathbf{y}}_t^{(m)} - \hat{\mathbf{y}}_t)^2}
@@ -265,13 +265,29 @@ With the architectural components and detection pipeline fully specified, the fo
 
 We evaluate on an indoor air quality (IAQ) dataset collected from sensors deployed in a laboratory environment. The dataset contains five sensor channels—NDIR CO\textsubscript{2}, metal-oxide VOC, thermistor temperature, capacitive humidity, and optical PM\textsubscript{2.5} dust—recorded at 1-minute resolution from March 8 to July 9, 2024, yielding 178,560 total observations. The dataset is publicly available.
 
-DBSCAN preprocessing successfully filters sensor saturation artifacts. \cref{table:dataset_stats} reports statistics before and after filtering: maximum CO\textsubscript{2} values drop from 9999 to 2606 ppm and maximum VOC from 9999 to 2725 ppb, while distribution medians are preserved, confirming that only outlier saturation events are removed. Features are subsequently min-max normalized to $[0, 1]$.
+DBSCAN preprocessing successfully filters sensor saturation artifacts. \cref{table:dataset_stats} reports statistics before and after filtering: maximum CO\textsubscript{2} values drop from 9999 to 2606 ppm and maximum VOC from 9999 to 2725 ppb, while distribution medians are preserved, confirming that only outlier saturation events are removed. Figure~\ref{fig:dbscan_preprocessing} visualizes the effect of DBSCAN filtering on the CO\textsubscript{2} distribution.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{images/dbscan_preprocessing.png}
+\caption{Effect of DBSCAN-based outlier removal on CO\textsubscript{2} distribution. (a) Before filtering: sensor saturation artifacts at 9999 ppm obscure the true distribution. (b) After DBSCAN ($\varepsilon=0.5$, MinPts=5): outliers removed, reducing the maximum from 9999 to 2606 ppm while preserving the core distribution shape.}
+\label{fig:dbscan_preprocessing}
+\end{figure}
+
+Features are subsequently min-max normalized to $[0, 1]$.
 
 \subsection{Experimental Configuration}
 
-All models are implemented in PyTorch and trained on an NVIDIA RTX 3060 GPU (12 GB VRAM). The Adam optimizer is used with learning rate $1 \times 10^{-3}$, batch size 16, early stopping patience of 10 epochs, and a maximum of 100 epochs. MC dropout uses $M=50$ forward passes for full evaluation and $M=20$ for benchmark comparisons. The input window size is $W=60$ timesteps (60 minutes). Training converges stably within 50 epochs, with early stopping typically triggered around epochs 60--70.
+All models are implemented in PyTorch~\cite{paszke2019pytorch} and trained on CPU with the Adam optimizer~\cite{kingma2015adam}, learning rate $3 \times 10^{-4}$, batch size 16, early stopping patience of 15 epochs, and a maximum of 100 epochs. The Adam optimizer is used with learning rate $1 \times 10^{-3}$, batch size 16, early stopping patience of 10 epochs, and a maximum of 100 epochs. MC dropout uses $M=50$ forward passes for full evaluation and $M=20$ for benchmark comparisons. The input window size is $W=60$ timesteps (60 minutes). Training converges stably within 50 epochs, with early stopping typically triggered around epochs 60--70. Figure~\ref{fig:training_losses} illustrates the training and validation loss curves.
 
-Baselines include: RNN, GRU, LSTM, Transformer (standard encoder with 4 heads), Base TCN (without stochastic components), TCN-Stochastic (MC dropout applied post hoc following Ghimire et al.), and our Full Enhanced model. The Base TCN contains approximately 245K parameters; the Full Enhanced model adds approximately 37K parameters (15\% overhead), totaling 282K, primarily from the AUAA module and Dynamic Weight Adapter.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{images/training_losses_enhanced.png}
+\caption{Training and validation loss curves for the enhanced TCN-Stochastic model. The composite loss combines reconstruction, uncertainty, and calibration components. The best model was saved at epoch 19, with early stopping triggered at epoch 55.}
+\label{fig:training_losses}
+\end{figure}
+
+Baselines include: RNN~\cite{rumelhart1986learning}, GRU~\cite{cho2014gru}, LSTM~\cite{hochreiter1997lstm}, Transformer (standard encoder with 4 heads)~\cite{vaswani2017attention}, Base TCN (without stochastic components)~\cite{bai2018tcn}, TCN-Stochastic (MC dropout applied post hoc), and our Full Enhanced model. The Base TCN contains approximately 245K parameters; the Full Enhanced model adds approximately 37K parameters (15\% overhead), totaling 282K, primarily from the AUAA module and Dynamic Weight Adapter.
 
 \subsection{Forecasting Performance}
 
@@ -340,12 +356,114 @@ F1 Score & 0.79 & \textbf{0.81} & \textbf{+2.5\%} \\
 \end{table}
 
 \subsection{Anomaly Detection Results}
+\label{sec:anomaly_results}
 
-Applying the 95th percentile threshold on the validation set (750 sliding windows), the model detects 38 anomalies (5.07\% anomaly rate). The dynamic weight $\alpha_t$ remained near-balanced (mean 0.4944, range 0.4943--0.4949), indicating that the monitored environment operated in a regime where reconstruction error and uncertainty carried comparable information.
+Applying the 95th percentile threshold on the validation set (8,914 sliding windows), the model detects 475 anomalies (5.33\% anomaly rate) using the adaptive threshold method. Figure~\ref{fig:anomaly_timeline} illustrates the anomaly detection timeline with the adaptive threshold overlaid on the hybrid anomaly scores.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{images/anomaly_timeline_adaptive.png}
+\caption{Anomaly detection timeline with adaptive threshold. The red dashed line indicates the adaptive threshold ($\tau = 0.000437$), which combines the 95th percentile base threshold with dynamic weight information. Windows exceeding the threshold are highlighted in red.}
+\label{fig:anomaly_timeline}
+\end{figure}
+
+The dynamic weight $\alpha_t$ remained near-balanced (mean 0.454, range 0.448--0.460, std 0.006), indicating that the monitored environment operated in a regime where reconstruction error and uncertainty carried comparable information. Figure~\ref{fig:dynamic_weight} shows the distribution and temporal evolution of learned dynamic weights.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{images/dynamic_weight_analysis.png}
+\caption{Dynamic weight analysis. (a) Distribution of learned $\alpha$ weights showing tight clustering around the mean (0.454) with minimal variance (std=0.006). (b) Dynamic weight evolution over validation windows. (c) Scatter plot of $\alpha$ vs reconstruction error showing near-zero correlation, indicating that the Dynamic Weight Adapter has insufficient uncertainty signal to drive meaningful adaptation when residual prediction already provides strong baselines.}
+\label{fig:dynamic_weight}
+\end{figure}
+
+\subsection{Uncertainty Quantification and Calibration}
+
+The Monte Carlo Dropout mechanism~\cite{gal2016dropout_bayesian} enables the model to produce uncertainty estimates alongside point predictions. Figure~\ref{fig:mc_uncertainty} illustrates the uncertainty quantification results, showing that the 95\% confidence intervals narrow during stable periods and expand proportionally during anomalous regions. This adaptive behavior ensures that the model signals reduced confidence precisely when predictions are less reliable, providing actionable uncertainty information for decision-making in safety-critical indoor air quality monitoring~\cite{kumar2022iaq_review, szczurek2020iaq}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{images/mc_uncertainty_visualization.png}
+\caption{Monte Carlo Dropout uncertainty visualization. The 95\% confidence intervals (orange shading) expand during anomalous regions (red background), indicating that the model correctly identifies uncertain predictions. The mean prediction closely tracks the ground truth during normal operation.}
+\label{fig:mc_uncertainty}
+\end{figure}
+
+To validate the quality of uncertainty calibration, Figure~\ref{fig:calibration_curve} presents the calibration curve comparing expected confidence levels against observed coverage. The model shows reasonable calibration at lower confidence levels, with slight deviations at higher levels where predicted intervals are somewhat too narrow---a known limitation of MC Dropout~\cite{gal2016dropout_bayesian, lakshminarayanan2017ensembles}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\linewidth]{images/calibration_curve.png}
+\caption{Uncertainty calibration curve comparing expected confidence levels against observed coverage. The model demonstrates reasonable calibration, with deviations at high confidence levels indicating slightly overconfident predictions.}
+\label{fig:calibration_curve}
+\end{figure}
+
+\subsection{Threshold Comparison and Error Analysis}
+
+The choice of anomaly thresholding strategy significantly impacts detection performance~\cite{chandola2009survey, aggarwal2017outlier}. Figure~\ref{fig:error_distribution} shows the reconstruction error distribution with all four thresholding strategies overlaid. The Chebyshev threshold provides the most conservative bound, while the adaptive threshold leverages the learned dynamic weights to adjust sensitivity.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{images/error_distribution_thresholds.png}
+\caption{Reconstruction error distribution with anomaly detection thresholds. Normal windows (blue) cluster at low error values, while anomalous windows (red) exhibit a long-tail distribution. The Chebyshev threshold ($\tau_{\text{Cheb}}$) provides the most conservative bound with a guaranteed false positive rate of at most 5\%~\cite{hawkins1980identification}.}
+\label{fig:error_distribution}
+\end{figure}
+
+Figure~\ref{fig:threshold_comparison} provides a side-by-side comparison of threshold values and corresponding detection counts across methods. The percentile-based threshold ($\tau_{95}$) yields the highest detection recall but with the weakest theoretical guarantee, while the Chebyshev threshold trades 2--3 percentage points of recall for a provable $P(\text{FP}) \leq 1/k^2$ bound.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{images/threshold_comparison.png}
+\caption{Comparison of thresholding strategies. (a) Threshold values by method. (b) Detection counts: anomalies correctly detected (red) vs. false positives on normal windows (gray), illustrating the precision--recall trade-off.}
+\label{fig:threshold_comparison}
+\end{figure}
+
+Figure~\ref{fig:feature_wise_error} presents the per-feature reconstruction error distribution for normal and anomalous windows. For normal windows, all features show similar low error levels. For anomalous windows, VOC and CO\textsubscript{2} exhibit the highest median errors, consistent with the feature attribution results showing these sensors contribute most to anomaly detection.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{images/feature_wise_error_analysis.png}
+\caption{Per-feature reconstruction error distributions. (a) Normal windows show uniformly low errors across all sensors. (b) Anomalous windows exhibit elevated errors with VOC and CO\textsubscript{2} showing the highest median, confirming their dominant role in anomaly triggering.}
+\label{fig:feature_wise_error}
+\end{figure}
+
+\subsection{Anomaly Score Discrimination}
+
+The effectiveness of the hybrid anomaly score in separating normal from anomalous windows is visualized in Figure~\ref{fig:anomaly_score_dist}. The score distributions for the two classes are well-separated, with the adaptive threshold positioned at the intersection, minimizing both false positives and false negatives.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{images/anomaly_score_distribution.png}
+\caption{Anomaly score distribution for normal vs.\ anomalous windows. The well-separated distributions demonstrate that the hybrid scoring mechanism effectively discriminates between the two classes. The adaptive threshold ($\tau = 0.000437$) sits at the decision boundary.}
+\label{fig:anomaly_score_dist}
+\end{figure}
+
+The relationship between predictive uncertainty and reconstruction error is further examined in Figure~\ref{fig:uncertainty_vs_error}. For normal windows, uncertainty and error exhibit a weak positive correlation, indicating that the model's uncertainty estimates carry some information about prediction quality. Anomalous windows cluster in the high-error, high-uncertainty region, confirming that both signals provide complementary information for anomaly detection~\cite{blasco2024survey, wiessner2024uncertainty}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\linewidth]{images/uncertainty_vs_error_scatter.png}
+\caption{Uncertainty vs.\ reconstruction error scatter plot. Normal windows (blue) cluster at low values. Anomalous windows (red crosses) occupy the high-error, high-uncertainty region, demonstrating complementary discrimination from both signals.}
+\label{fig:uncertainty_vs_error}
+\end{figure}
 
 \subsection{Per-Sensor Attribution Distribution}
 
-\cref{table:attribution} presents the per-sensor attribution distribution. The feature-importance learner produces well-balanced attributions: Humidity (21.0\%), VOC (20.5\%), CO\textsubscript{2} (20.4\%), Dust (19.2\%), and Temperature (18.9\%). The near-uniform distribution confirms that all five sensor channels contribute meaningfully to anomaly decisions, validating the multi-sensor approach.
+\cref{table:attribution} presents the per-sensor attribution distribution. The feature-importance learner produces well-balanced attributions: Humidity (21.0\%), VOC (20.5\%), CO\textsubscript{2} (20.4\%), Dust (19.2\%), and Temperature (18.9\%). The near-uniform distribution confirms that all five sensor channels contribute meaningfully to anomaly decisions, validating the multi-sensor approach. Figure~\ref{fig:feature_importance} visualizes the attribution distribution.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{images/feature_importance_enhanced.png}
+\caption{Feature-level attribution for detected anomalies. VOC and CO\textsubscript{2} contribute most to anomaly detection (21.8\% and 21.7\% respectively), while Temperature contributes least (15.0\%). The relatively uniform distribution across sensors suggests that anomalies manifest across multiple dimensions simultaneously.}
+\label{fig:feature_importance}
+\end{figure}
+
+Figure~\ref{fig:ablation_comparison} presents the ablation study results comparing the full-scale MSE across model variants and a zoomed view of the enhanced model variants.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{images/ablation_comparison_enhanced.png}
+\caption{Ablation study results. (a) Full-scale MSE comparison showing the dramatic improvement from base TCN to enhanced models. (b) Zoomed comparison between the enhanced model variants, showing that the Dynamic Weight Adapter adds negligible improvement when uncertainty is collapsed.}
+\label{fig:ablation_comparison}
+\end{figure}
 
 \begin{table}[H]
 \centering
@@ -387,7 +505,7 @@ Temperature & 18.9\% \\
 \end{tabular}
 \end{table}
 
-\textbf{Threshold Comparison.} Three threshold methods produce different operating points: the simple percentile method yields $\tau_{95} = 0.001803$, the adaptive threshold produces a more conservative $\tau_{\text{adapt}} = 0.015033$, and the Chebyshev threshold with $k=4.47$ provides distribution-free FP-rate control at $\epsilon=0.05$. Among these, the percentile threshold (95th) yields the highest detection recall (83\%) but with the weakest theoretical guarantee; the Chebyshev threshold trades approximately 2--3 percentage points of recall for a provable $P(\text{FP}) \leq 1/k^2$ bound, offering a principled operating point for safety-critical deployments where false alarms carry high operational cost.
+\textbf{Threshold Comparison.} Three threshold methods produce different operating points~\cite{chandola2009survey, liu2008isolation, breunig2000lof}: the simple percentile method yields $\tau_{95} = 0.001803$, the adaptive threshold produces a more conservative $\tau_{\text{adapt}} = 0.015033$, and the Chebyshev threshold with $k=4.47$ provides distribution-free FP-rate control at $\epsilon=0.05$. Among these, the percentile threshold (95th) yields the highest detection recall (83\%) but with the weakest theoretical guarantee; the Chebyshev threshold trades approximately 2--3 percentage points of recall for a provable $P(\text{FP}) \leq 1/k^2$ bound, offering a principled operating point for safety-critical deployments where false alarms carry high operational cost.
 
 % ============================================================
 \section{Discussion}
@@ -418,7 +536,7 @@ Each architectural choice is motivated by a concrete sensor-characteristic argum
 
 \subsection{Design Extensions and Deployment Considerations}
 
-The sensor-specific design principles established in this work suggest natural extensions. Training under normal-operation assumptions means contamination by undetected anomalies can bias predictive distributions---robust training strategies such as trimmed loss functions offer a direct mitigation path. The current single-step prediction scope can be extended to multi-horizon forecasting for detecting gradual drift patterns that emerge over longer timescales. For higher-frequency sensor streams (e.g., 100~Hz vibration monitoring), model distillation or reduced MC sample counts preserve the architectural benefits within tighter latency budgets. The fixed sensor set assumption can be relaxed through dynamic input masking, and online learning variants would address concept drift in non-stationary environments.
+The sensor-specific design principles established in this work suggest natural extensions. Training under normal-operation assumptions means contamination by undetected anomalies can bias predictive distributions---robust training strategies such as trimmed loss functions~\cite{huber1964robust} offer a direct mitigation path. The current single-step prediction scope can be extended to multi-horizon forecasting~\cite{zhou2021informer, wu2023timesnet} for detecting gradual drift patterns that emerge over longer timescales. For higher-frequency sensor streams (e.g., 100~Hz vibration monitoring), model distillation or reduced MC sample counts preserve the architectural benefits within tighter latency budgets. The fixed sensor set assumption can be relaxed through dynamic input masking, and online learning variants would address concept drift in non-stationary environments.
 
 \section{Conclusions}
 
