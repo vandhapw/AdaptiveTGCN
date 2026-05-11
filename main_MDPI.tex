@@ -38,9 +38,12 @@
 \address{%
 $^{1}$ \quad Department of Information Systems, Pukyong National University, Busan 48513, Republic of Korea; vandhapw@pukyong.ac.kr\\
 $^{2}$ \quad Department of Information System, University of Jember, Indonesia 68121, Republic of Indonesia; ifrinanuritha@unej.ac.id\\
-$^{3}$ \quad Division of Computer Engineering and AI, Pukyong National University, Busan 48513, Republic of Korea; khrhee@pknu.ac.kr}\\
-$^{3}$ \quad Research Center, Hanyoung DS, Inc., Seoul, 07600, Republic of Korea; hyp6511@hyds.kr}
+$^{3}$ \quad Division of Computer Engineering and AI, Pukyong National University, Busan 48513, Republic of Korea; khrhee@pknu.ac.kr\\
+$^{4}$ \quad Research Center, Hanyoung DS, Inc., Seoul 07600, Republic of Korea; hyp6511@hyds.kr
+}
+
 \corres{Correspondence: cskim@pknu.ac.kr}
+
 
 % === ABSTRACT ===
 \abstract{Multivariate time-series anomaly detection in physical sensor networks faces challenges that generic deep learning models do not address: heterogeneous sensor reliability, context-dependent anomaly scoring, and inactionable binary outputs lacking per-sensor attribution. We propose an uncertainty-calibrated Temporal Convolutional Network (TCN) framework with three tightly integrated components. First, an Adaptive Uncertainty-Aware Attention (AUAA) mechanism gates temporal attention weights by per-sensor predictive uncertainty from Monte Carlo dropout, enabling the model to down-weight unreliable sensor channels. Second, a Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history. Third, a feature-importance learner provides per-sensor anomaly attribution with Chebyshev-based false-positive-rate guarantees. Evaluated on four-month indoor air quality sensor data, the full model achieves R$^2$=0.9953 and SMAPE=1.87\%, representing a 40\% cumulative MSE reduction over the base TCN. Ablation studies isolate each component: AUAA alone contributes 25\% MSE reduction, and the dynamic weight adapter adds 15 percentage points. Cross-dataset validation on the SWaT industrial control benchmark yields F1=0.81. The framework delivers sensor-specific interpretability with theoretical bounds while maintaining sub-50ms inference latency, suitable for real-time deployment.}
