@@ -1,31 +1,57 @@
-\vspace{6pt}
-\noindent\textbf{Algorithm~1:} Stochastic TCN-based Anomaly Detection
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\caption{Uncertainty-Calibrated Stochastic TCN Anomaly Detection}
 \label{alg:stochastic_tcn}
-\vspace{4pt}
+\KwData{Trained Full Enhanced model $f_{\boldsymbol{\theta}}$;
+        input window $\mathbf{X} \in \mathbb{R}^{W \times n}$;
+        MC sample count $M$;
+        validation-calibrated thresholds $\tau_{95}, \tau_\text{theory}$;
+        confidence factor $k = \sqrt{1/\epsilon}$ for the Chebyshev bound.}
+\KwResult{Binary anomaly mask $\mathbf{A} \in \{0,1\}^{T \times n}$
+          and high-confidence subset $\mathbf{A}^{\text{hc}}$,
+          plus per-sensor attribution $\mathbf{w}_f$.}
 
-\noindent \textbf{Input:} Trained TCN model $f_{\theta}$, input sequence $\mathbf{X}$, thresholds $\tau_{95}, \tau_{99}$\\
-\textbf{Output:} Anomaly flags $\mathbf{A}_{95}, \mathbf{A}_{99}$
+\BlankLine
+\tcp{Step 1 --- Monte Carlo predictive distribution (Eq.~\ref{eq:mc_moments})}
+Enable dropout at inference\;
+\For{$m \leftarrow 1$ \KwTo $M$}{
+    $\hat{\mathbf{y}}^{(m)} \leftarrow f_{\boldsymbol{\theta}}(\mathbf{X})$ \tcp*{stochastic forward pass}
+}
+$\hat{\mathbf{y}} \leftarrow \dfrac{1}{M}\sum_{m=1}^{M}\hat{\mathbf{y}}^{(m)}$ \tcp*{predictive mean}
+$\boldsymbol{\sigma} \leftarrow \sqrt{\dfrac{1}{M}\sum_{m=1}^{M}(\hat{\mathbf{y}}^{(m)}-\hat{\mathbf{y}})^{2}}$ \tcp*{per-sensor epistemic std}
 
-\medskip
-\noindent \textbf{1. Monte Carlo Prediction:}\\
-$\hat{\mathbf{y}}, \boldsymbol{\sigma} \gets \text{MC-Predict}(f_{\theta}, \mathbf{X}, N=50)$
+\BlankLine
+\tcp{Step 2 --- AUAA-modulated reconstruction error (Eq.~\ref{eq:auaa_multihead})}
+$\mathbf{e}_{t} \leftarrow |\mathbf{x}_{t} - \hat{\mathbf{y}}_{t}|$ \tcp*{per-sensor residual}
+$\boldsymbol{\alpha}^{\text{attn}}_{t} \leftarrow \text{softmax}\!\big(\mathbf{Q}_t\mathbf{K}_t^{\top}/\sqrt{d_{k}}\big)\,\odot\,(1+\boldsymbol{\sigma}_{t})^{-1}$
 
-\medskip
-\noindent \textbf{2. Error Calculation:}\\
-\textbf{for} each feature $i \in \{1,\dots,5\}$ \textbf{do}\\
-\quad $e_i \gets |y_i - \hat{y}_i|$\\
-\textbf{end for}
+\BlankLine
+\tcp{Step 3 --- Dynamic Weight Adapter (Eqs.~\ref{eq:dw_gru}, \ref{eq:hybrid_score})}
+$\mathbf{h}_{t} \leftarrow \text{GRU}\!\big(\mathbf{h}_{t-1},[\mathbf{e}_{t},\boldsymbol{\sigma}_{t}]\big)$\;
+$\alpha_{t} \leftarrow \sigma\!\big(\mathbf{W}_{\alpha}[\mathbf{e}_{t},\boldsymbol{\sigma}_{t},\mathbf{h}_{t}]+\mathbf{b}_{\alpha}\big)$ \tcp*{context-dependent weight}
+$s_{t} \leftarrow \alpha_{t}\,\mathbf{e}_{t}+(1-\alpha_{t})\,\boldsymbol{\sigma}_{t}$ \tcp*{hybrid anomaly score}
 
-\medskip
-\noindent \textbf{3. Anomaly Detection:}\\
-\textbf{for} each feature $i$ and timestep $t$ \textbf{do}\\
-\quad $\mathbf{A}_{95}[i,t] \gets \mathbf{1}_{[\,e_i(t) > \tau_{95}\,]}$\\
-\quad $\mathbf{A}_{99}[i,t] \gets \mathbf{1}_{[\,e_i(t) > \tau_{99}\,]}$\\
-\quad \textbf{if} $e_i(t) > \hat{y}_i(t) + 2\sigma_i(t)$ \textbf{then}\\
-\quad\quad Mark as high-confidence anomaly\\
-\quad \textbf{end if}\\
-\textbf{end for}
+\BlankLine
+\tcp{Step 4 --- Feature-level attribution (Eq.~\ref{eq:feature_importance})}
+$\mathbf{w}_{f} \leftarrow \text{softmax}\!\big(\mathbf{V}\,\tanh(\mathbf{W}\,\mathbf{x}_{t}+\mathbf{b})\big)$
 
-\medskip
-\noindent \textbf{return} $\mathbf{A}_{95}, \mathbf{A}_{99}$
-\vspace{6pt}
+\BlankLine
+\tcp{Step 5 --- Threshold-based binary flag}
+\For{$t \leftarrow 1$ \KwTo $T$}{
+    \For{$f \leftarrow 1$ \KwTo $n$}{
+        \uIf{$s_{t,f} > \tau_{95}$}{
+            $\mathbf{A}[t,f] \leftarrow 1$\;
+            \tcp{Chebyshev high-confidence rule: $P(\text{FP}) \leq 1/k^2$}
+            \If{$s_{t,f} > \bar{s} + k\,\sigma_{s}$ \quad \tcp*[h]{Eq.~\ref{eq:tau_chebyshev}}}{
+                $\mathbf{A}^{\text{hc}}[t,f] \leftarrow 1$\;
+            }
+        }
+        \Else{
+            $\mathbf{A}[t,f] \leftarrow 0$\;
+        }
+    }
+}
+
+\BlankLine
+\Return $\mathbf{A}$, $\mathbf{A}^{\text{hc}}$, $\mathbf{w}_{f}$\;
+\end{algorithm}
