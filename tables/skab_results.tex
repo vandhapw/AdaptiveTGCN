@@ -1,0 +1,29 @@
+\begin{table}[H]
+\centering
+\caption{Cross-dataset validation on the Skoltech Anomaly Benchmark (SKAB).
+The Base TCN and Full Enhanced models are trained from scratch on the SKAB
+anomaly-free recording (9405 rows, 1\,Hz, eight sensor channels). Detection thresholds are
+calibrated on a held-out validation slice (95\textsuperscript{th} percentile of
+anomaly score, anomaly fraction = 33.8\%) and applied unchanged to the anomaly-rich test slice (anomaly fraction = 36.1\%). Numerics are loaded verbatim from
+\texttt{research\_outputs\_full/tables/skab\_metrics.csv}; no value in this
+table is hardcoded in the paper source.}
+\label{table:skab_results}
+\small
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{ROC-AUC} & \textbf{Threshold $\tau_{95}$} \\
+\midrule
+Base TCN      & 0.4766 & 0.0332 & 0.0620 & 0.6793 & $2.42\times 10^{2}$ \\
+\textbf{Full Enhanced} & \textbf{0.5564} & \textbf{0.4178} & \textbf{0.4773} & \textbf{0.7267} & $4.61\times 10^{2}$ \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize Source: SKAB v0.9, Skoltech \cite{skab_dataset}. Eight sensors
+(Accelerometer1RMS, Accelerometer2RMS, Current, Voltage, Pressure, Temperature,
+Thermocouple, Volume Flow RateRMS) sampled at 1\,Hz.
+Train / val / test = 4693 / 9345 / 9346 windows; 8 sensor channels, $W=20$, stride $S=2$, $M=20$ Monte-Carlo samples. The validation-calibrated threshold $\tau_{95}$ is applied
+to the test set without retuning, so the detector is evaluated as it would
+operate in deployment.
+\end{flushleft}
+\end{table}
