@@ -71,12 +71,12 @@ We present an uncertainty-calibrated TCN framework for multivariate sensor anoma
 
 % The overall architecture of the proposed framework is illustrated in \cref{fig:architecture}. The framework follows a closed-loop design: sensor data pass through a three-layer TCN backbone, MC dropout produces per-sensor uncertainty estimates, and these uncertainty signals are then fed back into the attention mechanism (AUAA), the dynamic anomaly scoring (Weight Adapter), and the per-sensor explanation module (Feature Attribution)---rather than being used only as an output-level term.
 
-% \begin{figure}[H]
-% \centering
-% \includegraphics[width=0.92\textwidth]{figures/architecture_diagram.png}
-% \caption{Architecture of the proposed uncertainty-calibrated TCN framework for multivariate sensor anomaly detection. Three innovations address three sensor-specific challenges: \textbf{(1)} Adaptive Uncertainty-Aware Attention (AUAA) gates temporal attention by per-sensor predictive uncertainty $\boldsymbol{\sigma}_t$, closing the loop between uncertainty estimation and attention computation; \textbf{(2)} the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; \textbf{(3)} the Feature-Attribution Learner produces per-sensor importance scores with Chebyshev-based false-positive-rate guarantees. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc. The ablation table at the bottom right summarizes the cumulative contribution of each component.}
-% \label{fig:architecture}
-% \end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/architecture_diagram.png}
+\caption{Architecture of the proposed uncertainty-calibrated TCN framework for multivariate sensor anomaly detection. Three innovations address three sensor-specific challenges: \textbf{(1)} Adaptive Uncertainty-Aware Attention (AUAA) gates temporal attention by per-sensor predictive uncertainty $\boldsymbol{\sigma}_t$, closing the loop between uncertainty estimation and attention computation; \textbf{(2)} the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; \textbf{(3)} the Feature-Attribution Learner produces per-sensor importance scores with Chebyshev-based false-positive-rate guarantees. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc.}
+\label{fig:architecture}
+\end{figure}
 
 We validate through four-month IAQ sensor data, comprehensive ablation studies isolating each component, cross-dataset evaluation on the SWaT industrial control benchmark~\cite{goh2017dataset}, and sensitivity analysis of key hyperparameters.
 
@@ -220,8 +220,9 @@ followed by a linear projection $\mathbf{W}_O\,[\boldsymbol{\alpha}_t^{(1)},\dot
 \begin{tikzpicture}[
   >=stealth, node distance=1.05cm,
   block/.style={rectangle, draw, thick, rounded corners=2pt, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small},
-  signal/.style={->, thick}, gate/.style={rectangle, draw, very thick, rounded corners=2pt, fill=orange!20, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small},
-  out/.style={rectangle, draw, very thick, rounded corners=2pt, fill=green!15, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small}
+  signal/.style={->, thick},
+  gate/.style={rectangle, draw, very thick, rounded corners=2pt, fill=orange!20, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small},
+  outbox/.style={rectangle, draw, very thick, rounded corners=2pt, fill=green!15, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small}
 ]
   \node[block] (h) {Hidden state $\mathbf{h}_t$};
   \node[block, below=of h] (qkv) {Linear $\mathbf{Q}_t, \mathbf{K}_t, \mathbf{V}_t$};
@@ -230,7 +231,7 @@ followed by a linear projection $\mathbf{W}_O\,[\boldsymbol{\alpha}_t^{(1)},\dot
   \node[gate, right=2.4cm of score] (gate) {Uncertainty gate\\$g_t = 1/(1+\boldsymbol{\sigma}_t)$};
   \node[block, below=of score] (soft) {softmax};
   \node[block, below=of soft, fill=blue!8] (mul) {Element-wise $\odot$};
-  \node[out, below=of mul] (alpha) {Attention $\boldsymbol{\alpha}_t$\\(uncertainty-gated)};
+  \node[outbox, below=of mul] (alpha) {Attention $\boldsymbol{\alpha}_t$\\(uncertainty-gated)};
   \draw[signal] (h) -- (qkv);
   \draw[signal] (qkv) -- (score);
   \draw[signal] (score) -- (soft);
@@ -370,17 +371,19 @@ Baselines include: RNN, GRU~\cite{cho2014gru}, LSTM~\cite{hochreiter1997lstm}, T
 \centering
 \caption{Forecasting performance on the held-out test split. RNN/GRU/LSTM/Transformer rows are reference values from comparable IAQ forecasting studies trained on similar data; Base TCN, TCN-Stochastic and Full Enhanced rows are reproduced under our experimental protocol.}
 \label{table:forecasting}
+\setlength{\tabcolsep}{4.5pt}
+\small
 \begin{tabular}{lccccc}
 \toprule
 \textbf{Model} & \textbf{MSE} & \textbf{RMSE} & \textbf{MAE} & \textbf{SMAPE} & \textbf{R\textsuperscript{2}} \\
 \midrule
-RNN (reference) & $7.10\times 10^{-3}$ & 0.07826 & 0.05386 & 9.38\% & 0.6549 \\
-GRU (reference) & $3.40\times 10^{-3}$ & 0.05780 & 0.03423 & 5.72\% & 0.7513 \\
-LSTM (reference) & $2.70\times 10^{-3}$ & 0.05215 & 0.02622 & 4.21\% & 0.7984 \\
-Transformer (reference) & $1.60\times 10^{-3}$ & 0.04003 & 0.02773 & 4.63\% & 0.8814 \\
-Base TCN (this work) & $2.20\times 10^{-4}$ & 0.01483 & 0.01059 & 13.64\% & 0.9984 \\
-TCN-Stochastic (this work) & $2.20\times 10^{-4}$ & 0.01483 & 0.01059 & 13.64\% & 0.9984 \\
-\textbf{Full Enhanced (this work)} & $\mathbf{1.65\times 10^{-4}}$ & $\mathbf{1.28\times 10^{-2}}$ & $\mathbf{6.50\times 10^{-3}}$ & \textbf{11.07\%} & \textbf{0.9988} \\
+RNN (reference)                  & $7.10\times 10^{-3}$ & 0.07826 & 0.05386 & 9.38\%  & 0.6549 \\
+GRU (reference)                  & $3.40\times 10^{-3}$ & 0.05780 & 0.03423 & 5.72\%  & 0.7513 \\
+LSTM (reference)                 & $2.70\times 10^{-3}$ & 0.05215 & 0.02622 & 4.21\%  & 0.7984 \\
+Transformer (reference)          & $1.60\times 10^{-3}$ & 0.04003 & 0.02773 & 4.63\%  & 0.8814 \\
+Base TCN (this work)             & $2.20\times 10^{-4}$ & 0.01483 & 0.01059 & 13.64\% & 0.9984 \\
+TCN-Stochastic (this work)       & $2.20\times 10^{-4}$ & 0.01483 & 0.01059 & 13.64\% & 0.9984 \\
+\textbf{Full Enhanced (this work)} & $\mathbf{1.65\times 10^{-4}}$ & \textbf{0.01283} & $\mathbf{6.50\times 10^{-3}}$ & \textbf{11.07\%} & \textbf{0.9988} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -453,16 +456,16 @@ With the validation-calibrated $\tau_{95}$ applied to the held-out test split ($
 
 \begin{figure}[H]
 \centering
-\begin{subfigure}[t]{0.49\linewidth}
+\begin{minipage}[t]{0.49\linewidth}
 \centering
-\includegraphics[width=\linewidth]{images/04_anomaly_diagnostics_base.png}
-\caption{Base TCN: percentile threshold $\tau_{95} = 1.06\times 10^{-3}$, 238 flagged windows (1.78\%).}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.49\linewidth}
+\includegraphics[width=\linewidth]{images/04_anomaly_diagnostics_base.png}\\
+\small (a) Base TCN: $\tau_{95} = 1.06\times 10^{-3}$, 238 flagged (1.78\%).
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}
 \centering
-\includegraphics[width=\linewidth]{images/05_anomaly_diagnostics_enhanced.png}
-\caption{Full Enhanced: percentile threshold $\tau_{95} = 9.88\times 10^{-4}$, 50 flagged windows (0.37\%).}
-\end{subfigure}
+\includegraphics[width=\linewidth]{images/05_anomaly_diagnostics_enhanced.png}\\
+\small (b) Full Enhanced: $\tau_{95} = 9.88\times 10^{-4}$, 50 flagged (0.37\%).
+\end{minipage}
 \caption{Anomaly detection diagnostics on the held-out test split. Per-channel reconstruction errors are overlaid with the validation-calibrated $\tau_{95}$ threshold (dashed red). Flagged windows are highlighted with markers. The Enhanced model concentrates its flags around the most clearly anomalous events while suppressing the broader low-magnitude tail visible in the Base TCN.}
 \label{fig:anomaly_diagnostics}
 \end{figure}
