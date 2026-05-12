@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.3.5)  12 MAY 2026 16:59
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.3.5)  12 MAY 2026 17:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1856,12 +1856,12 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [2]
-<figures/architecture_diagram.png, id=221, 624.4128pt x 487.8225pt>
+<figures/architecture_diagram.png, id=221, 673.5564pt x 665.8476pt>
 File: figures/architecture_diagram.png Graphic file (type png)
 <use figures/architecture_diagram.png>
 Package pdftex.def Info: figures/architecture_diagram.png  used on input line 7
 9.
-(pdftex.def)             Requested size: 362.80608pt x 283.4434pt.
+(pdftex.def)             Requested size: 362.80608pt x 358.65826pt.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
 (Font)              scaled to size 9.37807pt on input line 80.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
@@ -2125,11 +2125,11 @@ Package rerunfilecheck Info: File `main_MDPI.out' has not changed.
 (rerunfilecheck)             Checksum: 6198F6FB18A4C019B76D9E14E8644E51;6518.
  ) 
 Here is how much of TeX's memory you used:
- 39437 strings out of 474485
- 776854 string characters out of 5743735
+ 39447 strings out of 474485
+ 776941 string characters out of 5743735
  1961542 words of memory out of 5000000
  60149 multiletter control sequences out of 15000+600000
- 662820 words of font info for 602 fonts, out of 8000000 for 9000
+ 663079 words of font info for 609 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  123i,23n,124p,1895b,950s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\upsil\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt
@@ -2149,7 +2149,7 @@ s/symbols/msbm10.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/type1/
 urw/palatino/uplb8a.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/typ
 e1/urw/palatino/uplr8a.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/
 type1/urw/palatino/uplri8a.pfb>
-Output written on main_MDPI.pdf (25 pages, 2974199 bytes).
+Output written on main_MDPI.pdf (25 pages, 3211994 bytes).
 PDF statistics:
  802 PDF objects out of 1000 (max. 8388607)
  176 named destinations out of 1000 (max. 500000)
