@@ -46,26 +46,37 @@
 \citation{ghimire_electricity_2025}
 \citation{cui_sde-hnn_2025}
 \citation{vaswani2017attention}
+\citation{angelopoulos2021conformal}
+\citation{boucheron2013concentration}
+\citation{kendall2018multitask}
+\citation{wu2021current}
+\citation{lai2021revisiting}
+\citation{hundman2018detecting}
+\citation{su2019robust}
+\citation{goh2017dataset}
+\citation{mathur2016swat}
+\citation{filonov2016multivariate}
+\citation{skab_dataset}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Benchmarks and Cross-Dataset Evaluation for Time-Series Anomaly Detection}{4}{subsection.2.2}\protected@file@percent }
 \citation{xu2022anomalytransformer}
 \citation{ghimire_electricity_2025}
 \citation{cui_sde-hnn_2025}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of the proposed framework with existing approaches across key dimensions.}}{4}{table.caption.2}\protected@file@percent }
-\newlabel{table:positioning}{{1}{4}{Comparison of the proposed framework with existing approaches across key dimensions}{table.caption.2}{}}
-\newlabel{table:positioning@cref}{{[table][1][]1}{[1][4][]4}}
-\citation{ester1996dbscan}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of the proposed framework with existing approaches across key dimensions.}}{5}{table.caption.2}\protected@file@percent }
+\newlabel{table:positioning}{{1}{5}{Comparison of the proposed framework with existing approaches across key dimensions}{table.caption.2}{}}
+\newlabel{table:positioning@cref}{{[table][1][]1}{[1][5][]5}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{5}{section.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Problem Statement and Sensor-Specific Formulation}{5}{subsection.3.1}\protected@file@percent }
 \newlabel{eq:sensor_model}{{1}{5}{Problem Statement and Sensor-Specific Formulation}{equation.3.1}{}}
 \newlabel{eq:sensor_model@cref}{{[equation][1][]1}{[1][5][]5}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Feature Engineering and Preprocessing}{5}{subsection.3.2}\protected@file@percent }
-\newlabel{eq:feature_rep}{{2}{5}{Feature Engineering and Preprocessing}{equation.3.2}{}}
-\newlabel{eq:feature_rep@cref}{{[equation][2][]2}{[1][5][]5}}
+\citation{ester1996dbscan}
 \citation{bai2018tcn,oord2016wavenet}
 \citation{he2016deep}
-\citation{gal2016dropout_bayesian}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Feature Engineering and Preprocessing}{6}{subsection.3.2}\protected@file@percent }
+\newlabel{eq:feature_rep}{{2}{6}{Feature Engineering and Preprocessing}{equation.3.2}{}}
+\newlabel{eq:feature_rep@cref}{{[equation][2][]2}{[1][6][]6}}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Dataset statistics before and after DBSCAN-based outlier filtering.}}{6}{table.caption.3}\protected@file@percent }
 \newlabel{table:dataset_stats}{{2}{6}{Dataset statistics before and after DBSCAN-based outlier filtering}{table.caption.3}{}}
-\newlabel{table:dataset_stats@cref}{{[table][2][]2}{[1][5][]6}}
+\newlabel{table:dataset_stats@cref}{{[table][2][]2}{[1][6][]6}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Uncertainty-Calibrated TCN Architecture}{6}{subsection.3.3}\protected@file@percent }
 \newlabel{eq:dilated_conv}{{3}{6}{Uncertainty-Calibrated TCN Architecture}{equation.3.3}{}}
 \newlabel{eq:dilated_conv@cref}{{[equation][3][]3}{[1][6][]6}}
@@ -73,12 +84,13 @@
 \newlabel{eq:receptive_field@cref}{{[equation][4][]4}{[1][6][]6}}
 \newlabel{eq:stochastic_depth}{{5}{6}{Uncertainty-Calibrated TCN Architecture}{equation.3.5}{}}
 \newlabel{eq:stochastic_depth@cref}{{[equation][5][]5}{[1][6][]6}}
-\newlabel{eq:bayes_post}{{6}{6}{Uncertainty-Calibrated TCN Architecture}{equation.3.6}{}}
-\newlabel{eq:bayes_post@cref}{{[equation][6][]6}{[1][6][]6}}
-\newlabel{eq:mc_moments}{{7}{6}{Uncertainty-Calibrated TCN Architecture}{equation.3.7}{}}
-\newlabel{eq:mc_moments@cref}{{[equation][7][]7}{[1][6][]6}}
+\citation{gal2016dropout_bayesian}
+\newlabel{eq:bayes_post}{{6}{7}{Uncertainty-Calibrated TCN Architecture}{equation.3.6}{}}
+\newlabel{eq:bayes_post@cref}{{[equation][6][]6}{[1][7][]7}}
+\newlabel{eq:mc_moments}{{7}{7}{Uncertainty-Calibrated TCN Architecture}{equation.3.7}{}}
+\newlabel{eq:mc_moments@cref}{{[equation][7][]7}{[1][7][]7}}
 \newlabel{eq:unc_decomp}{{8}{7}{Uncertainty-Calibrated TCN Architecture}{equation.3.8}{}}
-\newlabel{eq:unc_decomp@cref}{{[equation][8][]8}{[1][6][]7}}
+\newlabel{eq:unc_decomp@cref}{{[equation][8][]8}{[1][7][]7}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Adaptive Uncertainty-Aware Attention (AUAA)}{7}{subsection.3.4}\protected@file@percent }
 \newlabel{eq:auaa_attention}{{9}{7}{Adaptive Uncertainty-Aware Attention (AUAA)}{equation.3.9}{}}
 \newlabel{eq:auaa_attention@cref}{{[equation][9][]9}{[1][7][]7}}
@@ -88,7 +100,7 @@
 \newlabel{eq:auaa_multihead@cref}{{[equation][11][]11}{[1][7][]7}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Adaptive Uncertainty-Aware Attention (AUAA) dataflow. Standard scaled dot-product attention (left column) is element-wise modulated by an uncertainty gate $g_t = 1/(1+\boldsymbol  {\sigma }_t)$ derived from MC dropout (right column). Dashed red line indicates the uncertainty feedback path that distinguishes this work from prior uncertainty-aware models, which use $\sigma _t$ only at the output layer.}}{8}{figure.caption.4}\protected@file@percent }
 \newlabel{fig:auaa}{{2}{8}{Adaptive Uncertainty-Aware Attention (AUAA) dataflow. Standard scaled dot-product attention (left column) is element-wise modulated by an uncertainty gate $g_t = 1/(1+\boldsymbol {\sigma }_t)$ derived from MC dropout (right column). Dashed red line indicates the uncertainty feedback path that distinguishes this work from prior uncertainty-aware models, which use $\sigma _t$ only at the output layer}{figure.caption.4}{}}
-\newlabel{fig:auaa@cref}{{[figure][2][]2}{[1][7][]8}}
+\newlabel{fig:auaa@cref}{{[figure][2][]2}{[1][8][]8}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Dynamic Weight Adapter for Anomaly Scoring}{8}{subsection.3.5}\protected@file@percent }
 \newlabel{eq:dynamic_weight}{{12}{8}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.12}{}}
 \newlabel{eq:dynamic_weight@cref}{{[equation][12][]12}{[1][8][]8}}
@@ -107,8 +119,8 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Anomaly Detection Pipeline}{9}{subsection.3.8}\protected@file@percent }
 \newlabel{eq:tau_percentile}{{21}{9}{Anomaly Detection Pipeline}{equation.3.21}{}}
 \newlabel{eq:tau_percentile@cref}{{[equation][21][]21}{[1][9][]9}}
-\newlabel{eq:tau_adaptive}{{22}{9}{Anomaly Detection Pipeline}{equation.3.22}{}}
-\newlabel{eq:tau_adaptive@cref}{{[equation][22][]22}{[1][9][]9}}
+\newlabel{eq:tau_adaptive}{{22}{10}{Anomaly Detection Pipeline}{equation.3.22}{}}
+\newlabel{eq:tau_adaptive@cref}{{[equation][22][]22}{[1][9][]10}}
 \newlabel{eq:tau_chebyshev}{{23}{10}{Anomaly Detection Pipeline}{equation.3.23}{}}
 \newlabel{eq:tau_chebyshev@cref}{{[equation][23][]23}{[1][10][]10}}
 \newlabel{eq:tau_distfree}{{24}{10}{Anomaly Detection Pipeline}{equation.3.24}{}}
@@ -226,12 +238,20 @@
 \bibcite{srivastava2014dropout}{{31}{2014}{{Srivastava et~al.}}{{Srivastava, Hinton, Krizhevsky, Sutskever, and Salakhutdinov}}}
 \bibcite{lakshminarayanan2017ensembles}{{32}{2017}{{Lakshminarayanan et~al.}}{{Lakshminarayanan, Pritzel, and Blundell}}}
 \bibcite{vaswani2017attention}{{33}{2017}{{Vaswani et~al.}}{{Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, and Polosukhin}}}
-\bibcite{ester1996dbscan}{{34}{1996}{{Ester et~al.}}{{Ester, Kriegel, Sander, and Xu}}}
-\bibcite{he2016deep}{{35}{2016}{{He et~al.}}{{He, Zhang, Ren, and Sun}}}
-\bibcite{kingma2015adam}{{36}{2015}{{Kingma and Ba}}{{}}}
-\bibcite{ioffe2015batchnorm}{{37}{2015}{{Ioffe and Szegedy}}{{}}}
-\bibcite{skab_dataset}{{38}{2020}{{Katser and Kozitsin}}{{}}}
-\bibcite{filonov2016multivariate}{{39}{2016}{{Filonov et~al.}}{{Filonov, Lavrentyev, and Vorontsov}}}
+\bibcite{angelopoulos2021conformal}{{34}{2021}{{Angelopoulos and Bates}}{{}}}
+\bibcite{boucheron2013concentration}{{35}{2013}{{Boucheron et~al.}}{{Boucheron, Lugosi, and Massart}}}
+\bibcite{kendall2018multitask}{{36}{2018}{{Kendall et~al.}}{{Kendall, Gal, and Cipolla}}}
+\bibcite{wu2021current}{{37}{2023}{{Wu and Keogh}}{{}}}
+\bibcite{lai2021revisiting}{{38}{2021}{{Lai et~al.}}{{Lai, Zha, Xu, Zhao, Xu, and Hu}}}
+\bibcite{hundman2018detecting}{{39}{2018}{{Hundman et~al.}}{{Hundman, Constantinou, Laporte, Colwell, and Soderstrom}}}
+\bibcite{su2019robust}{{40}{2019}{{Su et~al.}}{{Su, Zhao, Niu, Liu, Sun, and Pei}}}
+\bibcite{mathur2016swat}{{41}{2016}{{Mathur and Tippenhauer}}{{}}}
+\bibcite{filonov2016multivariate}{{42}{2016}{{Filonov et~al.}}{{Filonov, Lavrentyev, and Vorontsov}}}
+\bibcite{skab_dataset}{{43}{2020}{{Katser and Kozitsin}}{{}}}
+\bibcite{ester1996dbscan}{{44}{1996}{{Ester et~al.}}{{Ester, Kriegel, Sander, and Xu}}}
+\bibcite{he2016deep}{{45}{2016}{{He et~al.}}{{He, Zhang, Ren, and Sun}}}
+\bibcite{kingma2015adam}{{46}{2015}{{Kingma and Ba}}{{}}}
+\bibcite{ioffe2015batchnorm}{{47}{2015}{{Ioffe and Szegedy}}{{}}}
 \newlabel{LastPage}{{}{25}{}{page.25}{}}
 \xdef\lastpage@lastpage{25}
 \xdef\lastpage@lastpageHy{25}

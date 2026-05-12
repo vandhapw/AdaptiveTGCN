@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.3.5)  12 MAY 2026 15:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.3.5)  12 MAY 2026 16:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1735,13 +1735,13 @@ Package epstopdf Info: Source file: <Definitions/logo-mdpi.eps>
 i-eps-converted-to.pdf Definitions/logo-mdpi.eps>
 (epstopdf)             \includegraphics on input line 53.
 Package epstopdf Info: Output file is already uptodate.
-<Definitions/logo-mdpi-eps-converted-to.pdf, id=153, 74.2775pt x 49.18375pt>
+<Definitions/logo-mdpi-eps-converted-to.pdf, id=157, 74.2775pt x 49.18375pt>
 File: Definitions/logo-mdpi-eps-converted-to.pdf Graphic file (type pdf)
 <use Definitions/logo-mdpi-eps-converted-to.pdf>
 Package pdftex.def Info: Definitions/logo-mdpi-eps-converted-to.pdf  used on in
 put line 53.
 (pdftex.def)             Requested size: 42.96877pt x 28.45274pt.
-<Definitions/logo-orcid.pdf, id=155, 102.3825pt x 102.3825pt>
+<Definitions/logo-orcid.pdf, id=159, 102.3825pt x 102.3825pt>
 File: Definitions/logo-orcid.pdf Graphic file (type pdf)
 <use Definitions/logo-orcid.pdf>
 Package pdftex.def Info: Definitions/logo-orcid.pdf  used on input line 53.
@@ -1800,7 +1800,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [2]
-<figures/architecture_diagram.png, id=217, 624.4128pt x 487.8225pt>
+<figures/architecture_diagram.png, id=221, 624.4128pt x 487.8225pt>
 File: figures/architecture_diagram.png Graphic file (type png)
 <use figures/architecture_diagram.png>
 Package pdftex.def Info: figures/architecture_diagram.png  used on input line 7
@@ -1830,7 +1830,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
-[4] (tables/dataset_stats.tex)
+[4]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 18.18796pt, for example:
@@ -1838,7 +1838,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
-[5]
+[5] (tables/dataset_stats.tex)
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 18.18796pt, for example:
@@ -1906,11 +1906,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [12]
-<images/07_time_series_illustration.png, id=410, 704.27115pt x 625.1355pt>
+<images/07_time_series_illustration.png, id=437, 704.27115pt x 625.1355pt>
 File: images/07_time_series_illustration.png Graphic file (type png)
 <use images/07_time_series_illustration.png>
 Package pdftex.def Info: images/07_time_series_illustration.png  used on input 
-line 403.
+line 407.
 (pdftex.def)             Requested size: 394.35522pt x 350.04486pt.
 
 
@@ -1921,12 +1921,12 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [13 <./images/07_time_series_illustration.png>]
-<images/03_prediction_intervals_enhanced.png, id=433, 1003.8303pt x 682.9515pt>
+<images/03_prediction_intervals_enhanced.png, id=460, 1003.8303pt x 682.9515pt>
 
 File: images/03_prediction_intervals_enhanced.png Graphic file (type png)
 <use images/03_prediction_intervals_enhanced.png>
 Package pdftex.def Info: images/03_prediction_intervals_enhanced.png  used on i
-nput line 443.
+nput line 447.
 (pdftex.def)             Requested size: 394.35522pt x 268.29874pt.
 
 
@@ -1945,10 +1945,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [15 <./images/03_prediction_intervals_enhanced.png>]
-<images/06_ablation_summary.png, id=450, 931.5603pt x 357.2547pt>
+<images/06_ablation_summary.png, id=477, 931.5603pt x 357.2547pt>
 File: images/06_ablation_summary.png Graphic file (type png)
 <use images/06_ablation_summary.png>
-Package pdftex.def Info: images/06_ablation_summary.png  used on input line 475
+Package pdftex.def Info: images/06_ablation_summary.png  used on input line 479
 .
 (pdftex.def)             Requested size: 335.20435pt x 128.55162pt.
  (tables/skab_results.tex)
@@ -1960,17 +1960,17 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [16 <./images/06_ablation_summary.png>]
-<images/04_anomaly_diagnostics_base.png, id=468, 1003.5894pt x 569.2467pt>
+<images/04_anomaly_diagnostics_base.png, id=493, 1003.5894pt x 569.2467pt>
 File: images/04_anomaly_diagnostics_base.png Graphic file (type png)
 <use images/04_anomaly_diagnostics_base.png>
 Package pdftex.def Info: images/04_anomaly_diagnostics_base.png  used on input 
-line 499.
+line 503.
 (pdftex.def)             Requested size: 193.23622pt x 109.59987pt.
-<images/05_anomaly_diagnostics_enhanced.png, id=469, 1003.8303pt x 569.7285pt>
+<images/05_anomaly_diagnostics_enhanced.png, id=494, 1003.8303pt x 569.7285pt>
 File: images/05_anomaly_diagnostics_enhanced.png Graphic file (type png)
 <use images/05_anomaly_diagnostics_enhanced.png>
 Package pdftex.def Info: images/05_anomaly_diagnostics_enhanced.png  used on in
-put line 504.
+put line 508.
 (pdftex.def)             Requested size: 193.23622pt x 109.66655pt.
 
 
@@ -1998,11 +1998,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [19]
-<images/08_uncertainty_calibration.png, id=503, 786.38794pt x 292.2418pt>
+<images/08_uncertainty_calibration.png, id=528, 786.38794pt x 292.2418pt>
 File: images/08_uncertainty_calibration.png Graphic file (type png)
 <use images/08_uncertainty_calibration.png>
 Package pdftex.def Info: images/08_uncertainty_calibration.png  used on input l
-ine 575.
+ine 579.
 (pdftex.def)             Requested size: 394.35522pt x 146.55307pt.
 
 
@@ -2021,7 +2021,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [21]
-Overfull \hbox (8.40965pt too wide) in paragraph at lines 609--609
+Overfull \hbox (8.40965pt too wide) in paragraph at lines 613--613
 \T1/ppl/m/n/9 (-20) com / vandhapw / datasets / refs / heads / main / df _ norm
 al . csv$[][]. Code at: [][]$https : / / github . com / vandhapw /
  []
@@ -2066,14 +2066,14 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
  ***********
 Package rerunfilecheck Info: File `main_MDPI.out' has not changed.
-(rerunfilecheck)             Checksum: 286FE1735E98103D44615174F4787081;6075.
+(rerunfilecheck)             Checksum: 6198F6FB18A4C019B76D9E14E8644E51;6518.
  ) 
 Here is how much of TeX's memory you used:
- 39403 strings out of 474485
- 775960 string characters out of 5743735
+ 39440 strings out of 474485
+ 776837 string characters out of 5743735
  1960542 words of memory out of 5000000
- 60121 multiletter control sequences out of 15000+600000
- 662959 words of font info for 604 fonts, out of 8000000 for 9000
+ 60146 multiletter control sequences out of 15000+600000
+ 663118 words of font info for 606 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  123i,23n,124p,1892b,950s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\upsil\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt
@@ -2093,9 +2093,9 @@ s/symbols/msbm10.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/type1/
 urw/palatino/uplb8a.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/typ
 e1/urw/palatino/uplr8a.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/
 type1/urw/palatino/uplri8a.pfb>
-Output written on main_MDPI.pdf (25 pages, 2962350 bytes).
+Output written on main_MDPI.pdf (25 pages, 2971800 bytes).
 PDF statistics:
- 769 PDF objects out of 1000 (max. 8388607)
- 167 named destinations out of 1000 (max. 500000)
- 118154 words of extra memory for PDF output out of 128383 (max. 10000000)
+ 801 PDF objects out of 1000 (max. 8388607)
+ 176 named destinations out of 1000 (max. 500000)
+ 118162 words of extra memory for PDF output out of 128383 (max. 10000000)
 
