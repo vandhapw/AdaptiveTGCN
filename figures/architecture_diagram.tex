@@ -44,38 +44,36 @@
 % ============================================================
 % TCN BACKBONE (3 layers) — Dilated Causal Convolutions illustration
 % ============================================================
-\node [block, tcnColor, below=of features, minimum width=8.0cm, minimum height=4.6cm] (tcn) {
-    \textbf{TCN Backbone: Dilated Causal Convolutions}\\[3pt]
+\node [block, tcnColor, below=of features, minimum width=7.2cm, minimum height=3.2cm] (tcn) {
+    \textbf{TCN Backbone: Dilated Causal Convolutions}\\[2pt]
     \begin{tikzpicture}[
         every node/.style={font=\tiny},
-        tcnnode/.style={circle, draw=teal!65, fill=white, line width=0.4pt, minimum size=0.30cm, inner sep=0},
-        active/.style={circle, draw=red!75, fill=red!18, line width=0.7pt, minimum size=0.30cm, inner sep=0},
-        rfconn/.style={->, red!75, thick, >={Stealth[scale=0.5]}},
-        bgconn/.style={->, gray!40, line width=0.25pt, >={Stealth[scale=0.4]}}
+        tcnnode/.style={circle, draw=teal!50, fill=white, line width=0.3pt, minimum size=0.22cm, inner sep=0},
+        active/.style={circle, draw=red!75, fill=red!22, line width=0.6pt, minimum size=0.22cm, inner sep=0},
+        rfconn/.style={->, red!75, line width=0.6pt, >={Stealth[scale=0.4]}}
     ]
-        % Row positions
-        \def\dx{0.62}
-        \def\dy{0.85}
+        \def\dx{0.48}
+        \def\dy{0.55}
         % Layer L0 (input) — bottom row
         \foreach \i in {1,...,8} {
             \node[tcnnode] (l0_\i) at (\i*\dx, 0) {};
         }
-        \node[anchor=east, font=\scriptsize\bfseries] at (0.55, 0) {Input $\mathbf{x}$};
+        \node[anchor=east, font=\tiny\bfseries] at (0.42, 0) {Input $\mathbf{x}$};
         % Layer L1 (d=1)
         \foreach \i in {1,...,8} {
             \node[tcnnode] (l1_\i) at (\i*\dx, \dy) {};
         }
-        \node[anchor=east, font=\scriptsize] at (0.55, \dy) {$L_1$ ($d{=}1$)};
+        \node[anchor=east, font=\tiny] at (0.42, \dy) {$L_1$ ($d{=}1$)};
         % Layer L2 (d=2)
         \foreach \i in {1,...,8} {
             \node[tcnnode] (l2_\i) at (\i*\dx, 2*\dy) {};
         }
-        \node[anchor=east, font=\scriptsize] at (0.55, 2*\dy) {$L_2$ ($d{=}2$)};
+        \node[anchor=east, font=\tiny] at (0.42, 2*\dy) {$L_2$ ($d{=}2$)};
         % Layer L3 (d=4)
         \foreach \i in {1,...,8} {
             \node[tcnnode] (l3_\i) at (\i*\dx, 3*\dy) {};
         }
-        \node[anchor=east, font=\scriptsize] at (0.55, 3*\dy) {$L_3$ ($d{=}4$)};
+        \node[anchor=east, font=\tiny] at (0.42, 3*\dy) {$L_3$ ($d{=}4$)};
         % Active receptive-field nodes (path to rightmost output)
         \node[active] at (l0_1) {}; \node[active] at (l0_2) {};
         \node[active] at (l0_3) {}; \node[active] at (l0_4) {};
@@ -85,15 +83,8 @@
         \node[active] at (l1_6) {}; \node[active] at (l1_8) {};
         \node[active] at (l2_4) {}; \node[active] at (l2_8) {};
         \node[active] at (l3_8) {};
-        \node[anchor=west, font=\scriptsize\bfseries, text=red!75] at ($(l3_8.east)+(0.1,0)$) {$\hat{y}_t$};
-        % Background light grey edges (full dilation pattern, all positions)
-        \foreach \i in {1,...,8} { \draw[bgconn] (l0_\i) -- (l1_\i); }
-        \foreach \i in {2,...,8} { \pgfmathtruncatemacro{\j}{\i-1} \draw[bgconn] (l0_\j) -- (l1_\i); }
-        \foreach \i in {1,...,8} { \draw[bgconn] (l1_\i) -- (l2_\i); }
-        \foreach \i in {3,...,8} { \pgfmathtruncatemacro{\j}{\i-2} \draw[bgconn] (l1_\j) -- (l2_\i); }
-        \foreach \i in {1,...,8} { \draw[bgconn] (l2_\i) -- (l3_\i); }
-        \foreach \i in {5,...,8} { \pgfmathtruncatemacro{\j}{\i-4} \draw[bgconn] (l2_\j) -- (l3_\i); }
-        % Receptive-field path to l3_8 (highlight)
+        \node[anchor=west, font=\tiny\bfseries, text=red!75] at ($(l3_8.east)+(0.08,0)$) {$\hat{y}_t$};
+        % Receptive-field path to l3_8 ONLY (no background grey edges — much cleaner)
         \draw[rfconn] (l2_8) -- (l3_8);
         \draw[rfconn] (l2_4) -- (l3_8);
         \draw[rfconn] (l1_8) -- (l2_8);
@@ -108,8 +99,8 @@
         \draw[rfconn] (l0_3) -- (l1_4);
         \draw[rfconn] (l0_2) -- (l1_2);
         \draw[rfconn] (l0_1) -- (l1_2);
-    \end{tikzpicture}\\[2pt]
-    {\scriptsize Kernel $k=2$, channels 64; receptive field $\mathrm{RF} = 1+(k-1)\sum_{l} d_l = 8$. Causal padding + WeightNorm + ReLU + Stochastic Depth.}
+    \end{tikzpicture}\\[1pt]
+    {\scriptsize $k=2$, 64 channels; receptive field $\mathrm{RF} = 1+(k-1)\sum_l d_l = 8$}
 };
 
 % ============================================================
