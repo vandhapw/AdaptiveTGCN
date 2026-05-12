@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.3.5)  12 MAY 2026 16:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.3.5)  12 MAY 2026 16:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1704,6 +1704,62 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\times' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\times' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 53.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `\leavevmode@ifvmode' on input line 53.
 
 
@@ -1998,7 +2054,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18796pt}.
 
 [19]
-<images/08_uncertainty_calibration.png, id=528, 786.38794pt x 292.2418pt>
+<images/08_uncertainty_calibration.png, id=529, 786.38794pt x 292.2418pt>
 File: images/08_uncertainty_calibration.png Graphic file (type png)
 <use images/08_uncertainty_calibration.png>
 Package pdftex.def Info: images/08_uncertainty_calibration.png  used on input l
@@ -2069,13 +2125,13 @@ Package rerunfilecheck Info: File `main_MDPI.out' has not changed.
 (rerunfilecheck)             Checksum: 6198F6FB18A4C019B76D9E14E8644E51;6518.
  ) 
 Here is how much of TeX's memory you used:
- 39440 strings out of 474485
- 776837 string characters out of 5743735
- 1960542 words of memory out of 5000000
- 60146 multiletter control sequences out of 15000+600000
- 663118 words of font info for 606 fonts, out of 8000000 for 9000
+ 39437 strings out of 474485
+ 776854 string characters out of 5743735
+ 1961542 words of memory out of 5000000
+ 60149 multiletter control sequences out of 15000+600000
+ 662820 words of font info for 602 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 123i,23n,124p,1892b,950s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 123i,23n,124p,1895b,950s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\upsil\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt
 0900.pk> <C:\Users\upsil\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
 0\ectt1000.pk> <C:\Users\upsil\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec
@@ -2093,9 +2149,9 @@ s/symbols/msbm10.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/type1/
 urw/palatino/uplb8a.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/typ
 e1/urw/palatino/uplr8a.pfb><C:/Users/upsil/AppData/Local/Programs/MiKTeX/fonts/
 type1/urw/palatino/uplri8a.pfb>
-Output written on main_MDPI.pdf (25 pages, 2971800 bytes).
+Output written on main_MDPI.pdf (25 pages, 2974199 bytes).
 PDF statistics:
- 801 PDF objects out of 1000 (max. 8388607)
+ 802 PDF objects out of 1000 (max. 8388607)
  176 named destinations out of 1000 (max. 500000)
  118162 words of extra memory for PDF output out of 128383 (max. 10000000)
 

@@ -16,13 +16,19 @@
 \citation{xu2022anomalytransformer}
 \citation{bai2018tcn}
 \citation{gal2016dropout_bayesian}
-\citation{goh2017dataset}
+\citation{skab_dataset}
 \citation{pang2021deep_survey}
 \citation{hochreiter1997lstm}
 \citation{cho2014gru}
 \citation{bai2018tcn}
 \citation{oord2016wavenet}
 \citation{zhang2020tcn_review}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Architecture of the proposed uncertainty-calibrated TCN framework for multivariate sensor anomaly detection. Three innovations address three sensor-specific challenges: \textbf  {(1)} Adaptive Uncertainty-Aware Attention (AUAA) gates temporal attention by per-sensor predictive uncertainty $\boldsymbol  {\sigma }_t$, closing the loop between uncertainty estimation and attention computation; \textbf  {(2)} the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; \textbf  {(3)} the Feature-Attribution Learner produces per-sensor importance scores with Chebyshev-based false-positive-rate guarantees. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc.}}{3}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:architecture}{{1}{3}{Architecture of the proposed uncertainty-calibrated TCN framework for multivariate sensor anomaly detection. Three innovations address three sensor-specific challenges: \textbf {(1)} Adaptive Uncertainty-Aware Attention (AUAA) gates temporal attention by per-sensor predictive uncertainty $\boldsymbol {\sigma }_t$, closing the loop between uncertainty estimation and attention computation; \textbf {(2)} the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; \textbf {(3)} the Feature-Attribution Learner produces per-sensor importance scores with Chebyshev-based false-positive-rate guarantees. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc}{figure.caption.1}{}}
+\newlabel{fig:architecture@cref}{{[figure][1][]1}{[1][3][]3}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Works}{3}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Deep Anomaly Detection in Multivariate Time Series}{3}{subsection.2.1}\protected@file@percent }
 \citation{thill_temporal_2021}
 \citation{wang_tcn-linear_2024}
 \citation{mehta_nac-tcn_2023}
@@ -33,12 +39,6 @@
 \citation{zhou2021informer}
 \citation{wu2022timesnet}
 \citation{zhao2020mtadgat}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Architecture of the proposed uncertainty-calibrated TCN framework for multivariate sensor anomaly detection. Three innovations address three sensor-specific challenges: \textbf  {(1)} Adaptive Uncertainty-Aware Attention (AUAA) gates temporal attention by per-sensor predictive uncertainty $\boldsymbol  {\sigma }_t$, closing the loop between uncertainty estimation and attention computation; \textbf  {(2)} the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; \textbf  {(3)} the Feature-Attribution Learner produces per-sensor importance scores with Chebyshev-based false-positive-rate guarantees. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc.}}{3}{figure.caption.1}\protected@file@percent }
-\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:architecture}{{1}{3}{Architecture of the proposed uncertainty-calibrated TCN framework for multivariate sensor anomaly detection. Three innovations address three sensor-specific challenges: \textbf {(1)} Adaptive Uncertainty-Aware Attention (AUAA) gates temporal attention by per-sensor predictive uncertainty $\boldsymbol {\sigma }_t$, closing the loop between uncertainty estimation and attention computation; \textbf {(2)} the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; \textbf {(3)} the Feature-Attribution Learner produces per-sensor importance scores with Chebyshev-based false-positive-rate guarantees. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc}{figure.caption.1}{}}
-\newlabel{fig:architecture@cref}{{[figure][1][]1}{[1][3][]3}}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Related Works}{3}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Deep Anomaly Detection in Multivariate Time Series}{3}{subsection.2.1}\protected@file@percent }
 \citation{kendall2017uncertainties}
 \citation{gal2016dropout_bayesian}
 \citation{srivastava2014dropout}
@@ -57,10 +57,10 @@
 \citation{mathur2016swat}
 \citation{filonov2016multivariate}
 \citation{skab_dataset}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Benchmarks and Cross-Dataset Evaluation for Time-Series Anomaly Detection}{4}{subsection.2.2}\protected@file@percent }
 \citation{xu2022anomalytransformer}
 \citation{ghimire_electricity_2025}
 \citation{cui_sde-hnn_2025}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Benchmarks and Cross-Dataset Evaluation for Time-Series Anomaly Detection}{5}{subsection.2.2}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of the proposed framework with existing approaches across key dimensions.}}{5}{table.caption.2}\protected@file@percent }
 \newlabel{table:positioning}{{1}{5}{Comparison of the proposed framework with existing approaches across key dimensions}{table.caption.2}{}}
 \newlabel{table:positioning@cref}{{[table][1][]1}{[1][5][]5}}
@@ -82,9 +82,9 @@
 \newlabel{eq:dilated_conv@cref}{{[equation][3][]3}{[1][6][]6}}
 \newlabel{eq:receptive_field}{{4}{6}{Uncertainty-Calibrated TCN Architecture}{equation.3.4}{}}
 \newlabel{eq:receptive_field@cref}{{[equation][4][]4}{[1][6][]6}}
-\newlabel{eq:stochastic_depth}{{5}{6}{Uncertainty-Calibrated TCN Architecture}{equation.3.5}{}}
-\newlabel{eq:stochastic_depth@cref}{{[equation][5][]5}{[1][6][]6}}
 \citation{gal2016dropout_bayesian}
+\newlabel{eq:stochastic_depth}{{5}{7}{Uncertainty-Calibrated TCN Architecture}{equation.3.5}{}}
+\newlabel{eq:stochastic_depth@cref}{{[equation][5][]5}{[1][6][]7}}
 \newlabel{eq:bayes_post}{{6}{7}{Uncertainty-Calibrated TCN Architecture}{equation.3.6}{}}
 \newlabel{eq:bayes_post@cref}{{[equation][6][]6}{[1][7][]7}}
 \newlabel{eq:mc_moments}{{7}{7}{Uncertainty-Calibrated TCN Architecture}{equation.3.7}{}}
@@ -96,18 +96,18 @@
 \newlabel{eq:auaa_attention@cref}{{[equation][9][]9}{[1][7][]7}}
 \newlabel{eq:auaa_gate}{{10}{7}{Adaptive Uncertainty-Aware Attention (AUAA)}{equation.3.10}{}}
 \newlabel{eq:auaa_gate@cref}{{[equation][10][]10}{[1][7][]7}}
-\newlabel{eq:auaa_multihead}{{11}{7}{Adaptive Uncertainty-Aware Attention (AUAA)}{equation.3.11}{}}
-\newlabel{eq:auaa_multihead@cref}{{[equation][11][]11}{[1][7][]7}}
+\newlabel{eq:auaa_multihead}{{11}{8}{Adaptive Uncertainty-Aware Attention (AUAA)}{equation.3.11}{}}
+\newlabel{eq:auaa_multihead@cref}{{[equation][11][]11}{[1][7][]8}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Adaptive Uncertainty-Aware Attention (AUAA) dataflow. Standard scaled dot-product attention (left column) is element-wise modulated by an uncertainty gate $g_t = 1/(1+\boldsymbol  {\sigma }_t)$ derived from MC dropout (right column). Dashed red line indicates the uncertainty feedback path that distinguishes this work from prior uncertainty-aware models, which use $\sigma _t$ only at the output layer.}}{8}{figure.caption.4}\protected@file@percent }
 \newlabel{fig:auaa}{{2}{8}{Adaptive Uncertainty-Aware Attention (AUAA) dataflow. Standard scaled dot-product attention (left column) is element-wise modulated by an uncertainty gate $g_t = 1/(1+\boldsymbol {\sigma }_t)$ derived from MC dropout (right column). Dashed red line indicates the uncertainty feedback path that distinguishes this work from prior uncertainty-aware models, which use $\sigma _t$ only at the output layer}{figure.caption.4}{}}
 \newlabel{fig:auaa@cref}{{[figure][2][]2}{[1][8][]8}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Dynamic Weight Adapter for Anomaly Scoring}{8}{subsection.3.5}\protected@file@percent }
 \newlabel{eq:dynamic_weight}{{12}{8}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.12}{}}
 \newlabel{eq:dynamic_weight@cref}{{[equation][12][]12}{[1][8][]8}}
-\newlabel{eq:dw_gru}{{16}{8}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.16}{}}
-\newlabel{eq:dw_gru@cref}{{[equation][16][]16}{[1][8][]8}}
-\newlabel{eq:hybrid_score}{{17}{8}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.17}{}}
-\newlabel{eq:hybrid_score@cref}{{[equation][17][]17}{[1][8][]8}}
+\newlabel{eq:dw_gru}{{16}{9}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.16}{}}
+\newlabel{eq:dw_gru@cref}{{[equation][16][]16}{[1][8][]9}}
+\newlabel{eq:hybrid_score}{{17}{9}{Dynamic Weight Adapter for Anomaly Scoring}{equation.3.17}{}}
+\newlabel{eq:hybrid_score@cref}{{[equation][17][]17}{[1][9][]9}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Feature-Level Anomaly Attribution}{9}{subsection.3.6}\protected@file@percent }
 \newlabel{eq:feature_importance}{{18}{9}{Feature-Level Anomaly Attribution}{equation.3.18}{}}
 \newlabel{eq:feature_importance@cref}{{[equation][18][]18}{[1][9][]9}}
@@ -116,11 +116,11 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.7}Composite Loss Function}{9}{subsection.3.7}\protected@file@percent }
 \newlabel{eq:loss}{{20}{9}{Composite Loss Function}{equation.3.20}{}}
 \newlabel{eq:loss@cref}{{[equation][20][]20}{[1][9][]9}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Anomaly Detection Pipeline}{9}{subsection.3.8}\protected@file@percent }
-\newlabel{eq:tau_percentile}{{21}{9}{Anomaly Detection Pipeline}{equation.3.21}{}}
-\newlabel{eq:tau_percentile@cref}{{[equation][21][]21}{[1][9][]9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Anomaly Detection Pipeline}{10}{subsection.3.8}\protected@file@percent }
+\newlabel{eq:tau_percentile}{{21}{10}{Anomaly Detection Pipeline}{equation.3.21}{}}
+\newlabel{eq:tau_percentile@cref}{{[equation][21][]21}{[1][10][]10}}
 \newlabel{eq:tau_adaptive}{{22}{10}{Anomaly Detection Pipeline}{equation.3.22}{}}
-\newlabel{eq:tau_adaptive@cref}{{[equation][22][]22}{[1][9][]10}}
+\newlabel{eq:tau_adaptive@cref}{{[equation][22][]22}{[1][10][]10}}
 \newlabel{eq:tau_chebyshev}{{23}{10}{Anomaly Detection Pipeline}{equation.3.23}{}}
 \newlabel{eq:tau_chebyshev@cref}{{[equation][23][]23}{[1][10][]10}}
 \newlabel{eq:tau_distfree}{{24}{10}{Anomaly Detection Pipeline}{equation.3.24}{}}
@@ -219,7 +219,7 @@
 \bibcite{xu2022anomalytransformer}{{13}{2022}{{Xu et~al.}}{{Xu, Wu, Wang, and Long}}}
 \bibcite{bai2018tcn}{{14}{2018}{{Bai et~al.}}{{Bai, Kolter, and Koltun}}}
 \bibcite{gal2016dropout_bayesian}{{15}{2016}{{Gal and Ghahramani}}{{}}}
-\bibcite{goh2017dataset}{{16}{2017}{{Goh et~al.}}{{Goh, Adepu, Junejo, and Mathur}}}
+\bibcite{skab_dataset}{{16}{2020}{{Katser and Kozitsin}}{{}}}
 \bibcite{hochreiter1997lstm}{{17}{1997}{{Hochreiter and Schmidhuber}}{{}}}
 \bibcite{cho2014gru}{{18}{2014}{{Cho et~al.}}{{Cho, van Merri{\"e}nboer, Gulcehre, Bahdanau, Bougares, Schwenk, and Bengio}}}
 \bibcite{oord2016wavenet}{{19}{2016}{{van~den Oord et~al.}}{{van~den Oord, Dieleman, Zen, Simonyan, Vinyals, Graves, Kalchbrenner, Senior, and Kavukcuoglu}}}
@@ -245,9 +245,9 @@
 \bibcite{lai2021revisiting}{{38}{2021}{{Lai et~al.}}{{Lai, Zha, Xu, Zhao, Xu, and Hu}}}
 \bibcite{hundman2018detecting}{{39}{2018}{{Hundman et~al.}}{{Hundman, Constantinou, Laporte, Colwell, and Soderstrom}}}
 \bibcite{su2019robust}{{40}{2019}{{Su et~al.}}{{Su, Zhao, Niu, Liu, Sun, and Pei}}}
-\bibcite{mathur2016swat}{{41}{2016}{{Mathur and Tippenhauer}}{{}}}
-\bibcite{filonov2016multivariate}{{42}{2016}{{Filonov et~al.}}{{Filonov, Lavrentyev, and Vorontsov}}}
-\bibcite{skab_dataset}{{43}{2020}{{Katser and Kozitsin}}{{}}}
+\bibcite{goh2017dataset}{{41}{2017}{{Goh et~al.}}{{Goh, Adepu, Junejo, and Mathur}}}
+\bibcite{mathur2016swat}{{42}{2016}{{Mathur and Tippenhauer}}{{}}}
+\bibcite{filonov2016multivariate}{{43}{2016}{{Filonov et~al.}}{{Filonov, Lavrentyev, and Vorontsov}}}
 \bibcite{ester1996dbscan}{{44}{1996}{{Ester et~al.}}{{Ester, Kriegel, Sander, and Xu}}}
 \bibcite{he2016deep}{{45}{2016}{{He et~al.}}{{He, Zhang, Ren, and Sun}}}
 \bibcite{kingma2015adam}{{46}{2015}{{Kingma and Ba}}{{}}}

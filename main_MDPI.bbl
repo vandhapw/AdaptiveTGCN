@@ -104,12 +104,13 @@ Gal, Y.; Ghahramani, Z.
   in Deep Learning.
 \newblock {\em JMLR: W\&CP} {\bf 2016}, {\em 48}.
 
-\bibitem[Goh et~al.(2017)Goh, Adepu, Junejo, and Mathur]{goh2017dataset}
-Goh, J.; Adepu, S.; Junejo, K.N.; Mathur, A.
-\newblock Anomaly detection in cyber-physical systems using recurrent neural
-  networks.
-\newblock In Proceedings of the 2017 IEEE 18th International Symposium on High
-  Assurance Systems Engineering (HASE). IEEE,  2017, pp. 140--145.
+\bibitem[Katser and Kozitsin(2020)]{skab_dataset}
+Katser, I.D.; Kozitsin, V.O.
+\newblock Skoltech Anomaly Benchmark ({SKAB}).
+\newblock \url{https://github.com/waico/SKAB},  2020.
+\newblock Version 0.9; multivariate sensor time-series with point-anomaly and
+  changepoint labels from an industrial water-circulation testbed at Skoltech,
+  {\url{https://doi.org/10.34740/kaggle/dsv/1693952}}.
 
 \bibitem[Hochreiter and Schmidhuber(1997)]{hochreiter1997lstm}
 Hochreiter, S.; Schmidhuber, J.
@@ -286,6 +287,13 @@ Su, Y.; Zhao, Y.; Niu, J.; Liu, R.; Sun, W.; Pei, D.
   International Conference on Knowledge Discovery and Data Mining (KDD),  2019,
   pp. 2828--2837.
 
+\bibitem[Goh et~al.(2017)Goh, Adepu, Junejo, and Mathur]{goh2017dataset}
+Goh, J.; Adepu, S.; Junejo, K.N.; Mathur, A.
+\newblock Anomaly detection in cyber-physical systems using recurrent neural
+  networks.
+\newblock In Proceedings of the 2017 IEEE 18th International Symposium on High
+  Assurance Systems Engineering (HASE). IEEE,  2017, pp. 140--145.
+
 \bibitem[Mathur and Tippenhauer(2016)]{mathur2016swat}
 Mathur, A.P.; Tippenhauer, N.O.
 \newblock {SWaT}: A Water Treatment Testbed for Research and Training on {ICS}
@@ -301,14 +309,6 @@ Filonov, P.; Lavrentyev, A.; Vorontsov, A.
   Fault Detection Using an {LSTM}-based Predictive Data Model.
 \newblock In Proceedings of the NIPS Time Series Workshop,  2016.
 \newblock Origin of the Skoltech water-circulation testbed reused for SKAB.
-
-\bibitem[Katser and Kozitsin(2020)]{skab_dataset}
-Katser, I.D.; Kozitsin, V.O.
-\newblock Skoltech Anomaly Benchmark ({SKAB}).
-\newblock \url{https://github.com/waico/SKAB},  2020.
-\newblock Version 0.9; multivariate sensor time-series with point-anomaly and
-  changepoint labels from an industrial water-circulation testbed at Skoltech,
-  {\url{https://doi.org/10.34740/kaggle/dsv/1693952}}.
 
 \bibitem[Ester et~al.(1996)Ester, Kriegel, Sander, and Xu]{ester1996dbscan}
 Ester, M.; Kriegel, H.P.; Sander, J.; Xu, X.
