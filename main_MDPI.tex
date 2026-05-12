@@ -353,7 +353,7 @@ A 4-week slice of the cleaned five-channel sensor stream is shown in \cref{fig:t
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{images/07_time_series_illustration.png}
-\caption{Indoor air quality sensor stream over a 4-week slice ($\approx 40{,}320$ readings at 1-minute resolution). Five channels exhibit heterogeneous dynamics: step changes (CO\textsubscript{2}, VOC), slow diurnal cycles (temperature, humidity), and transient spikes (dust). This temporal heterogeneity motivates the sensor-aware design choices in the proposed framework.}
+\caption{Multivariate indoor air quality sensor stream over a 4-week slice ($\approx 40{,}320$ readings per channel at 1-minute resolution). Panels~(a)--(e) show CO\textsubscript{2}, VOC, temperature, humidity, and PM\textsubscript{2.5} dust respectively. For each channel the running signal is overlaid with its mean (dashed) and the 5th--95th percentile interquantile band (shaded). Panel-level summary statistics ($\mu$, $\sigma$, 5\%/95\% quantiles) are annotated in the upper right of each subplot. Faint vertical dotted lines mark week boundaries. Five channels exhibit clearly heterogeneous dynamics: step changes (CO\textsubscript{2}, VOC), slow diurnal cycles (temperature, humidity), and transient spikes (dust), motivating the sensor-aware design choices in the proposed framework.}
 \label{fig:time_series}
 \end{figure}
 
