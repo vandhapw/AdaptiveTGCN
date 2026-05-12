@@ -1,18 +1,20 @@
-\documentclass[tikz,border=10pt]{standalone}
-\usepackage{tikz}
-\usepackage{pifont}
-\usetikzlibrary{shapes,arrows.meta,positioning,calc,fit,backgrounds}
+% \documentclass[tikz,border=10pt]{standalone}
+% \usepackage{tikz}
+% \usepackage{pifont}
+% \usetikzlibrary{shapes,arrows.meta,positioning,calc,fit,backgrounds}
 
-\begin{document}
+% \begin{document}
 \begin{tikzpicture}[
-    node distance=0.85cm,
+    node distance=0.75cm,
+    scale=0.80,
+    transform shape,
     % --- Color palette ---
-    inputColor/.style={fill=blue!8, draw=blue!40, thick},
-    tcnColor/.style={fill=teal!10, draw=teal!50, thick},
-    auaaColor/.style={fill=orange!15, draw=orange!70, thick},
-    adapterColor/.style={fill=purple!12, draw=purple!65, thick},
-    attribColor/.style={fill=green!12, draw=green!60, thick},
-    outputColor/.style={fill=green!18, draw=green!70, very thick},
+    inputColor/.style={fill=blue!10, draw=blue!55!black, thick},
+    tcnColor/.style={fill=cyan!10, draw=cyan!55!black, thick},
+    auaaColor/.style={fill=orange!12, draw=orange!65!black, thick},
+    adapterColor/.style={fill=violet!10, draw=violet!60!black, thick},
+    attribColor/.style={fill=green!10, draw=green!60!black, thick},
+    outputColor/.style={fill=red!10, draw=red!60!black, thick},
     % --- Block styles ---
     block/.style={rectangle, rounded corners=3pt, draw, minimum width=2.6cm, minimum height=0.9cm, align=center, font=\footnotesize\bfseries},
     smallBlock/.style={rectangle, rounded corners=2pt, draw, minimum width=2.0cm, minimum height=0.7cm, align=center, font=\footnotesize},
@@ -30,7 +32,7 @@
 \node [block, inputColor, minimum width=3.2cm, minimum height=1.3cm] (input) {
     \textbf{Multivariate Sensor Input}\\[2pt]
     \scriptsize $\mathbf{X} \in \mathbb{R}^{W \times n}$ \\[1pt]
-    \scriptsize CO$_2$ | VOC | Temp | Hum | PM$_{2.5}$
+    \scriptsize CO$_2$ | VOC | Temp | Hum | Dust
 };
 
 % ============================================================
@@ -44,7 +46,7 @@
 % ============================================================
 % TCN BACKBONE (3 layers) — Dilated Causal Convolutions illustration
 % ============================================================
-\node [block, tcnColor, below=of features, minimum width=7.2cm, minimum height=3.2cm] (tcn) {
+\node [block, tcnColor, below=of features, minimum width=2.5cm, minimum height=2cm] (tcn) {
     \textbf{TCN Backbone: Dilated Causal Convolutions}\\[2pt]
     \begin{tikzpicture}[
         every node/.style={font=\tiny},
@@ -112,28 +114,28 @@
 };
 
 % ============================================================
-% INNOVATION 1: AUAA (below-left of MC dropout)
+% AUAA (below-left of MC dropout)
 % ============================================================
 \node [block, auaaColor, below=2.0cm of mcdropout, xshift=-4.0cm, minimum width=5.2cm, minimum height=1.7cm] (auaa) {
-    \textbf{Innovation 1: AUAA}\\[3pt]
+    \textbf{AUAA}\\[3pt]
     \scriptsize $\boldsymbol{\alpha}_t = \text{softmax}\!\left(\frac{\mathbf{Q}\mathbf{K}^\top}{\sqrt{d_k}}\right) \odot \frac{1}{1+\boldsymbol{\sigma}_t}$\\[3pt]
     {\scriptsize Uncertainty gates attention weights}
 };
 
 % ============================================================
-% INNOVATION 2: Dynamic Weight Adapter (below-right of MC dropout)
+% Dynamic Weight Adapter (below-right of MC dropout)
 % ============================================================
 \node [block, adapterColor, below=2.0cm of mcdropout, xshift=4.0cm, minimum width=5.2cm, minimum height=1.7cm] (adapter) {
-    \textbf{Innovation 2: Dynamic Weight Adapter}\\[3pt]
+    \textbf{Dynamic Weight Adapter}\\[3pt]
     \scriptsize $s_t = \alpha_t \cdot \mathbf{e}_t + (1-\alpha_t) \cdot \mathbf{u}_t$\\[3pt]
     {\scriptsize GRU-context learns $\alpha_t$ over time}
 };
 
 % ============================================================
-% INNOVATION 3: Feature Attribution (below MC dropout, centred)
+% Feature Attribution (below MC dropout, centred)
 % ============================================================
-\node [block, attribColor, below=2.0cm of mcdropout, yshift=-1.8cm, minimum width=5.2cm, minimum height=1.7cm] (attribution) {
-    \textbf{Innovation 3: Feature Attribution}\\[3pt]
+\node [block, attribColor, below=3.0cm of mcdropout, yshift=-1.8cm, minimum width=5.2cm, minimum height=1.7cm] (attribution) {
+    \textbf{Feature Attribution}\\[3pt]
     \scriptsize $\mathbf{w}_f = \text{softmax}(\mathbf{V}\!\cdot\!\tanh(\mathbf{W}\mathbf{x}+\mathbf{b}))$\\[3pt]
     {\scriptsize Per-sensor importance + Chebyshev bound}
 };
@@ -171,16 +173,30 @@
 % Uncertainty feedback loop: AUAA back to TCN attention
 \draw [feedbackArrow]
     (auaa.west) -- ++(-1.2,0)
-    node [pos=0.5, above, font=\tiny\bfseries, text=red!70] {uncertainty $\to$ attention}
+    node [
+        pos=0.5,
+        above=180pt,
+        xshift=30pt,
+        % yshift=54pt,
+        font=\tiny\bfseries,
+        text=red!70
+    ] {uncertainty $\to$ attention}
     |- (tcn.west);
 
 % GRU memory loop in adapter
-\draw [feedbackArrow]
-    (adapter.east) -- ++(1.2,0)
-    node [pos=0.5, right, font=\tiny\bfseries, text=red!70] {GRU memory}
-    -- ++(0,1.5)
-    -- ($(adapter.north east)+(1.2,0.4)$)
-    -- (adapter.north east);
+\draw [feedbackArrow, rounded corners=2pt]
+    (adapter.east)
+    -- ++(1.0,0)
+    node[
+        midway,
+        right,
+        above=20pt,
+        xshift=40pt,
+        font=\tiny\bfseries,
+        text=red!70
+    ] {GRU memory}
+    |- ($(adapter.north east)+(0.8,0.8)$)
+    -| ($(adapter.north)+(0.3,0)$);
 
 % ============================================================
 % INNOVATION CALLOUT LABELS (transparent, on background layer)
@@ -191,33 +207,5 @@
     \node [callout, fit=(attribution)] {};
 \end{pgfonlayer}
 
-% Gap labels next to each innovation
-\node [highlight, above=4pt of auaa.north west, anchor=south west] {Gap 1: Sensor reliability};
-\node [highlight, above=4pt of adapter.north west, anchor=south west] {Gap 2: Context-aware scoring};
-\node [highlight, below=4pt of attribution.south west, anchor=north west] {Gap 3: Actionable per-sensor output};
-
-% ============================================================
-% MINI ABLATION TABLE (fresh data from research_outputs_full)
-% ============================================================
-\node [rectangle, fill=gray!5, draw=gray!30, rounded corners=2pt,
-       right=1.0cm of output, minimum width=4.6cm, inner sep=6pt, font=\scriptsize] (table) {
-    \renewcommand{\arraystretch}{1.1}
-    \begin{tabular}{l c c}
-    \textbf{Component} & \boldmath$\Delta$\textbf{MSE} & \textbf{Cumulative MSE} \\
-    \hline
-    Base TCN           & ---       & $2.20\times 10^{-4}$ \\
-    + MC Dropout       & $+0.0\%$  & $2.20\times 10^{-4}$ \\
-    + AUAA (\textcolor{red!80}{\ding{72}1}) & $-25.2\%$ & $1.65\times 10^{-4}$ \\
-    + Full (\textcolor{red!80}{\ding{72}1+2+3}) & $-25.2\%$ & \boldmath$1.65\times 10^{-4}$ \\
-    \end{tabular}
-};
-
-% ============================================================
-% KEY INSIGHT TEXT
-% ============================================================
-\node [font=\small\itshape, text=red!50!black, below=0.4cm of output] (insight) {
-    \textbf{Key insight:} uncertainty is not just a score --- it reshapes attention and gates scoring.
-};
-
 \end{tikzpicture}
-\end{document}
+% \end{document}

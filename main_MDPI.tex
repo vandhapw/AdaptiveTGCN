@@ -77,7 +77,8 @@ We present an uncertainty-calibrated TCN framework for multivariate sensor anoma
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{figures/architecture_diagram.png}
+\input{figures/architecture_diagram}
+% \includegraphics[width=0.92\textwidth]{figures/architecture_diagram.png}
 \caption{Architecture of the proposed uncertainty-aware TCN framework for multivariate sensor anomaly detection. The central panel expands the TCN backbone as an explicit stack of dilated causal convolutions ($k{=}2$, dilations $d_l\in\{1,2,4\}$, 64 channels per layer); red nodes and edges trace the receptive-field path that produces the rightmost output $\hat{y}_t$ from eight past input timesteps ($\mathrm{RF}=8$). Three innovations address three sensor-specific challenges: \textbf{(1)} Adaptive Uncertainty-Aware Attention (AUAA) gates temporal attention by per-sensor predictive uncertainty $\boldsymbol{\sigma}_t$, closing the loop between uncertainty estimation and attention computation; \textbf{(2)} the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; \textbf{(3)} the Feature-Attribution Learner produces per-sensor importance scores with Chebyshev-based false-positive-rate guarantees. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc.}
 \label{fig:architecture}
 \end{figure}
@@ -229,14 +230,14 @@ followed by a linear projection $\mathbf{W}_O\,[\boldsymbol{\alpha}_t^{(1)},\dot
   >=stealth, node distance=1.05cm,
   block/.style={rectangle, draw, thick, rounded corners=2pt, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small},
   signal/.style={->, thick},
-  gate/.style={rectangle, draw, very thick, rounded corners=2pt, fill=orange!20, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small},
+  gate/.style={rectangle, draw, very thick, rounded corners=2pt, fill=orange!20, minimum width=2.6cm, minimum height=0.65cm, align=center, font=\small},
   outbox/.style={rectangle, draw, very thick, rounded corners=2pt, fill=green!15, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small}
 ]
   \node[block] (h) {Hidden state $\mathbf{h}_t$};
   \node[block, below=of h] (qkv) {Linear $\mathbf{Q}_t, \mathbf{K}_t, \mathbf{V}_t$};
   \node[block, below=of qkv] (score) {Scaled dot-product\\$\mathbf{Q}_t \mathbf{K}_t^\top / \sqrt{d_k}$};
   \node[block, right=2.4cm of qkv] (sigma) {MC dropout $\boldsymbol{\sigma}_t$\\($M$ stochastic passes)};
-  \node[gate, right=2.4cm of score] (gate) {Uncertainty gate\\$g_t = 1/(1+\boldsymbol{\sigma}_t)$};
+  \node[gate, right=2.5cm of score] (gate) {Uncertainty gate\\$g_t = 1/(1+\boldsymbol{\sigma}_t)$};
   \node[block, below=of score] (soft) {softmax};
   \node[block, below=of soft, fill=blue!8] (mul) {Element-wise $\odot$};
   \node[outbox, below=of mul] (alpha) {Attention $\boldsymbol{\alpha}_t$\\(uncertainty-gated)};
@@ -245,9 +246,9 @@ followed by a linear projection $\mathbf{W}_O\,[\boldsymbol{\alpha}_t^{(1)},\dot
   \draw[signal] (score) -- (soft);
   \draw[signal] (soft) -- (mul);
   \draw[signal] (mul) -- (alpha);
-  \draw[signal] (h.east) -- ++(0.8,0) |- (sigma.west);
+  \draw[signal] (h.east) -- ++(0.8,0) -| (sigma.north);
   \draw[signal] (sigma) -- (gate);
-  \draw[signal, dashed, red] (gate) -| (mul.east);
+  \draw[signal, dashed, red] (gate.south) |- (mul.east);
 \end{tikzpicture}
 \caption{Adaptive Uncertainty-Aware Attention (AUAA) dataflow. Standard scaled dot-product attention (left column) is element-wise modulated by an uncertainty gate $g_t = 1/(1+\boldsymbol{\sigma}_t)$ derived from MC dropout (right column). Dashed red line indicates the uncertainty feedback path that distinguishes this work from prior uncertainty-aware models, which use $\sigma_t$ only at the output layer.}
 \label{fig:auaa}
