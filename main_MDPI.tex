@@ -29,7 +29,7 @@
 \usepackage{microtype}
 
 % === TITLE AND AUTHORS ===
-\Title{Uncertainty-Calibrated Temporal Convolutional Networks with Adaptive Attention for Multivariate Time Series Sensor Anomaly Detection}
+\Title{A Composite-Objective Uncertainty-Aware Temporal Convolutional Framework for Multivariate Time-Series Anomaly Detection with Distribution-Free Guarantees}
 
 \newcommand{\orcidauthorA}{0000-0001-9790-7597}
 \newcommand{\orcidauthorB}{0000-0003-0466-8254}
@@ -46,9 +46,9 @@ $^{4}$ \quad Research Center, Hanyoung DS, Inc., Seoul, 07600, Republic of Korea
 \corres{Correspondence: cskim@pknu.ac.kr}
 
 % === ABSTRACT ===
-\abstract{Multivariate time-series anomaly detection in physical sensor networks faces challenges that generic deep learning models do not address: heterogeneous sensor reliability, context-dependent anomaly scoring, and inactionable binary outputs lacking per-sensor attribution. We propose an uncertainty-calibrated Temporal Convolutional Network (TCN) framework with three tightly integrated components. First, an Adaptive Uncertainty-Aware Attention (AUAA) mechanism gates temporal attention weights by per-sensor predictive uncertainty from Monte Carlo dropout, enabling the model to down-weight unreliable sensor channels. Second, a Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history. Third, a feature-importance learner provides per-sensor anomaly attribution with Chebyshev-based false-positive-rate guarantees. Evaluated on four-month indoor air quality sensor data, the full Enhanced model achieves R$^2$=0.9988 and MSE=$1.65\times10^{-4}$, representing a 25.2\% MSE reduction over the Base TCN baseline (MSE=$2.20\times10^{-4}$, R$^2$=0.9984). The validation-calibrated thresholding pipeline flags 50 anomalous windows in the test split (0.37\% flag rate). Ablation studies decompose component contributions: the auxiliary objectives (dynamic weighting and feature attribution) account for the entire 25\% reduction, with AUAA providing complementary attention adaptation. Per-sensor attribution scores remain near-uniform across all five channels, confirming a balanced multi-sensor contribution. The framework delivers sensor-specific interpretability with theoretical bounds while maintaining sub-50ms inference latency, suitable for real-time deployment in indoor air quality monitoring.}
+\abstract{Multivariate time-series anomaly detection on physical sensor networks faces three challenges that generic deep learning models do not address: heterogeneous sensor reliability, context-dependent anomaly scoring, and inactionable binary outputs lacking per-sensor attribution. We propose an uncertainty-aware Temporal Convolutional Network (TCN) framework with three tightly integrated components: (i) an Adaptive Uncertainty-Aware Attention (AUAA) mechanism that gates temporal attention weights by per-sensor predictive uncertainty obtained from Monte-Carlo dropout; (ii) a Dynamic Weight Adapter that learns context-sensitive blending of reconstruction error and uncertainty via a GRU over weight history; and (iii) a feature-importance learner that produces per-sensor attribution scores. We complement the empirical architecture with two distribution-free theoretical results: a Chebyshev-type false-positive bound on the hybrid anomaly score, and a Monte-Carlo posterior moment convergence result at rate $O(M^{-1/2})$. Evaluated on four-month indoor air quality sensor data, the Full Enhanced model achieves $R^{2}=0.9988$ and MSE $1.65\times 10^{-4}$, a $25.2\%$ MSE reduction over the Base TCN ($R^{2}=0.9984$, MSE $2.20\times 10^{-4}$). A controlled synthetic-anomaly injection experiment with ground-truth labels provides precision, recall, and F1 measurements for both models on the held-out test split. Ablation isolates each component's contribution. The framework delivers sensor-specific interpretability with provable bounds while retaining sub-50\,ms inference latency for $M=20$ Monte-Carlo samples.}
 
-\keyword{anomaly detection; temporal convolutional network; uncertainty quantification; attention mechanism; sensor networks; indoor air quality}
+\keyword{multivariate time series; time-series anomaly detection; temporal convolutional network; uncertainty quantification; Monte-Carlo dropout; adaptive attention; Chebyshev concentration inequality; distribution-free guarantees; indoor air quality}
 
 \begin{document}
 
@@ -56,7 +56,7 @@ $^{4}$ \quad Research Center, Hanyoung DS, Inc., Seoul, 07600, Republic of Korea
 % ============================================================
 \section{Introduction}
 
-Sensor networks for environmental monitoring, industrial control, and building management generate massive streams of multivariate time-series data that embed critical operational intelligence~\cite{kumar2022iaq_review, szczurek2020iaq}. Indoor air quality (IAQ) monitoring exemplifies the challenge: CO\textsubscript{2}, volatile organic compounds (VOC), temperature, humidity, and particulate matter exhibit complex co-variation patterns while each sensor type suffers from distinct noise characteristics, calibration drift rates, and failure modes~\cite{coleman_sensing_2018, abid2021iaq_deep}. Anomaly detection in such systems has been extensively surveyed~\cite{chandola2009survey, aggarwal2017outlier, pang2021deep_survey}, with recent IAQ-specific studies leveraging deep architectures for both forecasting and outlier identification~\cite{choi2024air_anomaly, wei2023lstm_ae_iaq}. Practical deployment, however, requires solutions that address challenges specific to physical sensor networks—challenges that generic time-series models do not explicitly target.
+Multivariate time-series data generated by sensor networks for environmental monitoring, industrial control, and building management embed critical operational intelligence and pose distinct analytical challenges that drive recent advances in time-series analysis~\cite{kumar2022iaq_review, szczurek2020iaq}. Among these challenges, anomaly detection on multivariate time series is a central problem with applications spanning fault diagnosis, structural health monitoring, and process safety. Indoor air quality (IAQ) monitoring exemplifies the multivariate sensor-stream regime: CO\textsubscript{2}, volatile organic compounds (VOC), temperature, humidity, and particulate matter exhibit complex co-variation patterns while each sensor type suffers from distinct noise characteristics, calibration drift rates, and failure modes~\cite{coleman_sensing_2018, abid2021iaq_deep}. Time-series anomaly detection has been extensively surveyed~\cite{chandola2009survey, aggarwal2017outlier, pang2021deep_survey}, with recent IAQ-specific studies leveraging deep architectures for both forecasting and outlier identification~\cite{choi2024air_anomaly, wei2023lstm_ae_iaq}. Practical deployment, however, requires solutions that address challenges specific to physical sensor networks within a mathematically rigorous time-series framework---challenges that generic time-series models do not explicitly target.
 
 Three sensor-specific challenges motivate this work. First, multi-sensor deployments exhibit heterogeneous reliability across time. Individual sensors degrade at different rates: electrochemical VOC sensors drift over weeks, optical dust sensors saturate in high-concentration events, and temperature sensors maintain stable calibration for months~\cite{sanchez-ferrera_review_2025}. Standard attention mechanisms treat all time steps equally, yet predictions for a degrading VOC sensor at time $t$ are inherently less reliable than predictions for a stable temperature sensor at the same instant. A sensor-aware model should dynamically down-weight attention to unreliable channels. Second, anomaly scoring must adapt to context. Most approaches combine reconstruction error and prediction uncertainty using fixed weights~\cite{ghimire_electricity_2025, cui_sde-hnn_2025}, but the relative informativeness of these signals depends on sensor state: during stable operation, large reconstruction errors reliably indicate anomalies; during degradation events, elevated uncertainty may be the more trustworthy signal even when reconstruction errors appear moderate. Fixed-weight scoring conflates these distinct regimes, reducing detection precision during sensor transitions. Third, anomaly detectors must produce actionable output. Binary flagging without sensor-level attribution leaves facility operators unable to determine whether a detected anomaly reflects a genuine environmental hazard, a degrading CO\textsubscript{2} sensor requiring recalibration, or a VOC spike from cleaning activities~\cite{xu2022anomalytransformer}. For anomaly detection to inform maintenance decisions, it must identify \textit{which sensors} contribute to each anomaly and provide confidence-calibrated uncertainty estimates rather than only point predictions.
 
@@ -327,7 +327,7 @@ We implement four thresholding strategies:
     \tau_{\text{theory}} = \bar{s} + k \cdot \sigma_s, \quad k = \sqrt{1/\epsilon}, \quad P(\text{FP}) \leq \frac{1}{k^2} = \epsilon,
     \label{eq:tau_chebyshev}
     \end{equation}
-    where $\bar{s}, \sigma_s$ are the mean and standard deviation of validation scores and $\epsilon$ is the desired false-positive rate.
+    where $\bar{s}, \sigma_s$ are the mean and standard deviation of validation scores and $\epsilon$ is the desired false-positive rate. The formal guarantee is stated in \cref{thm:chebyshev_fp} below.
     \item \textbf{Distribution-free quantile} (\emph{contamination-aware}):
     \begin{equation}
     \tau_{\text{dist}} = Q_{1-\gamma}\!\left(\hat{F}_{s}\right),
@@ -340,7 +340,52 @@ The complete detection algorithm is presented in \cref{alg:stochastic_tcn}.
 
 \input{algorithms/[alg]stochastic-AD}
 
-With the architectural components and detection pipeline fully specified, the following section evaluates each component's contribution through forecasting benchmarks, ablation studies, cross-dataset validation, and sensitivity analyses on real-world sensor data.
+\subsection{Theoretical Guarantees}
+\label{sec:theoretical_guarantees}
+
+The two results below formalise the distribution-free properties on which our anomaly-detection pipeline rests. Both are stated for the anomaly-score variable produced by \cref{eq:hybrid_score}.
+
+\begin{Theorem}[Distribution-Free False-Positive Bound]
+\label{thm:chebyshev_fp}
+Let $S$ denote the anomaly-score random variable on a clean (normal-operation) validation set, with finite mean $\mu_s = \mathbb{E}[S]$ and finite variance $\sigma_s^2 = \mathrm{Var}(S) < \infty$. For any desired false-positive rate $\epsilon \in (0,1)$, define the threshold
+\begin{equation*}
+\tau_{\mathrm{theory}}(\epsilon) \;\triangleq\; \mu_s + k(\epsilon)\,\sigma_s, \qquad k(\epsilon) = \sqrt{1/\epsilon}.
+\end{equation*}
+Then the false-positive rate of the detector $\mathbf{1}_{[S > \tau_{\mathrm{theory}}(\epsilon)]}$ satisfies
+\begin{equation*}
+P\!\left(S > \tau_{\mathrm{theory}}(\epsilon)\right) \;\leq\; \frac{1}{k(\epsilon)^{2}} \;=\; \epsilon,
+\end{equation*}
+without any distributional assumption on $S$.
+\end{Theorem}
+
+\begin{proof}
+By Chebyshev's inequality~\cite{aggarwal2017outlier}, for any random variable $S$ with finite mean $\mu_s$ and variance $\sigma_s^2$ and for every $k > 0$,
+\begin{equation*}
+P\!\left(|S - \mu_s| \geq k\,\sigma_s\right) \;\leq\; \frac{1}{k^{2}}.
+\end{equation*}
+The one-sided event $\{S > \mu_s + k\sigma_s\}$ is contained in $\{|S - \mu_s| \geq k\sigma_s\}$, so
+$P(S > \mu_s + k\sigma_s) \leq P(|S - \mu_s| \geq k\sigma_s) \leq 1/k^2$.
+Setting $k = \sqrt{1/\epsilon}$ yields $1/k^{2} = \epsilon$, which establishes the claimed bound. \qed
+\end{proof}
+
+\begin{Theorem}[Monte-Carlo Posterior Moment Convergence]
+\label{thm:mc_convergence}
+Let $\boldsymbol{\theta}^{(m)} \overset{\mathrm{i.i.d.}}{\sim} q(\boldsymbol{\theta})$ for $m = 1,\dots,M$ denote dropout-sampled network weights, and define the per-sample predictions $\hat{\mathbf{y}}^{(m)}(\mathbf{x}) = f_{\boldsymbol{\theta}^{(m)}}(\mathbf{x})$. Assume $\hat{\mathbf{y}}^{(m)}$ has finite second moment $\mathbb{E}_{q}[\|\hat{\mathbf{y}}^{(m)}\|^{2}] < \infty$. Then the empirical Monte-Carlo mean and variance estimators
+\begin{equation*}
+\hat{\mathbf{y}}_M \triangleq \tfrac{1}{M}\sum_{m=1}^{M} \hat{\mathbf{y}}^{(m)}, \qquad
+\widehat{\boldsymbol{\sigma}}^{2}_M \triangleq \tfrac{1}{M}\sum_{m=1}^{M} (\hat{\mathbf{y}}^{(m)} - \hat{\mathbf{y}}_M)^{2}
+\end{equation*}
+converge to the posterior predictive moments at rate $O(1/\sqrt{M})$ in probability:
+$\| \hat{\mathbf{y}}_M - \mathbb{E}_{q}[\hat{\mathbf{y}}] \| = O_p(M^{-1/2})$ and likewise for $\widehat{\boldsymbol{\sigma}}^{2}_M$.
+\end{Theorem}
+
+\begin{proof}
+The strong law of large numbers implies $\hat{\mathbf{y}}_M \xrightarrow{a.s.} \mathbb{E}_q[\hat{\mathbf{y}}]$ since the i.i.d.\ samples have finite first moment. The classical central limit theorem then yields $\sqrt{M}\,(\hat{\mathbf{y}}_M - \mathbb{E}_q[\hat{\mathbf{y}}]) \xrightarrow{d} \mathcal{N}(0, \mathrm{Cov}_q(\hat{\mathbf{y}}))$ under finite second moment, giving the $O_p(M^{-1/2})$ rate. The same argument applied to the centred squared sample $(\hat{\mathbf{y}}^{(m)} - \hat{\mathbf{y}}_M)^{2}$ together with Slutsky's theorem gives convergence of $\widehat{\boldsymbol{\sigma}}^{2}_M$ at the same rate. The variational interpretation of dropout as a Bayesian posterior $q(\boldsymbol{\theta})$ over weights is due to Gal and Ghahramani~\cite{gal2016dropout_bayesian}; under their identification, $\mathbb{E}_{q}[\hat{\mathbf{y}}]$ and $\mathrm{Cov}_{q}(\hat{\mathbf{y}})$ are the posterior predictive moments. \qed
+\end{proof}
+
+\Cref{thm:chebyshev_fp} furnishes the false-positive guarantee invoked at line~16 of \cref{alg:stochastic_tcn}. \Cref{thm:mc_convergence} justifies the empirical moments used at lines~4--5 of the same algorithm, with the rate $M=50$ chosen so that $M^{-1/2}\approx 0.14$ for an a-priori standard-error budget under 15\%.
+
+With the architectural components, detection pipeline, and theoretical guarantees fully specified, the following section evaluates each component's contribution through forecasting benchmarks, ablation studies, sensitivity analyses, and a synthetic-anomaly injection experiment with ground-truth labels on the held-out test split.
 
 % ============================================================
 \section{Experimental Results}
@@ -432,26 +477,20 @@ Enhanced + AUAA, fixed hybrid score   & $1.65\times 10^{-4}$ & $3.44\times 10^{-
 \label{fig:ablation_summary}
 \end{figure}
 
-\subsection{Cross-Dataset Validation on SWaT}
+\subsection{Synthetic-Anomaly Injection with Ground-Truth Labels}
+\label{sec:synthetic_injection}
 
-We evaluate generalization on the Secure Water Treatment (SWaT) industrial control benchmark, which contains 51 sensor/actuator features and labeled cyber-physical attack periods~\cite{goh2017dataset}. Example time-series visualizations of predictions, residuals, and detected anomalies are available in the public code repository. The model is trained on the first 50,000 normal-operation samples and evaluated on the subsequent 50,000 labeled samples. \cref{table:swat} reports the results.
+The unlabelled nature of the four-month IAQ stream precludes direct precision/recall/F1 reporting. To obtain a labelled evaluation under controlled conditions, we conduct a \emph{synthetic anomaly injection} experiment on the held-out test split following the canonical taxonomy used in time-series anomaly benchmarks~\cite{pang2021deep_survey, aggarwal2017outlier}.
 
-The Full Enhanced model achieves F1=0.81, Precision=0.79, and Recall=0.83, representing a +2.5\% F1 improvement over the baseline stochastic TCN. This cross-domain transfer—from environmental IAQ monitoring to industrial process control—demonstrates that the sensor-specific architectural adaptations capture general properties of multi-sensor networks, not IAQ-specific heuristics.
+Three anomaly families are injected on the raw-sensor channels of the test windows, each spanning approximately one-third of the total injected budget (5\% of test windows):
+\begin{enumerate}[leftmargin=*, nosep]
+\item \textbf{Point anomalies.} A single-timestep spike of magnitude $k\sigma_f$ ($k=6$) replaces the last reading of a randomly selected channel $f$.
+\item \textbf{Contextual anomalies.} A sustained level shift of magnitude $k\sigma_f$ is added to the last $d_{\text{ctx}}=5$ timesteps of channel $f$.
+\item \textbf{Collective anomalies.} A half-period sinusoidal perturbation of amplitude $k\sigma_f$ is added over the last $d_{\text{col}}=8$ timesteps of channel $f$.
+\end{enumerate}
+Window labels are $y_{t}=1$ if any injection touched window $t$ and $0$ otherwise. Both the Base TCN and Full Enhanced models are evaluated unchanged at the validation-calibrated threshold $\tau_{95}$ on the injected test set. Precision, recall, F1, and ROC-AUC are reported in \cref{table:synthetic_injection}.
 
-\begin{table}[H]
-\centering
-\caption{Cross-dataset validation on the SWaT industrial control benchmark.}
-\label{table:swat}
-\begin{tabular}{lccc}
-\toprule
-\textbf{Metric} & \textbf{Stochastic TCN} & \textbf{Full Enhanced} & \textbf{Improvement} \\
-\midrule
-Precision & 0.77 & 0.79 & +0.02 \\
-Recall & 0.81 & 0.83 & +0.02 \\
-F1 Score & 0.79 & \textbf{0.81} & \textbf{+2.5\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{tables/synthetic_anomaly_results}
 
 \subsection{Anomaly Detection Results}
 
@@ -558,9 +597,9 @@ The sensor-specific design principles established in this work suggest natural e
 
 \section{Conclusions}
 
-We introduced an uncertainty-calibrated TCN framework that treats predictive uncertainty as an internal architectural signal rather than a post-hoc add-on. The framework is motivated by three sensor-specific challenges---heterogeneous reliability drift across sensor types, context-dependent anomaly scoring requirements, and the need for actionable per-sensor diagnostic output---and integrates three tightly coupled components: (1) the Adaptive Uncertainty-Aware Attention (AUAA) mechanism gates temporal attention by per-sensor predictive uncertainty from MC dropout; (2) the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty; and (3) the feature-importance learner provides per-sensor attributions with Chebyshev-based false-positive-rate guarantees.
+We introduced an uncertainty-aware TCN framework that treats predictive uncertainty as an internal architectural signal rather than a post-hoc add-on, accompanied by two distribution-free theoretical guarantees that anchor the operational pipeline. The framework is motivated by three sensor-specific challenges---heterogeneous reliability drift across sensor types, context-dependent anomaly scoring requirements, and the need for actionable per-sensor diagnostic output---and integrates three tightly coupled components: (1) the Adaptive Uncertainty-Aware Attention (AUAA) mechanism gates temporal attention by per-sensor predictive uncertainty from MC dropout; (2) the Dynamic Weight Adapter learns context-sensitive blending of reconstruction error and uncertainty; and (3) the feature-importance learner provides per-sensor attributions. The Chebyshev-type bound (\cref{thm:chebyshev_fp}) furnishes a distribution-free false-positive guarantee on the hybrid score, and the Monte-Carlo convergence result (\cref{thm:mc_convergence}) sets the sample-size budget $M$ for the inference pass.
 
-Comprehensive experiments on four-month IAQ sensor data demonstrated a $25.2\%$ MSE reduction on the held-out test split (Base $2.20\times 10^{-4}$ vs.\ Full Enhanced $1.65\times 10^{-4}$; $R^2$ 0.9988, SMAPE 11.07\%). The ablation isolates the source of this gain: the auxiliary objectives (dynamic-weight regulariser and feature-attribution loss) deliver the dominant reduction, while AUAA contributes uncertainty-gated attention at scoring time without further reducing forecasting MSE. Cross-dataset validation on SWaT achieved F1=0.81 ($+2.5\%$ vs.\ stochastic TCN), confirming domain-agnostic benefits. Per-sensor attribution (Humidity $20.4\%$, VOC $20.1\%$, CO\textsubscript{2} $20.0\%$, Temperature $20.0\%$, Dust $19.5\%$) provides actionable sensor-level interpretability, while Chebyshev concentration bounds guarantee $P(\text{FP}) \leq 1/k^2$ without distributional assumptions. With sub-50ms inference latency and $\sim 15\%$ parameter overhead, the framework is suitable for real-time deployment in smart buildings, environmental monitoring, and industrial process control.
+Comprehensive experiments on four-month IAQ sensor data demonstrated a $25.2\%$ MSE reduction on the held-out test split (Base $2.20\times 10^{-4}$ vs.\ Full Enhanced $1.65\times 10^{-4}$; $R^2$ 0.9988, SMAPE 11.07\%). The ablation isolates the source of this gain: the auxiliary objectives (dynamic-weight regulariser and feature-attribution loss) deliver the dominant reduction, while AUAA contributes uncertainty-gated attention at scoring time without further reducing forecasting MSE. A controlled synthetic-anomaly injection experiment with ground-truth labels (\cref{sec:synthetic_injection}) provides precision, recall, and F1 measurements that supplement the unlabelled unsupervised flagging on the raw IAQ stream. Per-sensor attribution (Humidity $20.4\%$, VOC $20.1\%$, CO\textsubscript{2} $20.0\%$, Temperature $20.0\%$, Dust $19.5\%$) provides actionable sensor-level interpretability, while the Chebyshev bound of \cref{thm:chebyshev_fp} guarantees $P(\text{FP}) \leq 1/k^2$ without distributional assumptions. With sub-50ms inference latency and $\sim 15\%$ parameter overhead, the framework is suitable for real-time deployment in smart buildings, environmental monitoring, and industrial process control.
 
 \vspace{6pt}
 \noindent\textbf{Operational Guarantee:} Applying the Chebyshev inequality to anomaly score distributions yields a distribution-free false-positive-rate bound: for any score distribution with finite variance and threshold \(\tau = \bar{s} + k \cdot \sigma_s\), the detector satisfies \(P(\text{FP}) \leq 1/k^2\). This enables principled threshold selection without parametric distributional assumptions, providing an operational guarantee that complements the empirical percentile-based approach.

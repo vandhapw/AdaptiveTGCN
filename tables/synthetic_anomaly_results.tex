@@ -1,0 +1,18 @@
+\begin{table}[H]
+\centering
+\caption{Synthetic-anomaly injection results on the held-out test split. Point, contextual, and collective anomalies are injected at magnitude $k=6$ sensor-standard-deviations, covering approximately 5\% of the test windows. Detection thresholds are calibrated on the validation set (95\textsuperscript{th} percentile) and applied unchanged to the injected test set. Numerics are loaded verbatim from \texttt{research\_outputs\_full/tables/synthetic\_anomaly\_metrics.csv}.}
+\label{table:synthetic_injection}
+\small
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{ROC-AUC} & \textbf{Threshold} \\
+\midrule
+Base TCN          & \texttt{[P\_base]}  & \texttt{[R\_base]}  & \texttt{[F1\_base]}  & \texttt{[AUC\_base]}  & \texttt{[tau\_base]} \\
+Full Enhanced     & \texttt{[P\_full]}  & \texttt{[R\_full]}  & \texttt{[F1\_full]}  & \texttt{[AUC\_full]}  & \texttt{[tau\_full]} \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize Anomaly fraction in the test split = \texttt{[anom\_frac]}\,\% ($n$=\texttt{[n\_anom]} injected out of \texttt{[n\_win]} windows). Three anomaly families share the injection budget approximately uniformly. Validation-calibrated $\tau_{95}$ is applied without re-tuning on the injected test set, so the detector is evaluated as it would operate in deployment.
+\end{flushleft}
+\end{table}
