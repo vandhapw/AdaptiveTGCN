@@ -1,0 +1,28 @@
+# LaTeX build artefacts — regenerated on every compile
+*.aux
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+
+# Keep main_MDPI.bbl tracked (often required by MDPI submission)
+!main_MDPI.bbl
+
+# Editor / OS junk
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Build PDFs of nested standalone TikZ (only main paper PDF is tracked)
+figures/*.pdf
+figures/*.aux
+figures/*.log
