@@ -1,4 +1,5 @@
 \begin{algorithm}[H]
+\footnotesize
 \DontPrintSemicolon
 \caption{Uncertainty-Aware Composite-Objective TCN Anomaly Detection}
 \label{alg:stochastic_tcn}
@@ -15,21 +16,21 @@
 \tcp{Step 1 --- Monte Carlo predictive distribution (Eq.~\ref{eq:mc_moments})}
 Enable dropout at inference\;
 \For{$m \leftarrow 1$ \KwTo $M$}{
-    $\hat{\mathbf{y}}^{(m)} \leftarrow f_{\boldsymbol{\theta}}(\mathbf{X})$ \tcp*{stochastic forward pass}
+    $\hat{\mathbf{y}}^{(m)} \leftarrow f_{\boldsymbol{\theta}}(\mathbf{X})$ \tcp*{ --> stochastic forward pass}
 }
-$\hat{\mathbf{y}} \leftarrow \dfrac{1}{M}\sum_{m=1}^{M}\hat{\mathbf{y}}^{(m)}$ \tcp*{predictive mean}
-$\boldsymbol{\sigma} \leftarrow \sqrt{\dfrac{1}{M}\sum_{m=1}^{M}(\hat{\mathbf{y}}^{(m)}-\hat{\mathbf{y}})^{2}}$ \tcp*{per-sensor epistemic std}
+$\hat{\mathbf{y}} \leftarrow \dfrac{1}{M}\sum_{m=1}^{M}\hat{\mathbf{y}}^{(m)}$ \tcp*{ --> predictive mean}
+$\boldsymbol{\sigma} \leftarrow \sqrt{\dfrac{1}{M}\sum_{m=1}^{M}(\hat{\mathbf{y}}^{(m)}-\hat{\mathbf{y}})^{2}}$ \tcp*{ --> per-sensor epistemic std}
 
 \BlankLine
 \tcp{Step 2 --- AUAA-modulated reconstruction error (Eq.~\ref{eq:auaa_multihead})}
-$\mathbf{e}_{t} \leftarrow |\mathbf{x}_{t} - \hat{\mathbf{y}}_{t}|$ \tcp*{per-sensor residual}
+$\mathbf{e}_{t} \leftarrow |\mathbf{x}_{t} - \hat{\mathbf{y}}_{t}|$ \tcp*{ --> per-sensor residual}
 $\boldsymbol{\alpha}^{\text{attn}}_{t} \leftarrow \text{softmax}\!\big(\mathbf{Q}_t\mathbf{K}_t^{\top}/\sqrt{d_{k}}\big)\,\odot\,(1+\boldsymbol{\sigma}_{t})^{-1}$
 
 \BlankLine
 \tcp{Step 3 --- Dynamic Weight Adapter (Eqs.~\ref{eq:dw_gru}, \ref{eq:hybrid_score})}
 $\mathbf{h}_{t} \leftarrow \text{GRU}\!\big(\mathbf{h}_{t-1},[\mathbf{e}_{t},\boldsymbol{\sigma}_{t}]\big)$\;
-$\alpha_{t} \leftarrow \sigma\!\big(\mathbf{W}_{\alpha}[\mathbf{e}_{t},\boldsymbol{\sigma}_{t},\mathbf{h}_{t}]+\mathbf{b}_{\alpha}\big)$ \tcp*{context-dependent weight}
-$s_{t} \leftarrow \alpha_{t}\,\mathbf{e}_{t}+(1-\alpha_{t})\,\boldsymbol{\sigma}_{t}$ \tcp*{hybrid anomaly score}
+$\alpha_{t} \leftarrow \sigma\!\big(\mathbf{W}_{\alpha}[\mathbf{e}_{t},\boldsymbol{\sigma}_{t},\mathbf{h}_{t}]+\mathbf{b}_{\alpha}\big)$ \tcp*{ --> context-dependent weight}
+$s_{t} \leftarrow \alpha_{t}\,\mathbf{e}_{t}+(1-\alpha_{t})\,\boldsymbol{\sigma}_{t}$ \tcp*{ --> hybrid anomaly score}
 
 \BlankLine
 \tcp{Step 4 --- Feature-level attribution (Eq.~\ref{eq:feature_importance})}

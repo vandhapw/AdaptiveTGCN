@@ -1,0 +1,269 @@
+
+\subsection{Problem Statement and Sensor-Specific Formulation}
+
+Consider a multivariate sensor network with $n$ sensors deployed in a physical environment, producing observations $\mathbf{x}_t \in \mathbb{R}^n$ at each discrete time step $t$. Each sensor $f \in \{1, \dots, n\}$ generates a scalar reading $x_f(t)$ with sensor-specific noise characteristics:
+
+\begin{equation}
+x_f(t) = \mu_f(t) + \eta_f(t), \quad \eta_f(t) \sim \mathcal{N}(0, \sigma_f^2(t))
+\label{eq:sensor_model}
+\end{equation}
+
+where $\mu_f(t)$ is the true physical quantity and $\sigma_f^2(t)$ is the time-varying sensor-specific noise variance that may fluctuate due to aging, environmental interference, or calibration drift. Three sensor-specific challenges arise from this formulation:
+
+\begin{enumerate}[leftmargin=*, nosep]
+    \item \textbf{Heterogeneous noise profiles.} Different sensor technologies exhibit distinct noise characteristics: CO\textsubscript{2} sensors suffer low-frequency drift from optical path contamination, VOC sensors display sensitivity degradation over weeks, and optical dust sensors produce transient saturation spikes during high-concentration events. A model that treats all sensor channels identically cannot adapt to these per-sensor reliability differences.
+    \item \textbf{Dynamic cross-dependencies.} Multivariate sensor readings co-vary through shared environmental drivers (HVAC cycling, occupancy patterns, diurnal cycles), creating complex inter-sensor correlations that evolve over time.
+    \item \textbf{Actionable output requirements.} Facility operators need per-sensor anomaly attribution to distinguish genuine environmental hazards (e.g., a VOC leak) from sensor malfunctions (e.g., a drifting CO\textsubscript{2} sensor), enabling targeted maintenance responses.
+\end{enumerate}
+
+The goal is to learn a function $f_\theta: \mathbb{R}^{W \times n} \to \mathbb{R}^n$ that maps a window of $W$ past observations to next-step predictions, while jointly producing per-sensor uncertainty estimates, context-adaptive anomaly scores, and feature-level attributions.
+
+\subsection{Feature Engineering and Preprocessing}
+
+We construct a windowed feature representation for each sensor $f$ at time $t$ using a sliding window of length $W$:
+
+\begin{equation}
+\mathbf{h}_f(t) = \left[x_f(t), x_f(t-1), \dots, x_f(t-W+1), \Delta_f(t), \mu_f^W(t), \sigma_f^W(t)\right]
+\label{eq:feature_rep}
+\end{equation}
+
+where $\Delta_f(t) = x_f(t) - x_f(t-1)$ captures first-order dynamics, $\mu_f^W(t)$ is the rolling mean, and $\sigma_f^W(t)$ is the rolling standard deviation over the window. Overlapping windows prevent boundary detection gaps.
+
+\textbf{DBSCAN-based Outlier Filtering.} Raw sensor data contains saturation artifacts (e.g., value 9999 for CO\textsubscript{2} and VOC sensors during calibration cycles or communication errors). We apply DBSCAN clustering~\cite{ester1996dbscan} with neighborhood radius $\varepsilon = 0.5$ and minimum cluster size $\text{MinPts} = 10$, selected via grid search over $\varepsilon \in [0.1, 2.0]$ and $\text{MinPts} \in [5, 25]$ on the training set, to identify and remove these noise points while preserving the core data distribution. \cref{table:dataset_stats} summarizes the statistical characteristics before and after filtering.
+
+\input{tables/dataset_stats}
+
+\subsection{Uncertainty-Calibrated TCN Architecture}
+
+The overall architecture of the proposed framework is illustrated in \cref{fig:architecture}. The framework follows a closed-loop design: sensor data pass through a three-layer TCN backbone, MC dropout produces per-sensor uncertainty estimates, and these uncertainty signals are then fed back into the attention mechanism (AUAA), the dynamic anomaly scoring (Weight Adapter), and the per-sensor explanation module (Feature Attribution)---rather than being used only as an output-level term.
+
+\textbf{TCN Backbone.} The core of our framework is a three-layer Temporal Convolutional Network~\cite{bai2018tcn, oord2016wavenet} with 64 channels per layer, kernel size $k=2$, and exponentially increasing dilation factors $d_l = 2^{l-1}$ for $l \in \{1,2,3\}$, yielding $\{d_1, d_2, d_3\} = \{1, 2, 4\}$. Within layer $l$, each output time step is produced by a dilated causal convolution:
+\begin{equation}
+y_t^{(l)} = \sum_{i=0}^{k-1} f^{(l)}(i) \cdot x_{t - d_l \cdot i}^{(l-1)},
+\label{eq:dilated_conv}
+\end{equation}
+where $f^{(l)}(\cdot)$ are the layer-$l$ kernel weights and $x_{t-d_l\cdot i}^{(l-1)}$ is the input at the corresponding past time step. The closed-form receptive field of the stack is
+\begin{equation}
+RF = 1 + (k-1)\sum_{l=1}^{L} d_l = 1 + (k-1)(2^{L} - 1) = 8
+\label{eq:receptive_field}
+\end{equation}
+with $L=3$ layers, covering 8 of the $W=20$ input timesteps; this matches the temporal scale at which IAQ co-variation manifests (sub-10-minute occupancy and ventilation transients) without inflating the parameter count. Each layer applies causal (left-padded) convolution to prevent information leakage from future timesteps, followed by weight normalization and ReLU activation.
+
+\textbf{Stochastic Depth Integration.} During training, each TCN block $l$ is randomly skipped via a stochastic-depth Bernoulli gate~\cite{he2016deep}:
+\begin{equation}
+\mathbf{x}^{(l+1)} = \mathbf{x}^{(l)} + b_l \cdot F^{(l)}(\mathbf{x}^{(l)}), \quad b_l \sim \mathrm{Bernoulli}(1 - p_l),
+\label{eq:stochastic_depth}
+\end{equation}
+where $F^{(l)}$ is the residual function of block $l$ and $p_l = 0.1 \times (l/L)$ scales linearly with depth. At inference, all blocks participate deterministically (i.e.\ $b_l=1$), and Monte Carlo dropout is activated across all layers with dropout rate $r=0.2$.
+
+\input{figures/proposed_framework}
+
+
+\textbf{MC Dropout as Bayesian Posterior.} Following~\cite{gal2016dropout_bayesian}, dropout applied at inference approximates the posterior predictive distribution:
+\begin{equation}
+p(\hat{\mathbf{y}}_t \mid \mathbf{x}_t, \mathcal{D}) \approx \frac{1}{M}\sum_{m=1}^{M} p\!\left(\hat{\mathbf{y}}_t \mid \mathbf{x}_t, \boldsymbol{\theta}^{(m)}\right),
+\label{eq:bayes_post}
+\end{equation}
+where $\boldsymbol{\theta}^{(m)}$ are the parameters with random dropout masks at the $m$-th forward pass. Running $M$ stochastic forward passes yields an ensemble $\{\hat{\mathbf{y}}^{(m)}\}_{m=1}^{M}$ from which we compute the predictive mean and the per-sensor predictive standard deviation:
+\begin{equation}
+\hat{\mathbf{y}}_t = \frac{1}{M}\sum_{m=1}^{M} \hat{\mathbf{y}}_t^{(m)}, \quad \boldsymbol{\sigma}_t = \sqrt{\frac{1}{M}\sum_{m=1}^{M} (\hat{\mathbf{y}}_t^{(m)} - \hat{\mathbf{y}}_t)^2}.
+\label{eq:mc_moments}
+\end{equation}
+The variance $\boldsymbol{\sigma}_t^2$ admits an epistemic--aleatoric decomposition in the heteroscedastic case:
+\begin{equation}
+\boldsymbol{\sigma}_t^{2,\text{total}}
+= \underbrace{\tfrac{1}{M}\sum_{m=1}^{M}(\hat{\mathbf{y}}_t^{(m)} - \hat{\mathbf{y}}_t)^2}_{\text{epistemic}}
++ \underbrace{\tfrac{1}{M}\sum_{m=1}^{M}\hat{\boldsymbol{\sigma}}_t^{(m),2}}_{\text{aleatoric}},
+\label{eq:unc_decomp}
+\end{equation}
+where $\hat{\boldsymbol{\sigma}}_t^{(m)}$ are per-pass aleatoric variance estimates when the network has a heteroscedastic output head. In our experiments the homoscedastic case ($\hat{\boldsymbol{\sigma}}_t^{(m)}=0$) is used, so $\boldsymbol{\sigma}_t$ in \cref{eq:mc_moments} captures only the epistemic component.
+
+\subsection{Adaptive Uncertainty-Aware Attention (AUAA)}
+
+The AUAA mechanism modulates standard scaled dot-product attention with per-timestep predictive uncertainty. Given query $\mathbf{Q}_t$, key $\mathbf{K}_t$, and value $\mathbf{V}_t$ matrices of dimension $d_k$, the uncertainty-gated attention is:
+
+\begin{equation}
+\boldsymbol{\alpha}_t = \text{softmax}\left(\frac{\mathbf{Q}_t \mathbf{K}_t^T}{\sqrt{d_k}}\right) \odot \frac{1}{1 + \boldsymbol{\sigma}_t}
+\label{eq:auaa_attention}
+\end{equation}
+
+where $\odot$ denotes element-wise multiplication and $\boldsymbol{\sigma}_t$ is the predictive standard deviation vector from MC dropout. The uncertainty gate $g_t = 1/(1 + \sigma_t)$ maps high-uncertainty predictions ($\sigma_t \to \infty$) to near-zero attention weights and low-uncertainty predictions ($\sigma_t \to 0$) to full attention. A learnable sigmoid refinement layer provides additional flexibility:
+
+\begin{equation}
+g_t^{\text{learned}} = \text{sigmoid}(\mathbf{W}_g \cdot \boldsymbol{\sigma}_t + \mathbf{b}_g)
+\label{eq:auaa_gate}
+\end{equation}
+
+The AUAA module uses $H = 4$ attention heads with hidden dimension $64$, with head outputs concatenated and linearly projected. The multi-head extension applies the uncertainty gate independently per head:
+\begin{equation}
+\boldsymbol{\alpha}_t^{(h)} = \text{softmax}\!\left(\frac{\mathbf{Q}_t^{(h)} \mathbf{K}_t^{(h)\top}}{\sqrt{d_k/H}}\right) \odot \frac{1}{1 + \boldsymbol{\sigma}_t}, \quad h = 1,\ldots,H,
+\label{eq:auaa_multihead}
+\end{equation}
+followed by a linear projection $\mathbf{W}_O\,[\boldsymbol{\alpha}_t^{(1)},\dots,\boldsymbol{\alpha}_t^{(H)}]$. This uncertainty-gated attention differs fundamentally from standard attention plus dropout regularisation: dropout perturbs attention randomly with no awareness of prediction quality, while AUAA explicitly couples attention weights to the model's own estimate of per-sensor reliability. \cref{fig:auaa} illustrates the dataflow that distinguishes AUAA from a standard scaled dot-product attention block.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  >=stealth, node distance=1.05cm,
+  block/.style={rectangle, draw, thick, rounded corners=2pt, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small},
+  signal/.style={->, thick},
+  gate/.style={rectangle, draw, very thick, rounded corners=2pt, fill=orange!20, minimum width=2.6cm, minimum height=0.65cm, align=center, font=\small},
+  outbox/.style={rectangle, draw, very thick, rounded corners=2pt, fill=green!15, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small}
+]
+  \node[block] (h) {Hidden state $\mathbf{h}_t$};
+  \node[block, below=of h] (qkv) {Linear $\mathbf{Q}_t, \mathbf{K}_t, \mathbf{V}_t$};
+  \node[block, below=of qkv] (score) {Scaled dot-product\\$\mathbf{Q}_t \mathbf{K}_t^\top / \sqrt{d_k}$};
+  \node[block, right=2.4cm of qkv] (sigma) {MC dropout $\boldsymbol{\sigma}_t$\\($M$ stochastic passes)};
+  \node[gate, right=2.5cm of score] (gate) {Uncertainty gate\\$g_t = 1/(1+\boldsymbol{\sigma}_t)$};
+  \node[block, below=of score] (soft) {softmax};
+  \node[block, below=of soft, fill=blue!8] (mul) {Element-wise $\odot$};
+  \node[outbox, below=of mul] (alpha) {Attention $\boldsymbol{\alpha}_t$\\(uncertainty-gated)};
+  \draw[signal] (h) -- (qkv);
+  \draw[signal] (qkv) -- (score);
+  \draw[signal] (score) -- (soft);
+  \draw[signal] (soft) -- (mul);
+  \draw[signal] (mul) -- (alpha);
+  \draw[signal] (h.east) -- ++(0.8,0) -| (sigma.north);
+  \draw[signal] (sigma) -- (gate);
+  \draw[signal, dashed, red] (gate.south) |- (mul.east);
+\end{tikzpicture}
+\caption{Adaptive Uncertainty-Aware Attention (AUAA) dataflow. Standard scaled dot-product attention (left column) is element-wise modulated by an uncertainty gate $g_t = 1/(1+\boldsymbol{\sigma}_t)$ derived from MC dropout (right column). Dashed red line indicates the uncertainty feedback path that distinguishes this work from prior uncertainty-aware models, which use $\sigma_t$ only at the output layer.}
+\label{fig:auaa}
+\end{figure}
+
+\subsection{Dynamic Weight Adapter for Anomaly Scoring}
+
+Fixed-weight combination of reconstruction error and uncertainty fails to capture context-dependent sensor behavior. Our Dynamic Weight Adapter learns time-varying weights conditioned on both signals and their history. At each timestep, reconstruction error $\mathbf{e}_t = |\mathbf{x}_t - \hat{\mathbf{x}}_t|$ and predictive uncertainty $\mathbf{u}_t = \boldsymbol{\sigma}_t$ are concatenated with a context vector $\mathbf{h}_t$:
+
+\begin{equation}
+\alpha_t = \text{sigmoid}(\mathbf{W}_\alpha \cdot [\mathbf{e}_t, \mathbf{u}_t, \mathbf{h}_t] + \mathbf{b}_\alpha)
+\label{eq:dynamic_weight}
+\end{equation}
+
+where $\mathbf{h}_t$ is the hidden state of a GRU that tracks recent weight history, enabling the adapter to remember past sensor reliability trends. The GRU recurrence is given explicitly by
+\begin{align}
+\mathbf{r}_t &= \mathrm{sigmoid}\!\left(\mathbf{W}_r [\mathbf{e}_t, \mathbf{u}_t] + \mathbf{U}_r \mathbf{h}_{t-1} + \mathbf{b}_r\right), \\
+\mathbf{z}_t &= \mathrm{sigmoid}\!\left(\mathbf{W}_z [\mathbf{e}_t, \mathbf{u}_t] + \mathbf{U}_z \mathbf{h}_{t-1} + \mathbf{b}_z\right), \\
+\tilde{\mathbf{h}}_t &= \tanh\!\left(\mathbf{W}_h [\mathbf{e}_t, \mathbf{u}_t] + \mathbf{U}_h (\mathbf{r}_t \odot \mathbf{h}_{t-1}) + \mathbf{b}_h\right), \\
+\mathbf{h}_t &= (1 - \mathbf{z}_t) \odot \mathbf{h}_{t-1} + \mathbf{z}_t \odot \tilde{\mathbf{h}}_t,
+\label{eq:dw_gru}
+\end{align}
+where $\mathbf{r}_t, \mathbf{z}_t$ are the reset and update gates respectively. The hybrid anomaly score combines both signals:
+
+\begin{equation}
+s_t = \alpha_t \cdot \mathbf{e}_t + (1 - \alpha_t) \cdot \mathbf{u}_t
+\label{eq:hybrid_score}
+\end{equation}
+
+During stable sensor operation, $\alpha_t \to 1$, making the score reconstruction-error dominant; during sensor degradation, $\alpha_t \to 0$, shifting emphasis to uncertainty. This context-sensitive mechanism adapts to evolving sensor conditions without manual threshold tuning.
+
+\subsection{Feature-Level Anomaly Attribution}
+
+The feature-importance learner computes per-sensor attribution weights via a learned transformation:
+
+\begin{equation}
+\mathbf{w}_f = \text{softmax}\left(\mathbf{V} \cdot \tanh(\mathbf{W} \cdot \mathbf{x} + \mathbf{b})\right)
+\label{eq:feature_importance}
+\end{equation}
+
+where $\mathbf{V} \in \mathbb{R}^{1 \times d}$ and $\mathbf{W} \in \mathbb{R}^{d \times n}$ are learned parameters. An inter-sensor correlation matrix $\mathbf{C} \in \mathbb{R}^{n \times n}$ is also learned to capture physical cross-sensor couplings (e.g., HVAC-induced correlations between temperature, humidity, and CO\textsubscript{2}).
+
+\textbf{Theoretical Guarantee (Chebyshev Bound).} Let $s_t$ be the anomaly score at time $t$ with empirical mean $\bar{s}$ and standard deviation $\sigma_s$ over a calibration set. For any threshold $\tau = \bar{s} + k \cdot \sigma_s$ with $k > 0$, the Chebyshev concentration inequality provides a distribution-free bound on the false positive rate:
+
+\begin{equation}
+P(\text{false positive}) = P(s_t > \tau \mid \text{normal}) \leq \frac{1}{k^2}
+\label{eq:chebyshev}
+\end{equation}
+
+This guarantees that for a desired false positive rate $\epsilon = 0.05$, setting $k = \sqrt{1/\epsilon} = \sqrt{20} \approx 4.47$ ensures the actual false positive rate does not exceed 5\%, regardless of the underlying score distribution. This is a strictly stronger guarantee than percentile-based thresholds, which provide only empirical estimates with no statistical coverage.
+
+\subsection{Composite Loss Function}
+
+The model is trained with a composite objective that jointly optimizes reconstruction fidelity, uncertainty calibration, and weight stability:
+
+\begin{equation}
+\mathcal{L} = \mathcal{L}_{\text{MSE}} + \beta_1 \cdot \mathcal{L}_{\text{uncertainty}} + \beta_2 \cdot \mathcal{L}_{\text{weight}}
+\label{eq:loss}
+\end{equation}
+
+where $\mathcal{L}_{\text{MSE}} = \frac{1}{n}\sum_{f=1}^{n} (\hat{y}_f - y_f)^2$ is the reconstruction loss. The uncertainty calibration term $\mathcal{L}_{\text{uncertainty}} = \frac{1}{n}\sum_{f=1}^{n} (\sigma_f^{\text{pred}} - \sigma_f^{\text{emp}})^2$ penalizes discrepancies between the predicted standard deviation $\sigma_f^{\text{pred}}$ (from MC dropout) and the empirical residual standard deviation $\sigma_f^{\text{emp}}$ computed over a rolling window of 50 samples, discouraging overconfident predictions. The weight regularization term $\mathcal{L}_{\text{weight}} = \frac{1}{T}\sum_{t=2}^{T} (\alpha_t - \alpha_{t-1})^2$ encourages smooth temporal transitions in the dynamic weight $\alpha_t$, preventing erratic shifts between reconstruction- and uncertainty-dominated regimes. Coefficients $\beta_1$ and $\beta_2$ converged to $\beta_1 = 0.1$ and $\beta_2 = 0.05$ via grid search on the validation set, with $\beta_2$ set lower to avoid over-smoothing the dynamic weights
+
+\subsection{Anomaly Detection Pipeline}
+
+We implement four thresholding strategies:
+
+\begin{enumerate}[leftmargin=*, nosep]
+    \item \textbf{Percentile-based} (\emph{empirical}):
+    \begin{equation}
+    \tau_{95} = Q_{0.95}\!\left(\{s_t^{\text{val}}\}_{t=1}^{T_{\text{val}}}\right),
+    \label{eq:tau_percentile}
+    \end{equation}
+    where $Q_{0.95}(\cdot)$ is the 95\textsuperscript{th} percentile of validation-set anomaly scores.
+    \item \textbf{Adaptive} (\emph{context-aware}):
+    \begin{equation}
+    \tau_{\text{adapt}} = \tau_{\text{base}} \cdot \left(0.8 + 0.4 \cdot \bar{\alpha}_t\right),
+    \label{eq:tau_adaptive}
+    \end{equation}
+    where $\bar{\alpha}_t$ is a moving average of the dynamic weight from \cref{eq:dynamic_weight} over a local window.
+    \item \textbf{Chebyshev theoretical} (\emph{distribution-free FP guarantee}):
+    \begin{equation}
+    \tau_{\text{theory}} = \bar{s} + k \cdot \sigma_s, \quad k = \sqrt{1/\epsilon}, \quad P(\text{FP}) \leq \frac{1}{k^2} = \epsilon,
+    \label{eq:tau_chebyshev}
+    \end{equation}
+    where $\bar{s}, \sigma_s$ are the mean and standard deviation of validation scores and $\epsilon$ is the desired false-positive rate. The formal guarantee is stated in \cref{thm:chebyshev_fp} below.
+    \item \textbf{Distribution-free quantile} (\emph{contamination-aware}):
+    \begin{equation}
+    \tau_{\text{dist}} = Q_{1-\gamma}\!\left(\hat{F}_{s}\right),
+    \label{eq:tau_distfree}
+    \end{equation}
+    where $\hat{F}_{s}$ is the empirical CDF of the hybrid score $s_t$ from \cref{eq:hybrid_score} and $\gamma$ is the assumed contamination ratio.
+\end{enumerate}
+
+The complete detection algorithm is presented in \cref{alg:stochastic_tcn}.
+
+\input{algorithms/[alg]stochastic-AD}
+
+\subsection{Theoretical Guarantees}
+\label{sec:theoretical_guarantees}
+
+The two results below formalize the distribution-free properties on which our anomaly-detection pipeline rests. Both are stated for the anomaly-score variable produced by \cref{eq:hybrid_score}.
+
+\begin{Theorem}[Distribution-Free False-Positive Bound]
+\label{thm:chebyshev_fp}
+Let $S$ denote the anomaly-score random variable on a clean (normal-operation) validation set, with finite mean $\mu_s = \mathbb{E}[S]$ and finite variance $\sigma_s^2 = \mathrm{Var}(S) < \infty$. For any desired false-positive rate $\epsilon \in (0,1)$, define the threshold
+\begin{equation*}
+\tau_{\mathrm{theory}}(\epsilon) \;\triangleq\; \mu_s + k(\epsilon)\,\sigma_s, \qquad k(\epsilon) = \sqrt{1/\epsilon}.
+\end{equation*}
+Then the false-positive rate of the detector $\mathbf{1}_{[S > \tau_{\mathrm{theory}}(\epsilon)]}$ satisfies
+\begin{equation*}
+P\!\left(S > \tau_{\mathrm{theory}}(\epsilon)\right) \;\leq\; \frac{1}{k(\epsilon)^{2}} \;=\; \epsilon,
+\end{equation*}
+without any distributional assumption on $S$.
+\end{Theorem}
+
+\begin{proof}
+By Chebyshev's inequality~\cite{aggarwal2017outlier}, for any random variable $S$ with finite mean $\mu_s$ and variance $\sigma_s^2$ and for every $k > 0$,
+\begin{equation*}
+P\!\left(|S - \mu_s| \geq k\,\sigma_s\right) \;\leq\; \frac{1}{k^{2}}.
+\end{equation*}
+The one-sided event $\{S > \mu_s + k\sigma_s\}$ is contained in $\{|S - \mu_s| \geq k\sigma_s\}$, so
+$P(S > \mu_s + k\sigma_s) \leq P(|S - \mu_s| \geq k\sigma_s) \leq 1/k^2$.
+Setting $k = \sqrt{1/\epsilon}$ yields $1/k^{2} = \epsilon$, which establishes the claimed bound. \qed
+\end{proof}
+
+\begin{Theorem}[Monte-Carlo Posterior Moment Convergence]
+\label{thm:mc_convergence}
+Let $\boldsymbol{\theta}^{(m)} \overset{\mathrm{i.i.d.}}{\sim} q(\boldsymbol{\theta})$ for $m = 1,\dots,M$ denote dropout-sampled network weights, and define the per-sample predictions $\hat{\mathbf{y}}^{(m)}(\mathbf{x}) = f_{\boldsymbol{\theta}^{(m)}}(\mathbf{x})$. Assume $\hat{\mathbf{y}}^{(m)}$ has finite second moment $\mathbb{E}_{q}[\|\hat{\mathbf{y}}^{(m)}\|^{2}] < \infty$. Then the empirical Monte-Carlo mean and variance estimators
+\begin{equation*}
+\hat{\mathbf{y}}_M \triangleq \tfrac{1}{M}\sum_{m=1}^{M} \hat{\mathbf{y}}^{(m)}, \qquad
+\widehat{\boldsymbol{\sigma}}^{2}_M \triangleq \tfrac{1}{M}\sum_{m=1}^{M} (\hat{\mathbf{y}}^{(m)} - \hat{\mathbf{y}}_M)^{2}
+\end{equation*}
+converge to the posterior predictive moments at rate $O(1/\sqrt{M})$ in probability:
+$\| \hat{\mathbf{y}}_M - \mathbb{E}_{q}[\hat{\mathbf{y}}] \| = O_p(M^{-1/2})$ and likewise for $\widehat{\boldsymbol{\sigma}}^{2}_M$.
+\end{Theorem}
+
+\begin{proof}
+The strong law of large numbers implies $\hat{\mathbf{y}}_M \xrightarrow{a.s.} \mathbb{E}_q[\hat{\mathbf{y}}]$ since the i.i.d.\ samples have finite first moment. The classical central limit theorem then yields $\sqrt{M}\,(\hat{\mathbf{y}}_M - \mathbb{E}_q[\hat{\mathbf{y}}]) \xrightarrow{d} \mathcal{N}(0, \mathrm{Cov}_q(\hat{\mathbf{y}}))$ under finite second moment, giving the $O_p(M^{-1/2})$ rate. The same argument applied to the centred squared sample $(\hat{\mathbf{y}}^{(m)} - \hat{\mathbf{y}}_M)^{2}$ together with Slutsky's theorem gives convergence of $\widehat{\boldsymbol{\sigma}}^{2}_M$ at the same rate. The variational interpretation of dropout as a Bayesian posterior $q(\boldsymbol{\theta})$ over weights is due to Gal and Ghahramani~\cite{gal2016dropout_bayesian}; under their identification, $\mathbb{E}_{q}[\hat{\mathbf{y}}]$ and $\mathrm{Cov}_{q}(\hat{\mathbf{y}})$ are the posterior predictive moments.
+\end{proof} 
+
+\Cref{thm:chebyshev_fp} furnishes the false-positive guarantee invoked at line~16 of \cref{alg:stochastic_tcn}. \Cref{thm:mc_convergence} justifies the empirical moments used at lines~4--5 of the same algorithm, with the rate $M=50$ chosen so that $M^{-1/2}\approx 0.14$ for an a-priori standard-error budget under 15\%. With the architectural components, detection pipeline, and theoretical guarantees fully specified, the following section evaluates each component's contribution through forecasting benchmarks, ablation studies, sensitivity analyses, and a cross-dataset validation on the Skoltech Anomaly Benchmark.

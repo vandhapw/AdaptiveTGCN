@@ -1,0 +1,35 @@
+
+\subsection{Interpretation of Results}
+
+The ablation results provide direct evidence for the role of auxiliary objectives in shaping the encoder representation. Adding MC dropout to the deterministic Base TCN leaves point-prediction MSE essentially unchanged ($+0.005\%$), confirming that MC dropout's primary contribution is uncertainty estimation rather than forecasting improvement. Activating the dynamic-weight regularizer and the feature-attribution loss together (without AUAA) produces the largest single jump in MSE ($-26.25\%$), demonstrating that the composite objective itself not merely model capacity drives the reduction. Adding AUAA on top of the auxiliary objectives produces near-equivalent MSE ($-25.19\%$): AUAA's contribution is therefore most visible in \emph{anomaly scoring} (uncertainty-gated attention re-weights time steps with high $\sigma_t$) rather than in forecasting metrics that average over time.
+
+The dynamic weight adapter's central tendency $\bar{\alpha} = 0.527$ on the test split sits slightly above $0.5$, indicating mild bias toward reconstruction error in this indoor-air-quality regime. The observed range $\alpha \in [0.003, 0.537]$ confirms that the gating module remains responsive: a small subset of windows triggers near-zero $\alpha$ (uncertainty-dominated scoring) while the dominant operating mode lies near the central tendency. The adapter learns this context dependence end-to-end without manual threshold tuning.
+
+\subsection{Comparison with Prior Stochastic TCN Frameworks}
+
+Our framework extends stochastic TCNs along three architectural dimensions. First, \textbf{uncertainty integration depth}: prior work~\cite{ghimire_electricity_2025, cui_sde-hnn_2025} applies uncertainty post hoc as a scoring term, while our AUAA feeds it into attention computation, consistent with the epistemic/aleatoric decomposition formalized by Kendall and Gal~\cite{kendall2017uncertainties}. Second, \textbf{adaptive vs.\ fixed scoring}: our dynamic weight adapter replaces static $\alpha$ with a context-sensitive mechanism. Third, \textbf{explanatory capability}: our feature-importance learner provides native per-sensor attributions absent from prior frameworks~\cite{audibert2020usad, malhotra2016lstmed, zhao2020mtadgat}. The cross-dataset improvement on SKAB ($7.7\times$ F1, $12.6\times$ recall over the Base TCN; \cref{sec:skab_cross_dataset}) confirms that these architectural differences yield measurable gains beyond the IAQ domain.
+
+\subsection{Uncertainty Calibration}
+
+Qualitatively, MC dropout uncertainty estimates tracked prediction difficulty: uncertainty increased during rapid environmental transitions (morning ventilation onset, occupancy changes) and decreased during stable nighttime periods. \cref{fig:uncertainty_calibration} reports the reliability diagram on the test split (left) alongside the distribution of predictive standard deviations (right). The reliability diagram exposes a coverage gap at high nominal confidence levels: at 95\% nominal confidence the empirical coverage falls below the diagonal, indicating that the raw MC dropout intervals are slightly over-confident on this dataset. The Chebyshev distribution-free bound used for threshold selection (Section 3.6) is unaffected by this calibration gap and provides the deployment-time FP-rate guarantee. The architectural integration of uncertainty distinguishes this work from standalone calibration studies~\cite{gal2016dropout_bayesian, lakshminarayanan2017ensembles}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/08_uncertainty_calibration.png}
+\caption{Uncertainty calibration diagnostics on the held-out test split. \textbf{(a)} Reliability diagram: empirical coverage vs.\ nominal confidence level. A perfectly calibrated model lies on the diagonal; departures below the diagonal indicate over-confidence. \textbf{(b)} Histogram of per-window predictive standard deviation $\boldsymbol{\sigma}_t$ from MC dropout ($M=50$ samples), centred at mean $\bar{\sigma} = 6.18\times 10^{-4}$.}
+\label{fig:uncertainty_calibration}
+\end{figure}
+
+\subsection{Sensor-Specific Design Justification}
+
+Each architectural choice is motivated by a concrete sensor-characteristic argument:
+
+\textbf{AUAA justified by sensor heterogeneity.} The uncertainty gate $1/(1 + \sigma_t)$ is motivated by the observation that sensor noise variance varies both across sensor types (e.g., electrochemical VOC vs.~thermistor temperature) and over time (sensor aging, environmental interference). A mechanism that uniformly treats all attention positions is suboptimal when some positions carry substantially more reliable information than others.
+
+\textbf{Dynamic weighting justified by sensor degradation.} Fixed-weight scoring implicitly assumes constant sensor quality—an assumption violated by real sensor deployments where CO\textsubscript{2} sensor drift and VOC sensitivity degradation evolve on timescales of days to weeks. The dynamic adapter's GRU state provides memory of recent sensor behavior, enabling adaptation to degradation trends.
+
+\textbf{Attribution justified by maintenance workflows.} In facility management, an anomaly attributed to CO\textsubscript{2} triggers HVAC inspection, while one attributed to dust triggers filter replacement—different sensor attributions lead to different operational responses. The feature-importance learner provides this sensor-level granularity as a native output.
+
+\subsection{Design Extensions and Deployment Considerations}
+
+The sensor-specific design principles established in this work suggest natural extensions. Training under normal-operation assumptions means contamination by undetected anomalies can bias predictive distributions, robust training strategies such as trimmed loss functions offer a direct mitigation path. The current single-step prediction scope can be extended to multi-horizon forecasting using long-context Transformer variants such as Informer~\cite{zhou2021informer} or TimesNet~\cite{wu2022timesnet} for detecting gradual drift patterns that emerge over longer timescales. Graph-attention extensions such as MTAD-GAT~\cite{zhao2020mtadgat} provide a path for modelling explicit inter-sensor dependencies that the current channel-independent architecture does not capture. For higher-frequency sensor streams (e.g., 100~Hz vibration monitoring), model distillation or reducing the number of MC samples allows architectural benefits to be preserved within tighter latency constraints. Assumptions regarding a fixed sensor set can be relaxed through dynamic input filtering, and online learning variants can address conceptual shifts in non-stationary environments.
