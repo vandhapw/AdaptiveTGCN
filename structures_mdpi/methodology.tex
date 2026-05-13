@@ -37,6 +37,9 @@ where $\Delta_f(t) = x_f(t) - x_f(t-1)$ captures first-order dynamics, $\mu_f^W(
 
 The overall architecture of the proposed framework is illustrated in \cref{fig:architecture}. The framework follows a closed-loop design: sensor data pass through a three-layer TCN backbone, MC dropout produces per-sensor uncertainty estimates, and these uncertainty signals are then fed back into the attention mechanism (AUAA), the dynamic anomaly scoring (Weight Adapter), and the per-sensor explanation module (Feature Attribution)---rather than being used only as an output-level term.
 
+\input{figures/proposed_framework}
+
+
 \textbf{TCN Backbone.} The core of our framework is a three-layer Temporal Convolutional Network~\cite{bai2018tcn, oord2016wavenet} with 64 channels per layer, kernel size $k=2$, and exponentially increasing dilation factors $d_l = 2^{l-1}$ for $l \in \{1,2,3\}$, yielding $\{d_1, d_2, d_3\} = \{1, 2, 4\}$. Within layer $l$, each output time step is produced by a dilated causal convolution:
 \begin{equation}
 y_t^{(l)} = \sum_{i=0}^{k-1} f^{(l)}(i) \cdot x_{t - d_l \cdot i}^{(l-1)},
@@ -56,7 +59,6 @@ with $L=3$ layers, covering 8 of the $W=20$ input timesteps; this matches the te
 \end{equation}
 where $F^{(l)}$ is the residual function of block $l$ and $p_l = 0.1 \times (l/L)$ scales linearly with depth. At inference, all blocks participate deterministically (i.e.\ $b_l=1$), and Monte Carlo dropout is activated across all layers with dropout rate $r=0.2$.
 
-\input{figures/proposed_framework}
 
 
 \textbf{MC Dropout as Bayesian Posterior.} Following~\cite{gal2016dropout_bayesian}, dropout applied at inference approximates the posterior predictive distribution:
@@ -221,7 +223,7 @@ We implement four thresholding strategies:
 
 The complete detection algorithm is presented in \cref{alg:stochastic_tcn}.
 
-\input{algorithms/[alg]stochastic-AD}
+
 
 \subsection{Theoretical Guarantees}
 \label{sec:theoretical_guarantees}
@@ -267,3 +269,5 @@ The strong law of large numbers implies $\hat{\mathbf{y}}_M \xrightarrow{a.s.} \
 \end{proof} 
 
 \Cref{thm:chebyshev_fp} furnishes the false-positive guarantee invoked at line~16 of \cref{alg:stochastic_tcn}. \Cref{thm:mc_convergence} justifies the empirical moments used at lines~4--5 of the same algorithm, with the rate $M=50$ chosen so that $M^{-1/2}\approx 0.14$ for an a-priori standard-error budget under 15\%. With the architectural components, detection pipeline, and theoretical guarantees fully specified, the following section evaluates each component's contribution through forecasting benchmarks, ablation studies, sensitivity analyses, and a cross-dataset validation on the Skoltech Anomaly Benchmark.
+
+\input{algorithms/[alg]stochastic-AD}
