@@ -1,107 +1,153 @@
-% Unified architecture (single figure), light-dark palette, serpentine flow.
-% Dilation graph + MC-dropout detail embedded inline in the backbone boxes;
-% only straight arrows + one turn => no overlapping lines.
+% Four-lane architecture (format of "architecture 2.png") with the detailed
+% breakdowns (dilated conv, MC-dropout, AUAA, GRU adapter) embedded inline.
+% Light-dark palette; cross-lane arrows routed in gap channels (no overlaps).
 \definecolor{acBlueD}{HTML}{1F3B57}
 \definecolor{acBlue}{HTML}{3B6EA5}
 \definecolor{acBlueL}{HTML}{A6C5E3}
 \definecolor{acRed}{HTML}{C0392B}
 \begin{tikzpicture}[
-    font=\footnotesize, >={Stealth[scale=0.95]},
-    box/.style={rectangle, rounded corners=4pt, draw=acBlue, thick, fill=acBlueL!25,
-                align=center, inner sep=4pt, text=black},
-    dk/.style={box, fill=acBlue, draw=acBlueD, text=white},
-    big/.style={rectangle, rounded corners=6pt, draw=acBlueD, very thick, fill=acBlueL!12},
-    fl/.style={-{Stealth[scale=1.1]}, very thick, draw=acBlueD},
-    fb/.style={-{Stealth[scale=1.0]}, very thick, draw=acRed, densely dashed},
-    sub/.style={rectangle, rounded corners=2pt, draw=acBlue, fill=acBlueL!45,
-                align=center, font=\tiny, inner sep=2pt, minimum height=0.42cm},
-    subd/.style={sub, fill=acBlue, text=white, draw=acBlueD},
-    mini/.style={-{Stealth[scale=0.7]}, draw=acBlueD, line width=0.5pt},
+   font=\scriptsize, >={Stealth[scale=0.9]},
+   hdr/.style={rectangle, rounded corners=2pt, minimum height=0.6cm, align=center,
+               font=\bfseries\footnotesize, text=white, fill=acBlueD, inner sep=4pt},
+   bx/.style={rectangle, rounded corners=3pt, draw=acBlue, thick, fill=acBlueL!25,
+              align=center, inner sep=2.5pt, text width=2.7cm, minimum height=0.6cm},
+   dk/.style={bx, fill=acBlue, draw=acBlueD, text=white},
+   big/.style={rectangle, rounded corners=5pt, draw=acBlueD, very thick, fill=acBlueL!12},
+   sub/.style={rectangle, rounded corners=2pt, draw=acBlue, fill=acBlueL!45, align=center,
+               font=\tiny, inner sep=1.5pt, minimum height=0.36cm},
+   subd/.style={sub, fill=acBlue, text=white, draw=acBlueD},
+   fl/.style={-{Stealth[scale=0.85]}, thick, draw=acBlueD},
+   xf/.style={-{Stealth[scale=1.0]}, very thick, draw=acBlueD},
+   fb/.style={-{Stealth[scale=0.85]}, thick, draw=acRed, densely dashed},
+   mini/.style={-{Stealth[scale=0.6]}, draw=acBlueD, line width=0.5pt},
+   wc/.style={circle, draw=acBlueD, fill=acBlue, text=white, minimum size=0.42cm, inner sep=0, font=\tiny},
+   hb/.style={rectangle, rounded corners=1.5pt, draw=acBlue, fill=acBlueL!45, minimum size=0.34cm, inner sep=1pt, font=\tiny, align=center},
+   cc/.style={circle, draw=acBlueD, fill=acBlue, text=white, minimum size=0.44cm, inner sep=0, font=\scriptsize},
 ]
-% ===================== ROW A (left -> right) =====================
-\node[box, text width=2.2cm, fill=acBlueL!35, minimum height=1.7cm] (inp) at (0,0)
-   {\textbf{Sensor Input}\\ $\mathbf{X}\!\in\!\mathbb{R}^{W\times n}$\\ 5 ch, $W{=}20$};
+% ---- lane backgrounds ----
+\begin{pgfonlayer}{background}
+  \foreach \xa/\xb in {-1.7/1.7, 3.0/9.45, 10.0/13.45, 14.0/17.45}
+     \fill[acBlueL!11, rounded corners=4pt] (\xa,0.55) rectangle (\xb,-9.7);
+\end{pgfonlayer}
+% ---- headers ----
+\node[hdr,text width=3.0cm] (h1) at (0,0)    {DATA PIPELINE};
+\node[hdr,text width=6.0cm] (h2) at (6.25,0) {MODEL ARCHITECTURES};
+\node[hdr,text width=3.2cm] (h3) at (11.7,0) {HYBRID ANOMALY SCORING};
+\node[hdr,text width=3.2cm] (h4) at (15.7,0) {ANOMALY DETECTION};
 
-\node[big, minimum width=4.7cm, minimum height=3.7cm] (tcn) at (4.7,0) {};
-\node[anchor=north, font=\bfseries\scriptsize, text=acBlueD, text width=4.5cm, align=center]
-   at ($(tcn.north)+(0,-0.07)$) {TCN Backbone --- Dilated Causal Convolutions};
-\begin{scope}[shift={(3.5,-0.95)},
-   nd/.style={circle, draw=acBlue, fill=acBlueL!40, line width=0.3pt, minimum size=0.17cm, inner sep=0},
-   ac/.style={circle, draw=acBlueD, fill=acBlueD, line width=0.3pt, minimum size=0.17cm, inner sep=0},
-   rf/.style={-, draw=acRed, line width=0.6pt}]
-   \def\dx{0.305}\def\dy{0.40}
-   \foreach \r/\lab in {0/$\mathbf{x}$,1/$d{=}1$,2/$d{=}2$,3/$d{=}4$}{
+% ===================== LANE 1: DATA PIPELINE =====================
+\node[bx] (d1) at (0,-1.55) {\textbf{Raw Multivariate Data}\\ \texttt{df\_normal.csv}, 5 channels};
+\node[bx] (d2) at (0,-2.85) {\textbf{Data Loader \& Processing}\\ parsers, artifact drop};
+\node[bx] (d3) at (0,-4.15) {\textbf{Feature Engineering}\\ lags, rolling stats (40 cols)};
+\node[bx,minimum height=1.0cm] (d4) at (0,-5.6)
+   {\textbf{Leakage-Controlled Split}\\[1pt]
+    \tikz{\fill[acBlueD](0,0)rectangle(1.45,0.14);\fill[acBlue](1.45,0)rectangle(1.75,0.14);
+          \fill[acBlueL](1.75,0)rectangle(2.05,0.14);}\\[-1pt]
+    {\tiny 70\% train $\mid$ 15\% val $\mid$ 15\% test}};
+\node[bx] (d5) at (0,-7.0) {\textbf{Windowing}\\ strided $20\times40$, 5 targets};
+
+% ===================== LANE 2A: BASE TCN (with dilation graph) =====================
+\node[big, minimum width=3.05cm, minimum height=2.75cm] (a1) at (4.55,-2.0) {};
+\node[anchor=north, font=\bfseries\tiny, text=acBlueD, text width=2.95cm, align=center]
+   at ($(a1.north)+(0,-0.05)$) {A $\cdot$ Base TCN ($3\times$ TemporalBlock)};
+\begin{scope}[shift={(3.55,-2.95)},
+   nd/.style={circle, draw=acBlue, fill=acBlueL!40, line width=0.25pt, minimum size=0.14cm, inner sep=0},
+   ac/.style={circle, draw=acBlueD, fill=acBlueD, line width=0.25pt, minimum size=0.14cm, inner sep=0},
+   rf/.style={-, draw=acRed, line width=0.5pt}]
+   \def\dx{0.265}\def\dy{0.34}
+   \foreach \r/\lab in {0/$\mathbf{x}$,1/$1$,2/$2$,3/$4$}{
      \foreach \i in {1,...,8} \node[nd] (n\r-\i) at (\i*\dx,\r*\dy) {};
-     \node[anchor=east, font=\tiny] at (0.18,\r*\dy) {\lab};}
+     \node[anchor=east, font=\tiny] at (0.16,\r*\dy) {\lab};}
    \foreach \a/\b in {n2-8/n3-8,n2-4/n3-8,n1-8/n2-8,n1-6/n2-8,n1-4/n2-4,n1-2/n2-4,
                       n0-8/n1-8,n0-7/n1-8,n0-6/n1-6,n0-5/n1-6,n0-4/n1-4,n0-3/n1-4,
                       n0-2/n1-2,n0-1/n1-2} \draw[rf] (\a)--(\b);
    \foreach \n in {n0-1,n0-2,n0-3,n0-4,n0-5,n0-6,n0-7,n0-8,n1-2,n1-4,n1-6,n1-8,n2-4,n2-8,n3-8}
       \node[ac] at (\n) {};
-   \node[anchor=west, font=\tiny\bfseries, text=acRed] at ($(n3-8.east)+(0.03,0)$) {$\hat{y}_t$};
+   \node[anchor=west, font=\tiny\bfseries, text=acRed] at ($(n3-8.east)+(0.02,0)$) {$\hat{y}_t$};
 \end{scope}
-\node[anchor=south, font=\tiny, text width=4.4cm, align=center] at ($(tcn.south)+(0,0.05)$)
-   {$k{=}2,\ d_l{=}2^{l-1}{=}\{1,2,4\},\ 64$ ch; $\mathrm{RF}{=}1{+}(k{-}1)\!\sum_l d_l{=}8$};
-
-\node[big, minimum width=3.7cm, minimum height=3.7cm] (mc) at (9.7,0) {};
-\node[anchor=north, font=\bfseries\scriptsize, text=acBlueD] at ($(mc.north)+(0,-0.07)$) {MC-Dropout ($M$ passes)};
-\begin{scope}[shift={(8.5,-0.55)}]
-  \foreach \k/\op in {0/0.5,1/0.7,2/1.0}
-     \draw[rounded corners=2pt, draw=acBlue, fill=acBlueL!35, fill opacity=\op]
-        (\k*0.18,\k*0.18) rectangle ++(1.25,0.95);
-  \node[font=\tiny,align=center] at (0.95,-0.27){active\\dropout};
+\node[anchor=south, font=\tiny, text width=2.95cm, align=center] at ($(a1.south)+(0,0.03)$)
+   {$k{=}2,\ d_l{=}\{1,2,4\},\ \mathrm{RF}{=}8$};
+\node[bx,text width=2.5cm] (a2) at (4.55,-4.05) {Reconstruction};
+\node[big, minimum width=3.05cm, minimum height=1.6cm] (a3) at (4.55,-5.55) {};
+\node[anchor=north, font=\bfseries\tiny, text=acBlueD] at ($(a3.north)+(0,-0.05)$) {MC-Dropout ($M$ passes)};
+\begin{scope}[shift={(3.85,-5.95)}]
+   \foreach \k/\op in {0/0.5,1/0.7,2/1.0}
+      \draw[rounded corners=1.5pt, draw=acBlue, fill=acBlueL!40, fill opacity=\op]
+         (\k*0.13,\k*0.13) rectangle ++(0.85,0.55);
+   \node[anchor=west, font=\tiny] at (1.25,0.27) {$\Rightarrow\hat{\mathbf{y}}_t,\boldsymbol{\sigma}_t$};
 \end{scope}
-\node[font=\scriptsize, text=acBlue] at (10.55,0.0) {$\Rightarrow$};
-\begin{scope}[shift={(10.75,-0.4)}]
-  \draw[draw=acBlue,fill=acBlueL!35,line width=0.5pt]
-    plot[domain=0:1.0,samples=24](\x,{0.42*exp(-((\x-0.5)^2)/0.045)})--(1.0,0)--(0,0)--cycle;
-\end{scope}
-\node[anchor=south, font=\tiny, text width=3.5cm, align=center] at ($(mc.south)+(0,0.05)$)
-   {$\hat{\mathbf{y}}_t{=}\tfrac1M\!\sum_m\!\hat{\mathbf{y}}_t^{(m)},\ \boldsymbol{\sigma}_t{=}\mathrm{std}_m$; $O(M^{-1/2})$ (Thm.~\ref{thm:mc_convergence})};
+\node[bx,text width=2.5cm] (a4) at (4.55,-7.0) {Point pred.\ $+$ epistemic unc.};
 
-\node[box, text width=2.5cm, minimum height=1.9cm] (out) at (13.7,0)
-   {\textbf{Per-sensor outputs}\\ mean $\hat{\mathbf{y}}_t$ \&\\ epistemic $\boldsymbol{\sigma}_t$};
+% ===================== LANE 2B: FULL ENHANCED =====================
+\node[bx,text width=2.6cm] (b1) at (7.95,-1.2) {\textbf{B $\cdot$ Full Enhanced}\\ $3\times$ TemporalBlock};
+\node[dk,text width=2.6cm] (b2) at (7.95,-2.3) {\textbf{Enhanced TemporalBlock}\\ LayerNorm, residual scale, stoch.\ depth};
+\node[dk,text width=2.6cm] (b3) at (7.95,-3.4) {\textbf{Sequence-Level Uncertainty Head}};
+% AUAA --- multi-head attention drawn as a visual (W_h projections -> heads -> concat -> W_O)
+\node[big, minimum width=3.2cm, minimum height=4.35cm] (b4) at (7.95,-6.1) {};
+\node[anchor=north, font=\bfseries\tiny, text=acBlueD, text width=3.1cm, align=center]
+   at ($(b4.north)+(0,-0.04)$) {AUAA --- uncertainty-gated multi-head attention};
+\coordinate (bin) at (7.95,-4.5);
+% per-head projection circles W_{h i}
+\node[wc] (w1) at (6.95,-4.95) {$W_{h1}$};
+\node[wc] (w2) at (7.65,-4.95) {$W_{h2}$};
+\node[font=\tiny] at (8.2,-4.95) {$\cdots$};
+\node[wc] (w4) at (8.9,-4.95) {$W_{hH}$};
+% head boxes
+\node[hb] (hd1) at (6.95,-5.6) {head$_1$};
+\node[hb] (hd2) at (7.65,-5.6) {head$_2$};
+\node[hb] (hd4) at (8.9,-5.6) {head$_H$};
+\node[font=\tiny,text=acRed] at (8.32,-5.6) {$\odot g_t$};
+% concat & output projection
+\node[cc] (cc) at (7.9,-6.35) {$+\!\!+$};
+\node[wc,minimum size=0.48cm] (wo) at (7.9,-7.05) {$W_O$};
+% mini wiring
+\draw[mini] (bin)--(w1); \draw[mini] (bin)--(w2); \draw[mini] (bin)--(w4);
+\draw[mini] (w1)--(hd1); \draw[mini] (w2)--(hd2); \draw[mini] (w4)--(hd4);
+\draw[mini] (hd1.south)--(cc); \draw[mini] (hd2.south)--(cc); \draw[mini] (hd4.south)--(cc);
+\draw[mini] (cc)--(wo);
+\node[anchor=south, font=\tiny, text width=3.1cm, align=center] at ($(b4.south)+(0,0.03)$)
+   {$\mathbf{o}{=}\mathbf{W}_O[\mathrm{head}_1{,}\dots{,}\mathrm{head}_H]$;\\ $\mathrm{head}_i{=}\mathrm{softmax}(\mathbf{Q}_i\mathbf{K}_i^\top\!/\sqrt{d_k/H})\odot g_t\mathbf{V}_i$};
+\node[bx,text width=2.6cm] (b5) at (7.95,-8.85) {\textbf{Dual Output Heads}\\ Mean $\mid$ Variance};
 
-% ===================== ROW B (right -> left) =====================
-% --- AUAA (broken down: multi-head attention + uncertainty gate) ---
-\node[big, minimum width=4.1cm, minimum height=3.35cm] (auaa) at (13.7,-5.25) {};
-\node[anchor=north, font=\bfseries\tiny, text=acBlueD, text width=3.9cm, align=center]
-   at ($(auaa.north)+(0,-0.06)$) {AUAA --- uncertainty-gated attention};
-\node[sub, text width=2.9cm] (mha) at (13.7,-4.62) {4-head multi-head attention\\ $\mathrm{softmax}(\mathbf{QK}^\top/\sqrt{d_k})$};
-\node[subd, text width=2.9cm] (agate) at (13.7,-5.62) {uncertainty gate\\ $g_t{=}1/(1+\boldsymbol{\sigma}_t)$};
-\draw[mini] (agate.north) -- (mha.south) node[midway, right=0pt, font=\tiny, text=acRed]{$\odot$};
-\node[anchor=south, font=\tiny, text width=3.9cm, align=center] at ($(auaa.south)+(0,0.04)$)
-   {$\boldsymbol{\alpha}^{\mathrm{att}}_t=\mathrm{softmax}(\tfrac{\mathbf{QK}^\top}{\sqrt{d_k}})\odot g_t$};
-% --- Dynamic Weight Adapter (broken down: encoders + GRU -> alpha_t) ---
-\node[big, minimum width=4.1cm, minimum height=3.35cm] (dwa) at (9.0,-5.25) {};
-\node[anchor=north, font=\bfseries\tiny, text=acBlueD, text width=3.9cm, align=center]
-   at ($(dwa.north)+(0,-0.06)$) {Dynamic Weight Adapter (GRU)};
-\node[font=\scriptsize] (det_e) at (7.55,-4.7) {$\mathbf{e}_t$};
-\node[sub, minimum width=0.75cm] (enc1) at (8.35,-4.7) {Enc};
-\node[font=\scriptsize] (det_u) at (7.55,-5.45) {$\mathbf{u}_t$};
-\node[sub, minimum width=0.75cm] (enc2) at (8.35,-5.45) {Enc};
-\node[subd, text width=1.0cm] (gru) at (9.6,-5.05) {GRU\\ $r_t,z_t$};
-\node[font=\scriptsize\bfseries, text=acBlueD] (alp) at (10.05,-5.9) {$\alpha_t$};
+% ===================== LANE 3: HYBRID ANOMALY SCORING =====================
+\node[bx] (s1) at (11.7,-1.4) {\textbf{Per-Window Scoring}\\ error $\mathbf{e}_t$, uncertainty $\mathbf{u}_t$};
+\node[bx] (s2) at (11.7,-2.7) {\textbf{Feature-Importance Learner}\\ FIL weights $\mathbf{w}_f$};
+\node[big, minimum width=3.2cm, minimum height=2.2cm] (s3) at (11.7,-4.45) {};
+\node[anchor=north, font=\bfseries\tiny, text=acBlueD, text width=3.1cm, align=center]
+   at ($(s3.north)+(0,-0.05)$) {Dynamic Weight Adapter (GRU)};
+\node[font=\tiny] (det_e) at (10.55,-4.5) {$\mathbf{e}_t$};
+\node[sub,minimum width=0.6cm] (enc1) at (11.15,-4.5) {Enc};
+\node[font=\tiny] (det_u) at (10.55,-5.1) {$\mathbf{u}_t$};
+\node[sub,minimum width=0.6cm] (enc2) at (11.15,-5.1) {Enc};
+\node[subd,text width=0.85cm] (gru) at (12.1,-4.8) {GRU $r_t,z_t$};
+\node[font=\tiny\bfseries,text=acBlueD] (alp) at (12.55,-5.45) {$\alpha_t$};
 \draw[mini] (det_e)--(enc1); \draw[mini] (det_u)--(enc2);
-\draw[mini] (enc1.east)-- (gru.west); \draw[mini] (enc2.east)-- (gru.west);
-\draw[mini] (gru.south)|- (alp.west);
-\node[anchor=south, font=\tiny, text width=3.9cm, align=center] at ($(dwa.south)+(0,0.04)$)
-   {$\alpha_t=\sigma(\mathbf{W}_\alpha[\mathbf{e}_t,\mathbf{u}_t,\mathbf{h}_t]+\mathbf{b}_\alpha)$};
-\node[dk, text width=3.0cm, minimum height=2.0cm] (hyb) at (5.0,-5.25)
-   {\textbf{Hybrid Score}\\ $s_t{=}\alpha_t\mathbf{e}_t$\\ $+(1{-}\alpha_t)\mathbf{u}_t$};
-\node[box, text width=3.2cm, minimum height=2.0cm] (thr) at (0.8,-5.25)
-   {\textbf{Threshold}\\ val-$P_{95}$ \emph{or} Chebyshev\\ $\tau{=}\bar{s}{+}k\sigma_s$, $P(\mathrm{FP})\!\le\!\tfrac1{k^2}$};
-\node[dk, text width=2.6cm, minimum height=1.0cm] (det) at (0.8,-7.6)
-   {\textbf{Detection}\\ flag if $s_t>\tau$};
+\draw[mini] (enc1.east)--(gru.west); \draw[mini] (enc2.east)--(gru.west);
+\draw[mini] (gru.south)|-(alp.west);
+\node[dk,minimum height=0.85cm] (s4) at (11.7,-6.3) {\textbf{Hybrid Score} $s_t{=}\alpha_t\mathbf{e}_t{+}(1{-}\alpha_t)\mathbf{u}_t$};
+\node[bx,minimum height=0.8cm] (s5) at (11.7,-7.6) {\textbf{Theoretical Bounds}\\ Chebyshev $P(\mathrm{FP})\!\le\!1/k^2$};
 
-% ===================== ARROWS (straight + one turn) =====================
-\draw[fl] (inp.east) -- (tcn.west);
-\draw[fl] (tcn.east) -- (mc.west);
-\draw[fl] (mc.east) -- (out.west);
-\draw[fb] (out.south) -- (auaa.north)
-   node[midway, right=1pt, font=\scriptsize\bfseries, text=acRed, align=left]{uncertainty\\$\to$ attention};
-\draw[fl] (auaa.west) -- (dwa.east);
-\draw[fl] (dwa.west) -- (hyb.east);
-\draw[fl] (hyb.west) -- (thr.east);
-\draw[fl] (thr.south) -- (det.north);
+% ===================== LANE 4: ANOMALY DETECTION =====================
+\node[bx,minimum height=0.95cm] (t1) at (15.7,-4.0) {\textbf{Threshold Calibration}\\ $\tau{=}\texttt{percentile}(\text{val},95)$};
+\node[dk,minimum height=0.85cm] (t2) at (15.7,-5.7) {\textbf{Detection}\\ flag window if $s_t>\tau$};
+
+% ===================== ARROWS =====================
+\foreach \a/\b in {d1/d2,d2/d3,d3/d4,d4/d5} \draw[fl] (\a)--(\b);
+\draw[fl] (a1)--(a2); \draw[fl] (a2)--(a3); \draw[fl] (a3)--(a4);
+\draw[fl] (b1)--(b2); \draw[fb] (b3)--(b4) node[midway,right=1pt,font=\tiny\bfseries,text=acRed]{$\sigma_t\!\to$attn};
+\draw[fl] (b2)--(b3); \draw[fl] (b4)--(b5);
+\draw[fl] (s1)--(s2); \draw[fl] (s2)--(s3); \draw[fl] (s3)--(s4); \draw[fl] (s4)--(s5);
+\draw[fl] (t1)--(t2);
+% windowing -> base TCN & full enhanced (top bus in gap12)
+\coordinate (J) at (2.35,-0.6);
+\draw[xf] (d5.east) -| (J);
+\draw[xf] (J) -| (a1.north);
+\draw[xf] (J) -| (b1.north);
+% model outputs -> per-window scoring (bottom bus + riser in gap23)
+\coordinate (M) at (9.72,-9.5);
+\draw[xf] (a4.south) -- (4.55,-9.5) -- (M);
+\draw[xf] (b5.south) -- (7.95,-9.5) -- (M);
+\draw[xf] (M) -- (9.72,-1.4) -- (s1.west);
+% hybrid score -> threshold (riser in gap34)
+\draw[xf] (s4.east) -| (13.72,-4.0) -- (t1.west);
 \end{tikzpicture}
