@@ -1,0 +1,27 @@
+\begin{table}[H]
+\centering
+\caption{Robustness on the SKAB test split with the clean-calibrated $\tau_{95}$ held fixed. Zeroing any single channel (a missing stream) or adding Gaussian noise up to $\sigma=1.0$ (standardized units) changes F1 by at most $0.006$.}
+\label{table:skab_robustness}
+\setlength{\tabcolsep}{7pt}\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Condition} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+Clean (reference)            & 0.556 & 0.417 & 0.477 \\
+\midrule
+Mask Accelerometer1RMS       & 0.556 & 0.417 & 0.477 \\
+Mask Accelerometer2RMS       & 0.557 & 0.419 & 0.479 \\
+Mask Current                 & 0.556 & 0.417 & 0.476 \\
+Mask Voltage                 & 0.555 & 0.416 & 0.476 \\
+Mask Pressure                & 0.556 & 0.418 & 0.477 \\
+Mask Temperature             & 0.556 & 0.416 & 0.476 \\
+Mask Thermocouple            & 0.556 & 0.416 & 0.476 \\
+Mask Volume Flow RateRMS     & 0.555 & 0.426 & 0.482 \\
+\midrule
+Gaussian noise $\sigma=0.10$ & 0.556 & 0.416 & 0.476 \\
+Gaussian noise $\sigma=0.25$ & 0.556 & 0.417 & 0.477 \\
+Gaussian noise $\sigma=0.50$ & 0.555 & 0.416 & 0.475 \\
+Gaussian noise $\sigma=1.00$ & 0.555 & 0.416 & 0.475 \\
+\bottomrule
+\end{tabular}
+\end{table}

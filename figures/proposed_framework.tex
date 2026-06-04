@@ -1,7 +1,6 @@
 \begin{figure}[H]
 \centering
-\input{figures/architecture_diagram}
-% \includegraphics[width=0.92\textwidth]{figures/architecture_diagram.png}
-\caption{Architecture of the proposed uncertainty-aware TCN framework for multivariate sensor anomaly detection. Dashed red lines indicate feedback paths where uncertainty signals reshape model computation internally, distinguishing this work from prior approaches that apply uncertainty only post hoc.}
+\resizebox{\textwidth}{!}{\input{figures/architecture_diagram}}
+\caption{End-to-end architecture of the proposed uncertainty-aware TCN framework, drawn as a single serpentine flow. The top row is the uncertainty backbone with its breakdown illustrations embedded inline: the \textbf{TCN backbone} with its dilated causal convolution stack (kernel $k{=}2$, dilations $d_l{=}2^{l-1}{=}\{1,2,4\}$, receptive field $\mathrm{RF}{=}8$; the red path traces the dilated dependencies feeding the output $\hat{y}_t$), \textbf{MC-dropout inference} ($M$ stochastic forward passes $\Rightarrow$ predictive mean $\hat{\mathbf{y}}_t$ and per-sensor epistemic standard deviation $\boldsymbol{\sigma}_t$), and the per-sensor outputs. The bottom row applies the contributed components (dark boxes): the AUAA uncertainty-gated attention, the Dynamic Weight Adapter ($\alpha_t$), the hybrid score, the distribution-free Chebyshev/percentile threshold, and detection. Solid navy arrows denote the forward flow; the dashed red arrow marks the uncertainty-to-attention coupling that distinguishes this work from approaches that apply uncertainty only post hoc.}
 \label{fig:architecture}
 \end{figure}

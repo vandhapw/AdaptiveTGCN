@@ -1,0 +1,19 @@
+\begin{table}[H]
+\centering
+\caption{Empirical validation of the Chebyshev false-positive bound on the SKAB clean validation windows ($n=6190$). The observed false-positive rate at $\tau=\bar{s}+k\sigma_s$ stays below the distribution-free guarantee $1/k^2$ at every $k$.}
+\label{table:chebyshev_calib}
+\setlength{\tabcolsep}{8pt}\small
+\begin{tabular}{ccc}
+\toprule
+\textbf{$k$} & \textbf{Bound $1/k^2$} & \textbf{Empirical FP rate} \\
+\midrule
+1.00 & 1.0000 & 0.15283 \\
+1.50 & 0.4444 & 0.05945 \\
+2.00 & 0.2500 & 0.01858 \\
+3.00 & 0.1111 & 0.00032 \\
+4.00 & 0.0625 & 0.00000 \\
+4.47 & 0.0500 & 0.00000 \\
+5.00 & 0.0400 & 0.00000 \\
+\bottomrule
+\end{tabular}
+\end{table}

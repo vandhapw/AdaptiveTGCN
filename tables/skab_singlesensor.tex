@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering
+\caption{Calibrated single-sensor threshold baselines on the SKAB test split (score $=|z_c|$ of each standardized channel at the target step; validation-calibrated $\tau_{95}$) versus the multi-sensor proposed model ($M=20$). No single channel is reliably best; multi-sensor fusion attains the best F1 and ROC-AUC.}
+\label{table:skab_singlesensor}
+\setlength{\tabcolsep}{6pt}\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Detector} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{ROC-AUC} \\
+\midrule
+Single: Accelerometer1RMS & 0.996 & 0.208 & 0.345 & 0.697 \\
+Single: Accelerometer2RMS & 0.825 & 0.243 & 0.376 & 0.725 \\
+Single: Current           & 0.330 & 0.009 & 0.018 & 0.513 \\
+Single: Voltage           & 0.343 & 0.044 & 0.078 & 0.501 \\
+Single: Pressure          & 0.365 & 0.029 & 0.054 & 0.511 \\
+Single: Temperature       & 0.283 & 0.021 & 0.040 & 0.508 \\
+Single: Thermocouple      & 0.397 & 0.464 & 0.428 & 0.571 \\
+Single: Volume Flow RateRMS & 0.581 & 0.020 & 0.039 & 0.584 \\
+\midrule
+\textbf{Multi-sensor (Proposed, $M{=}20$)} & 0.556 & 0.418 & \textbf{0.477} & \textbf{0.730} \\
+\bottomrule
+\end{tabular}
+\end{table}

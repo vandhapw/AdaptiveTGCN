@@ -1,0 +1,21 @@
+\begin{table}[H]
+\centering
+\caption{Per-fault-group detection on the SKAB test split at $M=20$ (validation-calibrated $\tau_{95}$, seed 42). The test half contains the \emph{valve2} and \emph{other} groups (\emph{valve1} falls in the calibration half under the 50/50 split); recall improves across \emph{both} groups, not only the dominant one.}
+\label{table:skab_perclass}
+\setlength{\tabcolsep}{5pt}\small
+\begin{tabular}{llccccccc}
+\toprule
+\textbf{Model} & \textbf{Group} & \textbf{\#win.} & \textbf{\#anom.} & \textbf{Recall} & \textbf{Precision} & \textbf{TP} & \textbf{FP} & \textbf{FN} \\
+\midrule
+\multirow{3}{*}{Base TCN}
+ & \emph{other}  & 7465 & 2620 & 0.005 & 0.765 & 13   & 4    & 2607 \\
+ & \emph{valve2} & 1881 & 757  & 0.112 & 0.374 & 85   & 142  & 672  \\
+ & overall       & 9346 & 3377 & 0.029 & 0.402 & 98   & 146  & 3279 \\
+\midrule
+\multirow{3}{*}{\textbf{Full Enhanced}}
+ & \emph{other}  & 7465 & 2620 & 0.250 & 0.998 & 654  & 1    & 1966 \\
+ & \emph{valve2} & 1881 & 757  & \textbf{1.000} & 0.402 & 757  & 1124 & 0 \\
+ & overall       & 9346 & 3377 & \textbf{0.418} & 0.556 & 1411 & 1125 & 1966 \\
+\bottomrule
+\end{tabular}
+\end{table}

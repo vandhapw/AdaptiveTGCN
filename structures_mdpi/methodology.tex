@@ -39,6 +39,8 @@ The overall architecture of the proposed framework is illustrated in \cref{fig:a
 
 \input{figures/proposed_framework}
 
+\textit{Intuition.} Before the formal description, the uncertainty signal flows through the model in one sentence: the TCN makes a prediction, MC dropout turns the spread of repeated predictions into a per-sensor ``how unsure am I?'' value $\boldsymbol{\sigma}_t$, and that value is then used three times---to \emph{down-weight} attention on time steps the model is unsure about (AUAA), to \emph{decide} whether the final anomaly score should trust the reconstruction error or the uncertainty more (Dynamic Weight Adapter), and to \emph{flag} an anomaly only when the combined score exceeds a threshold with a provable false-alarm ceiling (Chebyshev bound). The remainder of this section formalizes each of these three uses; a reader interested in the operational behaviour rather than the derivations can skip to the hybrid score in \cref{eq:hybrid_score}.
+
 
 \textbf{TCN Backbone.} The core of our framework is a three-layer Temporal Convolutional Network~\cite{bai2018tcn, oord2016wavenet} with 64 channels per layer, kernel size $k=2$, and exponentially increasing dilation factors $d_l = 2^{l-1}$ for $l \in \{1,2,3\}$, yielding $\{d_1, d_2, d_3\} = \{1, 2, 4\}$. Within layer $l$, each output time step is produced by a dilated causal convolution:
 \begin{equation}
@@ -95,22 +97,23 @@ where $\odot$ denotes element-wise multiplication and $\boldsymbol{\sigma}_t$ is
 g_t^{\text{learned}} = \text{sigmoid}(\mathbf{W}_g \cdot \boldsymbol{\sigma}_t + \mathbf{b}_g)
 \label{eq:auaa_gate}
 \end{equation}
+where $\mathbf{W}_g$ and $\mathbf{b}_g$ are the learnable weight matrix and bias vector of the refinement layer and $\mathrm{sigmoid}(\cdot)$ is applied element-wise.
 
 The AUAA module uses $H = 4$ attention heads with hidden dimension $64$, with head outputs concatenated and linearly projected. The multi-head extension applies the uncertainty gate independently per head:
 \begin{equation}
 \boldsymbol{\alpha}_t^{(h)} = \text{softmax}\!\left(\frac{\mathbf{Q}_t^{(h)} \mathbf{K}_t^{(h)\top}}{\sqrt{d_k/H}}\right) \odot \frac{1}{1 + \boldsymbol{\sigma}_t}, \quad h = 1,\ldots,H,
 \label{eq:auaa_multihead}
 \end{equation}
-followed by a linear projection $\mathbf{W}_O\,[\boldsymbol{\alpha}_t^{(1)},\dots,\boldsymbol{\alpha}_t^{(H)}]$. This uncertainty-gated attention differs fundamentally from standard attention plus dropout regularisation: dropout perturbs attention randomly with no awareness of prediction quality, while AUAA explicitly couples attention weights to the model's own estimate of per-sensor reliability. \cref{fig:auaa} illustrates the dataflow that distinguishes AUAA from a standard scaled dot-product attention block.
+followed by a linear projection $\mathbf{W}_O\,[\boldsymbol{\alpha}_t^{(1)},\dots,\boldsymbol{\alpha}_t^{(H)}]$, where $\mathbf{W}_O$ is the learnable output-projection matrix, $H$ the number of heads, $d_k/H$ the per-head dimension, and the superscript $(h)$ indexes the $h$-th head. This uncertainty-gated attention differs fundamentally from standard attention plus dropout regularisation: dropout perturbs attention randomly with no awareness of prediction quality, while AUAA explicitly couples attention weights to the model's own estimate of per-sensor reliability. \cref{fig:auaa} illustrates the dataflow that distinguishes AUAA from a standard scaled dot-product attention block.
 
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
   >=stealth, node distance=1.05cm,
-  block/.style={rectangle, draw, thick, rounded corners=2pt, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small},
-  signal/.style={->, thick},
-  gate/.style={rectangle, draw, very thick, rounded corners=2pt, fill=orange!20, minimum width=2.6cm, minimum height=0.65cm, align=center, font=\small},
-  outbox/.style={rectangle, draw, very thick, rounded corners=2pt, fill=green!15, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small}
+  block/.style={rectangle, draw=acBlue, thick, rounded corners=2pt, fill=acBlueL!25, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small},
+  signal/.style={->, thick, draw=acBlueD},
+  gate/.style={rectangle, draw=acBlueD, very thick, rounded corners=2pt, fill=acBlue, text=white, minimum width=2.6cm, minimum height=0.65cm, align=center, font=\small},
+  outbox/.style={rectangle, draw=acBlueD, very thick, rounded corners=2pt, fill=acBlue, text=white, minimum width=2.4cm, minimum height=0.65cm, align=center, font=\small}
 ]
   \node[block] (h) {Hidden state $\mathbf{h}_t$};
   \node[block, below=of h] (qkv) {Linear $\mathbf{Q}_t, \mathbf{K}_t, \mathbf{V}_t$};
@@ -118,7 +121,7 @@ followed by a linear projection $\mathbf{W}_O\,[\boldsymbol{\alpha}_t^{(1)},\dot
   \node[block, right=2.4cm of qkv] (sigma) {MC dropout $\boldsymbol{\sigma}_t$\\($M$ stochastic passes)};
   \node[gate, right=2.5cm of score] (gate) {Uncertainty gate\\$g_t = 1/(1+\boldsymbol{\sigma}_t)$};
   \node[block, below=of score] (soft) {softmax};
-  \node[block, below=of soft, fill=blue!8] (mul) {Element-wise $\odot$};
+  \node[block, below=of soft, fill=acBlueL!45] (mul) {Element-wise $\odot$};
   \node[outbox, below=of mul] (alpha) {Attention $\boldsymbol{\alpha}_t$\\(uncertainty-gated)};
   \draw[signal] (h) -- (qkv);
   \draw[signal] (qkv) -- (score);
@@ -127,9 +130,9 @@ followed by a linear projection $\mathbf{W}_O\,[\boldsymbol{\alpha}_t^{(1)},\dot
   \draw[signal] (mul) -- (alpha);
   \draw[signal] (h.east) -- ++(0.8,0) -| (sigma.north);
   \draw[signal] (sigma) -- (gate);
-  \draw[signal, dashed, red] (gate.south) |- (mul.east);
+  \draw[->, thick, densely dashed, draw=acRed] (gate.south) |- (mul.east);
 \end{tikzpicture}
-\caption{Adaptive Uncertainty-Aware Attention (AUAA) dataflow. Standard scaled dot-product attention (left column) is element-wise modulated by an uncertainty gate $g_t = 1/(1+\boldsymbol{\sigma}_t)$ derived from MC dropout (right column). Dashed red line indicates the uncertainty feedback path that distinguishes this work from prior uncertainty-aware models, which use $\sigma_t$ only at the output layer.}
+\caption{Adaptive Uncertainty-Aware Attention (AUAA) dataflow. Standard scaled dot-product attention (left) is element-wise modulated by an uncertainty gate $g_t = 1/(1+\boldsymbol{\sigma}_t)$ from MC dropout (right); the dashed red line marks the uncertainty feedback path.}
 \label{fig:auaa}
 \end{figure}
 
@@ -142,7 +145,7 @@ Fixed-weight combination of reconstruction error and uncertainty fails to captur
 \label{eq:dynamic_weight}
 \end{equation}
 
-where $\mathbf{h}_t$ is the hidden state of a GRU that tracks recent weight history, enabling the adapter to remember past sensor reliability trends. The GRU recurrence is given explicitly by
+where $\mathbf{W}_\alpha$ and $\mathbf{b}_\alpha$ are learned parameters, $[\,\cdot\,,\cdot\,,\cdot\,]$ denotes concatenation, $\mathbf{e}_t$ is the reconstruction-error vector, $\mathbf{u}_t = \boldsymbol{\sigma}_t$ the predictive-uncertainty vector, and $\mathbf{h}_t$ is the hidden state of a GRU that tracks recent weight history, enabling the adapter to remember past sensor reliability trends. The GRU recurrence is given explicitly by
 \begin{align}
 \mathbf{r}_t &= \mathrm{sigmoid}\!\left(\mathbf{W}_r [\mathbf{e}_t, \mathbf{u}_t] + \mathbf{U}_r \mathbf{h}_{t-1} + \mathbf{b}_r\right), \\
 \mathbf{z}_t &= \mathrm{sigmoid}\!\left(\mathbf{W}_z [\mathbf{e}_t, \mathbf{u}_t] + \mathbf{U}_z \mathbf{h}_{t-1} + \mathbf{b}_z\right), \\
@@ -150,7 +153,7 @@ where $\mathbf{h}_t$ is the hidden state of a GRU that tracks recent weight hist
 \mathbf{h}_t &= (1 - \mathbf{z}_t) \odot \mathbf{h}_{t-1} + \mathbf{z}_t \odot \tilde{\mathbf{h}}_t,
 \label{eq:dw_gru}
 \end{align}
-where $\mathbf{r}_t, \mathbf{z}_t$ are the reset and update gates respectively. The hybrid anomaly score combines both signals:
+where $\mathbf{r}_t$ and $\mathbf{z}_t$ are the reset and update gates, $\tilde{\mathbf{h}}_t$ the candidate state, $\{\mathbf{W}_r, \mathbf{W}_z, \mathbf{W}_h\}$ and $\{\mathbf{U}_r, \mathbf{U}_z, \mathbf{U}_h\}$ learned weight matrices, $\{\mathbf{b}_r, \mathbf{b}_z, \mathbf{b}_h\}$ bias vectors, and $\odot$ the Hadamard (element-wise) product. The hybrid anomaly score combines both signals:
 
 \begin{equation}
 s_t = \alpha_t \cdot \mathbf{e}_t + (1 - \alpha_t) \cdot \mathbf{u}_t
@@ -168,7 +171,7 @@ The feature-importance learner computes per-sensor attribution weights via a lea
 \label{eq:feature_importance}
 \end{equation}
 
-where $\mathbf{V} \in \mathbb{R}^{1 \times d}$ and $\mathbf{W} \in \mathbb{R}^{d \times n}$ are learned parameters. An inter-sensor correlation matrix $\mathbf{C} \in \mathbb{R}^{n \times n}$ is also learned to capture physical cross-sensor couplings (e.g., HVAC-induced correlations between temperature, humidity, and CO\textsubscript{2}).
+where $\mathbf{W} \in \mathbb{R}^{d \times n}$ and $\mathbf{V} \in \mathbb{R}^{1 \times d}$ are learned weight matrices, $\mathbf{b} \in \mathbb{R}^{d}$ a learned bias vector, $d$ the hidden width, $n$ the number of sensors, $\mathbf{x}$ the input window, and $\mathbf{w}_f$ the resulting per-sensor attribution weights. An inter-sensor correlation matrix $\mathbf{C} \in \mathbb{R}^{n \times n}$ is also learned to capture physical cross-sensor couplings (e.g., HVAC-induced correlations between temperature, humidity, and CO\textsubscript{2}).
 
 \textbf{Theoretical Guarantee (Chebyshev Bound).} Let $s_t$ be the anomaly score at time $t$ with empirical mean $\bar{s}$ and standard deviation $\sigma_s$ over a calibration set. For any threshold $\tau = \bar{s} + k \cdot \sigma_s$ with $k > 0$, the Chebyshev concentration inequality provides a distribution-free bound on the false positive rate:
 
@@ -265,7 +268,7 @@ $\| \hat{\mathbf{y}}_M - \mathbb{E}_{q}[\hat{\mathbf{y}}] \| = O_p(M^{-1/2})$ an
 \end{Theorem}
 
 \begin{proof}
-The strong law of large numbers implies $\hat{\mathbf{y}}_M \xrightarrow{a.s.} \mathbb{E}_q[\hat{\mathbf{y}}]$ since the i.i.d.\ samples have finite first moment. The classical central limit theorem then yields $\sqrt{M}\,(\hat{\mathbf{y}}_M - \mathbb{E}_q[\hat{\mathbf{y}}]) \xrightarrow{d} \mathcal{N}(0, \mathrm{Cov}_q(\hat{\mathbf{y}}))$ under finite second moment, giving the $O_p(M^{-1/2})$ rate. The same argument applied to the centred squared sample $(\hat{\mathbf{y}}^{(m)} - \hat{\mathbf{y}}_M)^{2}$ together with Slutsky's theorem gives convergence of $\widehat{\boldsymbol{\sigma}}^{2}_M$ at the same rate. The variational interpretation of dropout as a Bayesian posterior $q(\boldsymbol{\theta})$ over weights is due to Gal and Ghahramani~\cite{gal2016dropout_bayesian}; under their identification, $\mathbb{E}_{q}[\hat{\mathbf{y}}]$ and $\mathrm{Cov}_{q}(\hat{\mathbf{y}})$ are the posterior predictive moments.
+We first fix the convergence notation. For a sequence of random vectors $\{Z_M\}$, $Z_M \xrightarrow{a.s.} Z$ denotes \emph{almost-sure convergence} ($P(\lim_{M\to\infty} Z_M = Z)=1$); $Z_M \xrightarrow{d} Z$ denotes \emph{convergence in distribution} (pointwise convergence of the cumulative distribution functions at every continuity point of the limit); and $Z_M = O_p(a_M)$ denotes \emph{stochastic boundedness at rate $a_M$}, i.e.\ for every $\varepsilon>0$ there exist $C_\varepsilon,M_\varepsilon$ with $P(\|Z_M\|/a_M > C_\varepsilon) < \varepsilon$ for all $M \geq M_\varepsilon$. The strong law of large numbers implies $\hat{\mathbf{y}}_M \xrightarrow{a.s.} \mathbb{E}_q[\hat{\mathbf{y}}]$ since the i.i.d.\ samples have finite first moment. The classical central limit theorem then yields $\sqrt{M}\,(\hat{\mathbf{y}}_M - \mathbb{E}_q[\hat{\mathbf{y}}]) \xrightarrow{d} \mathcal{N}(0, \mathrm{Cov}_q(\hat{\mathbf{y}}))$ under finite second moment, giving the $O_p(M^{-1/2})$ rate. The same argument applied to the centred squared sample $(\hat{\mathbf{y}}^{(m)} - \hat{\mathbf{y}}_M)^{2}$ together with Slutsky's theorem gives convergence of $\widehat{\boldsymbol{\sigma}}^{2}_M$ at the same rate. The variational interpretation of dropout as a Bayesian posterior $q(\boldsymbol{\theta})$ over weights is due to Gal and Ghahramani~\cite{gal2016dropout_bayesian}; under their identification, $\mathbb{E}_{q}[\hat{\mathbf{y}}]$ and $\mathrm{Cov}_{q}(\hat{\mathbf{y}})$ are the posterior predictive moments.
 \end{proof} 
 
 \Cref{thm:chebyshev_fp} furnishes the false-positive guarantee invoked at line~16 of \cref{alg:stochastic_tcn}. \Cref{thm:mc_convergence} justifies the empirical moments used at lines~4--5 of the same algorithm, with the rate $M=50$ chosen so that $M^{-1/2}\approx 0.14$ for an a-priori standard-error budget under 15\%. With the architectural components, detection pipeline, and theoretical guarantees fully specified, the following section evaluates each component's contribution through forecasting benchmarks, ablation studies, sensitivity analyses, and a cross-dataset validation on the Skoltech Anomaly Benchmark.

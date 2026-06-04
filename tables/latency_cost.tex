@@ -1,0 +1,31 @@
+\begin{table}[H]
+\centering
+\caption{Measured inference cost (NVIDIA GeForce GTX 1080 Ti; latency includes the full Monte-Carlo pass). \textbf{Left:} per-window latency and F1 versus MC budget $M$ (8-channel SKAB). \textbf{Right:} per-window latency at $M=20$ versus sensor count $C$ (synthetic).}
+\label{table:latency_cost}
+\setlength{\tabcolsep}{8pt}\small
+\begin{minipage}[t]{0.48\linewidth}\centering
+\begin{tabular}{ccc}
+\toprule
+\textbf{$M$} & \textbf{ms/window} & \textbf{F1} \\
+\midrule
+5  & 0.023 & 0.476 \\
+10 & 0.076 & 0.477 \\
+20 & 0.162 & 0.477 \\
+50 & 0.286 & 0.477 \\
+\bottomrule
+\end{tabular}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}\centering
+\begin{tabular}{cc}
+\toprule
+\textbf{Channels $C$} & \textbf{ms/window ($M{=}20$)} \\
+\midrule
+8   & 1.06 \\
+16  & 1.16 \\
+32  & 0.76 \\
+64  & 0.36 \\
+128 & 0.37 \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\end{table}

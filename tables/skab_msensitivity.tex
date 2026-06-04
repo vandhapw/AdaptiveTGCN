@@ -1,0 +1,18 @@
+\begin{table}[H]
+\centering
+\caption{SKAB detection metrics versus the Monte-Carlo budget $M$ (seed 42, validation-calibrated $\tau_{95}$). F1 is essentially invariant to $M$ and ROC-AUC rises only $+0.003$ from $M=20$ to $M=50$.}
+\label{table:skab_msensitivity}
+\setlength{\tabcolsep}{6pt}\small
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{\textbf{Base TCN}} & \multicolumn{2}{c}{\textbf{Full Enhanced}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{$M$} & \textbf{F1} & \textbf{ROC-AUC} & \textbf{F1} & \textbf{ROC-AUC} \\
+\midrule
+5  & 0.046 & 0.676 & 0.476 & 0.723 \\
+10 & 0.063 & 0.677 & 0.477 & 0.725 \\
+20 & 0.054 & 0.678 & \textbf{0.477} & 0.727 \\
+50 & 0.061 & 0.679 & 0.477 & 0.730 \\
+\bottomrule
+\end{tabular}
+\end{table}

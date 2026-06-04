@@ -1,0 +1,27 @@
+\begin{table}[H]
+\centering
+\caption{SKAB detection against twelve established methods under a unified point-wise protocol (validation-calibrated $\tau_{95}$, no test tuning); mean$\pm$std over five seeds. $^{\dagger}$ compact reimplementation under the identical protocol. The Full Enhanced F1 gain over every baseline is significant (paired $t$-test $p<0.01$).}
+\label{table:skab_baselines}
+\setlength{\tabcolsep}{5pt}\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Method} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{ROC-AUC} \\
+\midrule
+Isolation Forest~\cite{liu2008isolation} & 0.381$\pm$0.055 & 0.014$\pm$0.002 & 0.026$\pm$0.004 & 0.577$\pm$0.004 \\
+PCA reconstruction & 0.337$\pm$0.000 & 0.068$\pm$0.000 & 0.113$\pm$0.000 & 0.645$\pm$0.000 \\
+Vanilla AE~\cite{skab_dataset} & 0.459$\pm$0.191 & 0.119$\pm$0.098 & 0.185$\pm$0.140 & 0.666$\pm$0.026 \\
+Conv-AE~\cite{skab_dataset} & 0.880$\pm$0.108 & 0.233$\pm$0.045 & 0.364$\pm$0.046 & 0.720$\pm$0.012 \\
+LSTM-ED~\cite{malhotra2016lstmed} & 0.991$\pm$0.000 & 0.198$\pm$0.005 & 0.330$\pm$0.007 & 0.743$\pm$0.002 \\
+LSTM-VAE~\cite{park2018lstmvae} & 0.979$\pm$0.007 & 0.200$\pm$0.004 & 0.332$\pm$0.006 & 0.739$\pm$0.005 \\
+OmniAnomaly$^{\dagger}$~\cite{su2019robust} & 0.983$\pm$0.017 & 0.200$\pm$0.002 & 0.333$\pm$0.002 & 0.741$\pm$0.003 \\
+MTAD-GAT$^{\dagger}$~\cite{zhao2020mtadgat} & 0.991$\pm$0.003 & 0.202$\pm$0.002 & 0.336$\pm$0.002 & 0.745$\pm$0.001 \\
+Anomaly Transformer$^{\dagger}$~\cite{xu2022anomalytransformer} & 0.991$\pm$0.000 & 0.199$\pm$0.000 & 0.332$\pm$0.000 & 0.748$\pm$0.001 \\
+TranAD$^{\dagger}$~\cite{tuli2022tranad} & 0.991$\pm$0.000 & 0.200$\pm$0.000 & 0.333$\pm$0.000 & 0.747$\pm$0.001 \\
+USAD~\cite{audibert2020usad} & 0.959$\pm$0.007 & 0.196$\pm$0.003 & 0.326$\pm$0.005 & 0.746$\pm$0.002 \\
+Res2coder$^{\dagger}$~\cite{wang2025res2coder} & 0.866$\pm$0.104 & 0.212$\pm$0.029 & 0.338$\pm$0.028 & 0.704$\pm$0.005 \\
+\midrule
+Base TCN (ours) & 0.535$\pm$0.162 & 0.064$\pm$0.042 & 0.113$\pm$0.071 & 0.689$\pm$0.012 \\
+\textbf{Full Enhanced (ours)} & 0.556$\pm$0.000 & \textbf{0.418$\pm$0.000} & \textbf{0.477$\pm$0.000} & 0.730$\pm$0.004 \\
+\bottomrule
+\end{tabular}
+\end{table}
