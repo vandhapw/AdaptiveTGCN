@@ -36,8 +36,8 @@
 \node[hdr,text width=3.2cm] (h4) at (15.7,0) {ANOMALY DETECTION};
 
 % ===================== LANE 1: DATA PIPELINE =====================
-\node[bx] (d1) at (0,-1.55) {\textbf{Raw Multivariate Data}\\ \texttt{df\_normal.csv}, 5 channels};
-\node[bx] (d2) at (0,-2.85) {\textbf{Data Loader \& Processing}\\ parsers, artifact drop};
+\node[bx] (d1) at (0,-1.55) {\textbf{Raw Multivariate Data}\\ \texttt{historical dataset (csv)}, 5 channels};
+\node[bx] (d2) at (0,-2.85) {\textbf{Data Loader \& Processing}\\};
 \node[bx] (d3) at (0,-4.15) {\textbf{Feature Engineering}\\ lags, rolling stats (40 cols)};
 \node[bx,minimum height=1.0cm] (d4) at (0,-5.6)
    {\textbf{Leakage-Controlled Split}\\[1pt]
@@ -76,22 +76,22 @@
          (\k*0.13,\k*0.13) rectangle ++(0.85,0.55);
    \node[anchor=west, font=\tiny] at (1.25,0.27) {$\Rightarrow\hat{\mathbf{y}}_t,\boldsymbol{\sigma}_t$};
 \end{scope}
-\node[bx,text width=2.5cm] (a4) at (4.55,-7.0) {Point pred.\ $+$ epistemic unc.};
+\node[bx,text width=2.5cm] (a4) at (4.55,-7.5) {Point pred.\ $+$ epistemic unc.};
 
 % ===================== LANE 2B: FULL ENHANCED =====================
-\node[bx,text width=2.6cm] (b1) at (7.95,-1.2) {\textbf{B $\cdot$ Full Enhanced}\\ $3\times$ TemporalBlock};
+\node[bx,text width=2.6cm] (b1) at (7.95,-1) {\textbf{B $\cdot$ Full Enhanced}\\ $3\times$ TemporalBlock};
 \node[dk,text width=2.6cm] (b2) at (7.95,-2.3) {\textbf{Enhanced TemporalBlock}\\ LayerNorm, residual scale, stoch.\ depth};
-\node[dk,text width=2.6cm] (b3) at (7.95,-3.4) {\textbf{Sequence-Level Uncertainty Head}};
+\node[dk,text width=2.6cm] (b3) at (7.95,-3.6) {\textbf{Sequence-Level Uncertainty Head}};
 % AUAA --- multi-head attention drawn as a visual (W_h projections -> heads -> concat -> W_O)
-\node[big, minimum width=3.2cm, minimum height=4.35cm] (b4) at (7.95,-6.1) {};
+\node[big, minimum width=3.2cm, minimum height=4.35cm] (b4) at (7.95,-6.4) {};
 \node[anchor=north, font=\bfseries\tiny, text=acBlueD, text width=3.1cm, align=center]
    at ($(b4.north)+(0,-0.04)$) {AUAA --- uncertainty-gated multi-head attention};
-\coordinate (bin) at (7.95,-4.5);
+\coordinate (bin) at (7.95,-4.8);
 % per-head projection circles W_{h i}
-\node[wc] (w1) at (6.95,-4.95) {$W_{h1}$};
-\node[wc] (w2) at (7.65,-4.95) {$W_{h2}$};
-\node[font=\tiny] at (8.2,-4.95) {$\cdots$};
-\node[wc] (w4) at (8.9,-4.95) {$W_{hH}$};
+\node[wc] (w1) at (6.95,-5.15) {$W_{h1}$};
+\node[wc] (w2) at (7.65,-5.15) {$W_{h2}$};
+\node[font=\tiny] at (8.2,-5.15) {$\cdots$};
+\node[wc] (w4) at (8.9,-5.15) {$W_{hH}$};
 % head boxes
 \node[hb] (hd1) at (6.95,-5.6) {head$_1$};
 \node[hb] (hd2) at (7.65,-5.6) {head$_2$};
@@ -107,12 +107,12 @@
 \draw[mini] (cc)--(wo);
 \node[anchor=south, font=\tiny, text width=3.1cm, align=center] at ($(b4.south)+(0,0.03)$)
    {$\mathbf{o}{=}\mathbf{W}_O[\mathrm{head}_1{,}\dots{,}\mathrm{head}_H]$;\\ $\mathrm{head}_i{=}\mathrm{softmax}(\mathbf{Q}_i\mathbf{K}_i^\top\!/\sqrt{d_k/H})\odot g_t\mathbf{V}_i$};
-\node[bx,text width=2.6cm] (b5) at (7.95,-8.85) {\textbf{Dual Output Heads}\\ Mean $\mid$ Variance};
+\node[bx,text width=2.6cm] (b5) at (7.95,-9.25) {\textbf{Dual Output Heads}\\ Mean $\mid$ Variance};
 
 % ===================== LANE 3: HYBRID ANOMALY SCORING =====================
 \node[bx] (s1) at (11.7,-1.4) {\textbf{Per-Window Scoring}\\ error $\mathbf{e}_t$, uncertainty $\mathbf{u}_t$};
 \node[bx] (s2) at (11.7,-2.7) {\textbf{Feature-Importance Learner}\\ FIL weights $\mathbf{w}_f$};
-\node[big, minimum width=3.2cm, minimum height=2.2cm] (s3) at (11.7,-4.45) {};
+\node[big, minimum width=3.2cm, minimum height=2.2cm] (s3) at (11.7,-4.85) {};
 \node[anchor=north, font=\bfseries\tiny, text=acBlueD, text width=3.1cm, align=center]
    at ($(s3.north)+(0,-0.05)$) {Dynamic Weight Adapter (GRU)};
 \node[font=\tiny] (det_e) at (10.55,-4.5) {$\mathbf{e}_t$};
@@ -124,8 +124,8 @@
 \draw[mini] (det_e)--(enc1); \draw[mini] (det_u)--(enc2);
 \draw[mini] (enc1.east)--(gru.west); \draw[mini] (enc2.east)--(gru.west);
 \draw[mini] (gru.south)|-(alp.west);
-\node[dk,minimum height=0.85cm] (s4) at (11.7,-6.3) {\textbf{Hybrid Score} $s_t{=}\alpha_t\mathbf{e}_t{+}(1{-}\alpha_t)\mathbf{u}_t$};
-\node[bx,minimum height=0.8cm] (s5) at (11.7,-7.6) {\textbf{Theoretical Bounds}\\ Chebyshev $P(\mathrm{FP})\!\le\!1/k^2$};
+\node[dk,minimum height=0.85cm] (s4) at (11.7,-7.3) {\textbf{Hybrid Score} $s_t{=}\alpha_t\mathbf{e}_t{+}(1{-}\alpha_t)\mathbf{u}_t$};
+\node[bx,minimum height=0.8cm] (s5) at (11.7,-8.5) {\textbf{Theoretical Bounds}\\ Chebyshev $P(\mathrm{FP})\!\le\!1/k^2$};
 
 % ===================== LANE 4: ANOMALY DETECTION =====================
 \node[bx,minimum height=0.95cm] (t1) at (15.7,-4.0) {\textbf{Threshold Calibration}\\ $\tau{=}\texttt{percentile}(\text{val},95)$};
@@ -139,14 +139,16 @@
 \draw[fl] (s1)--(s2); \draw[fl] (s2)--(s3); \draw[fl] (s3)--(s4); \draw[fl] (s4)--(s5);
 \draw[fl] (t1)--(t2);
 % windowing -> base TCN & full enhanced (top bus in gap12)
-\coordinate (J) at (2.35,-0.6);
-\draw[xf] (d5.east) -| (J);
-\draw[xf] (J) -| (a1.north);
-\draw[xf] (J) -| (b1.north);
+\coordinate (J) at (2.35,-0.9);
+% \draw[xf] (d5.east) -| (J);
+% \draw[xf] (d5.east) -| ($(J)+(0.1,1.1)$ -- (J));
+\draw[xf] (d5.east) -| ($(J)+(0.1,1.0)$) -- ($(J)+(0.6,1.0)$);
+% \draw[xf] (J) -| (a1.north);
+% \draw[xf] (J) -| (b1.north);
 % model outputs -> per-window scoring (bottom bus + riser in gap23)
-\coordinate (M) at (9.72,-9.5);
-\draw[xf] (a4.south) -- (4.55,-9.5) -- (M);
-\draw[xf] (b5.south) -- (7.95,-9.5) -- (M);
+\coordinate (M) at (9.72,-10.5);
+\draw[xf,-] (a4.south) -- (4.55,-10.5) -- (M);
+\draw[xf,-] (b5.south) -- (7.95,-10.5) -- (M);
 \draw[xf] (M) -- (9.72,-1.4) -- (s1.west);
 % hybrid score -> threshold (riser in gap34)
 \draw[xf] (s4.east) -| (13.72,-4.0) -- (t1.west);
