@@ -58,7 +58,7 @@ TCN-Stochastic (this work)       & $2.20\times 10^{-4}$ & 0.01483 & 0.01059 & 13
 
 \subsection{Ablation Studies}
 
-\cref{table:ablation} presents the ablation results decomposing each component's contribution under the unified training-validation-test split with $M=50$ Monte Carlo samples. Starting from the Base TCN (MSE $2.20\times 10^{-4}$), adding MC Dropout leaves MSE essentially unchanged ($+0.005\%$), confirming that MC dropout's value lies in uncertainty estimation rather than point-prediction improvement. Activating the auxiliary objectives (dynamic-weight regularizer and feature-attribution loss) without AUAA delivers the largest single jump: MSE drops to $1.62\times 10^{-4}$ ($-26.25\%$). Replacing the fixed hybrid score with the AUAA mechanism yields $1.65\times 10^{-4}$ ($-25.19\%$), and the Proposed model that activates all three innovations together retains $1.65\times 10^{-4}$ ($-25.19\%$).
+\cref{table:ablation} presents the ablation results decomposing each component's contribution under the unified training-validation-test split with $M=50$ Monte Carlo samples. Starting from the Base TCN (MSE $2.20\times 10^{-4}$), adding MC Dropout leaves MSE essentially unchanged ($+0.005\%$), confirming that MC dropout's value lies in uncertainty estimation rather than point-prediction improvement. Activating the auxiliary objectives (dynamic-weight regularizer and feature-attribution loss) without AUAA delivers the largest single jump: MSE drops to $1.62\times 10^{-4}$ ($-26.25\%$). Replacing the fixed hybrid score with the AUAA mechanism yields $1.65\times 10^{-4}$ ($-25.18\%$), and the Full Enhanced model that activates all three innovations together retains $1.65\times 10^{-4}$ ($-25.19\%$).
 
 Three findings emerge. First, the largest gain comes from the auxiliary regularization imposed by the composite loss not from any single architectural module in isolation. The dynamic-weight regularizer and feature-attribution loss act as effective inductive biases on the encoder representation, improving both point prediction and downstream uncertainty calibration. Second, AUAA produces near-equivalent point-prediction MSE relative to the fixed-score variant; its contribution emerges during \emph{anomaly scoring} (when $\sigma_t$ is large, attention is reweighted) rather than during \emph{forecasting} (which averages over time steps). Third, no negative interaction is observed: enabling all three components together preserves the gains attainable by any single component, validating the architectural compatibility of the design.
 
@@ -68,9 +68,9 @@ Three findings emerge. First, the largest gain comes from the auxiliary regulari
 \centering
 \caption{Ablation study showing cumulative component contributions on the held-out test split.}
 \label{table:ablation}
-\begin{tabular}{lcccc}
+\begin{tabular}{lccc}
 \toprule
-\textbf{Configuration} & \textbf{MSE} & \textbf{Std err}$\pm$ & \textbf{$\Delta$ MSE} \\
+\textbf{Configuration} & \textbf{MSE} & \textbf{Per-window s.d.} & \textbf{$\Delta$ MSE} \\
 \midrule
 Base TCN                              & $2.20\times 10^{-4}$ & $6.19\times 10^{-4}$ & --- \\
 TCN + MC Dropout                      & $2.20\times 10^{-4}$ & $6.19\times 10^{-4}$ & $+0.005\%$ \\
@@ -80,15 +80,6 @@ Enhanced + AUAA, fixed hybrid score   & $1.65\times 10^{-4}$ & $3.44\times 10^{-
 \bottomrule
 \end{tabular}
 \end{table}
-
-\cref{fig:ablation_summary} provides a visual summary of the ablation: the auxiliary objectives produce the dominant MSE reduction; subsequent architectural additions preserve this gain without further reducing forecasting MSE.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth]{images/06_ablation_summary.png}
-\caption{Ablation summary on the held-out test split: the auxiliary objectives (Configuration 3) deliver the largest MSE reduction, which AUAA (Configuration 4) and the full integration (Configuration 5) preserve.}
-\label{fig:ablation_summary}
-\end{figure}
 
 \subsection{Cross-Dataset Validation on the Skoltech Anomaly Benchmark}
 \label{sec:skab_cross_dataset}
@@ -127,7 +118,7 @@ With the validation-calibrated $\tau_{95}$ applied to the held-out IAQ test spli
 {\small (a) Base TCN: $\tau_{95} = 1.06\times 10^{-3}$, 239 flagged (1.79\%).}\\[8pt]
 \includegraphics[width=\textwidth]{images/05_anomaly_diagnostics_enhanced.png}\\[1pt]
 {\small (b) Full Enhanced (Proposed Model): $\tau_{95} = 9.93\times 10^{-4}$, 50 flagged (0.37\%).}
-\caption{Anomaly detection diagnostics on the held-out test split for (a) Base TCN and (b) Full Enhanced. Each panel shows the anomaly-score timeline with the validation-calibrated $\tau_{95}$ (dashed red) and flagged windows, the score distribution, the per-sensor attribution, and the error--uncertainty relationship.}
+\caption{Anomaly detection diagnostics on the held-out test split for (a) Base TCN and (b) Full Enhanced, drawn with an identical four-panel layout and shared score axes for direct comparison: anomaly-score timeline (log $y$) with the validation-calibrated $\tau_{95}$ (dashed red) and flagged windows, score distribution (log $x$), error--uncertainty relationship (log--log), and per-sensor mean reconstruction error.}
 \label{fig:anomaly_diagnostics}
 \end{figure}
 
