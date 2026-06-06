@@ -11,10 +11,10 @@ We present the TCN framework, which accounts for uncertainty in the detection of
     
     \item \textbf{Dynamic Weight Adapter for Hybrid Anomaly Scoring.} A learnable gating module that contextually balances reconstruction error against predictive uncertainty using a GRU over recent weight history. This replaces static combination weights with a mechanism that adapts to sensor operating conditions.
     
-    \item \textbf{Distribution-Free Operating Guarantees.} A Chebyshev-type false-positive bound that guarantees $P(\text{false positive}) \leq 1/k^2$ without distributional assumptions, together with a Monte-Carlo posterior-moment convergence result that fixes the sample budget $M$. The architecture additionally exposes a per-sensor attribution head; rather than claim it as a result, we audit its causal faithfulness and report candidly that it is \emph{not} yet faithful (Section~4.7), so we present it as an exploratory component and future-work direction.
+    \item \textbf{Distribution-Free Operating Guarantees.} A Chebyshev-type false-positive bound that guarantees $P(\text{false positive}) \leq 1/k^2$ without distributional assumptions, together with a Monte-Carlo posterior-moment convergence result that fixes the sample budget $M$.
 \end{enumerate}
 
-\noindent The detection and uncertainty results that follow do not depend on the attribution head.
+\noindent The architecture also includes a per-sensor attribution head; we treat it as \emph{exploratory} and audit its faithfulness in Section~4.7 (it is not yet causally faithful), and the detection and uncertainty results do not depend on it.
 
 % We validate through four-month IAQ sensor data, comprehensive ablation studies isolating each component, cross-dataset evaluation on the Skoltech Anomaly Benchmark (SKAB)~\cite{skab_dataset}.
 % a publicly available labelled industrial water-circulation corpus whose ground-truth labels are exogenous to our model development pipeline and sensitivity analysis of key hyperparameters.
