@@ -14,7 +14,7 @@ We present the TCN framework, which accounts for uncertainty in the detection of
     \item \textbf{Distribution-Free Operating Guarantees.} A Chebyshev-type false-positive bound that guarantees $P(\text{false positive}) \leq 1/k^2$ without distributional assumptions, together with a Monte-Carlo posterior-moment convergence result that fixes the sample budget $M$.
 \end{enumerate}
 
-\noindent The architecture also includes a per-sensor attribution head; we treat it as \emph{exploratory} and audit its faithfulness in Section~4.7 (it is not yet causally faithful), and the detection and uncertainty results do not depend on it.
+\noindent The architecture also includes a per-sensor attribution head; we treat it as \emph{exploratory} and audit in Section~4.7 , and the detection and uncertainty results do not depend on it.
 
 % We validate through four-month IAQ sensor data, comprehensive ablation studies isolating each component, cross-dataset evaluation on the Skoltech Anomaly Benchmark (SKAB)~\cite{skab_dataset}.
 % a publicly available labelled industrial water-circulation corpus whose ground-truth labels are exogenous to our model development pipeline and sensitivity analysis of key hyperparameters.
