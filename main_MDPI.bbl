@@ -35,6 +35,7 @@ Taheri, S.; Razban, A.
 Chandola, V.; Banerjee, A.; Kumar, V.
 \newblock Anomaly Detection: A Survey.
 \newblock {\em ACM Computing Surveys} {\bf 2009}, {\em 41},~1--58.
+\newblock {\url{https://doi.org/10.1145/1541880.1541882}}.
 
 \bibitem[Aggarwal(2017)]{aggarwal2017outlier}
 Aggarwal, C.C.
@@ -45,6 +46,7 @@ Aggarwal, C.C.
 Pang, G.; Shen, C.; Cao, L.; Hengel, A.V.D.
 \newblock Deep Learning for Anomaly Detection: A Review.
 \newblock {\em ACM Computing Surveys} {\bf 2021}, {\em 54},~1--38.
+\newblock {\url{https://doi.org/10.1145/3439950}}.
 
 \bibitem[Park et~al.(2023)Park, Seo, and Cho]{choi2024air_anomaly}
 Park, J.; Seo, Y.; Cho, J.
@@ -92,6 +94,7 @@ Xu, J.; Wu, H.; Wang, J.; Long, M.
   Discrepancy.
 \newblock In Proceedings of the Proceedings of the 10th International
   Conference on Learning Representations (ICLR),  2022.
+\newblock {\url{https://doi.org/10.48550/arXiv.2110.02642}}.
 
 \bibitem[Bai et~al.(2018)Bai, Kolter, and Koltun]{bai2018tcn}
 Bai, S.; Kolter, J.Z.; Koltun, V.
@@ -119,6 +122,7 @@ Cho, K.; van Merri{\"e}nboer, B.; Gulcehre, C.; Bahdanau, D.; Bougares, F.;
   Statistical Machine Translation.
 \newblock In Proceedings of the Proceedings of the 2014 Conference on Empirical
   Methods in Natural Language Processing (EMNLP),  2014, pp. 1724--1734.
+\newblock {\url{https://doi.org/10.48550/arXiv.1406.1078}}.
 
 \bibitem[van~den Oord et~al.(2016)van~den Oord, Dieleman, Zen, Simonyan,
   Vinyals, Graves, Kalchbrenner, Senior, and Kavukcuoglu]{oord2016wavenet}
@@ -165,12 +169,14 @@ Audibert, J.; Michiardi, P.; Guyard, F.; Marti, S.; Zuluaga, M.A.
 \newblock In Proceedings of the Proceedings of the 26th ACM SIGKDD
   International Conference on Knowledge Discovery \& Data Mining (KDD),  2020,
   pp. 3395--3404.
+\newblock {\url{https://doi.org/10.1145/3394486.3403392}}.
 
 \bibitem[Malhotra et~al.(2016)Malhotra, Ramakrishnan, Anand, Vig, Agarwal, and
   Shroff]{malhotra2016lstmed}
 Malhotra, P.; Ramakrishnan, A.; Anand, G.; Vig, L.; Agarwal, P.; Shroff, G.
 \newblock LSTM-based Encoder-Decoder for Multi-sensor Anomaly Detection.
 \newblock In Proceedings of the ICML 2016 Anomaly Detection Workshop,  2016.
+\newblock {\url{https://doi.org/10.48550/arXiv.1607.00148}}.
 
 \bibitem[Tuli et~al.(2022)Tuli, Casale, and Jennings]{tuli2022tranad}
 Tuli, S.; Casale, G.; Jennings, N.R.
@@ -178,6 +184,7 @@ Tuli, S.; Casale, G.; Jennings, N.R.
   Multivariate Time Series Data.
 \newblock {\em Proceedings of the VLDB Endowment} {\bf 2022}, {\em
   15},~1201--1214.
+\newblock {\url{https://doi.org/10.48550/arXiv.2201.07284}}.
 
 \bibitem[Zhou et~al.(2021)Zhou, Zhang, Peng, Zhang, Li, Xiong, and
   Zhang]{zhou2021informer}
@@ -186,6 +193,7 @@ Zhou, H.; Zhang, S.; Peng, J.; Zhang, S.; Li, J.; Xiong, H.; Zhang, W.
   Forecasting.
 \newblock In Proceedings of the Proceedings of the AAAI Conference on
   Artificial Intelligence,  2021, Vol.~35, pp. 11106--11115.
+\newblock {\url{https://doi.org/10.48550/arXiv.2012.07436}}.
 
 \bibitem[Wu et~al.(2023)Wu, Hu, Liu, Zhou, Wang, and Long]{wu2022timesnet}
 Wu, H.; Hu, T.; Liu, Y.; Zhou, H.; Wang, J.; Long, M.
@@ -193,20 +201,23 @@ Wu, H.; Hu, T.; Liu, Y.; Zhou, H.; Wang, J.; Long, M.
   Analysis.
 \newblock In Proceedings of the Proceedings of the International Conference on
   Learning Representations (ICLR),  2023.
+\newblock {\url{https://doi.org/10.48550/arXiv.2210.02186}}.
 
-\bibitem[Zhao et~al.(2020)Zhao, Wang, Duan, Huang, Liu, Wang, Sun, Li, Liu, and
-  Yao]{zhao2020mtadgat}
-Zhao, H.; Wang, Y.; Duan, J.; Huang, C.; Liu, D.; Wang, J.; Sun, T.; Li, Z.;
-  Liu, J.; Yao, H.
+\bibitem[Zhao et~al.(2020)Zhao, Wang, Duan, Huang, Cao, Tong, Xu, Bai, Tong,
+  and Zhang]{zhao2020mtadgat}
+Zhao, H.; Wang, Y.; Duan, J.; Huang, C.; Cao, D.; Tong, Y.; Xu, B.; Bai, J.;
+  Tong, J.; Zhang, Q.
 \newblock Multivariate Time-Series Anomaly Detection via Graph Attention
   Network.
 \newblock In Proceedings of the IEEE International Conference on Data Mining
   (ICDM),  2020, pp. 841--850.
+\newblock {\url{https://doi.org/10.1109/ICDM50108.2020.00093}}.
 
-\bibitem[Kendall(2017)]{kendall2017uncertainties}
-Kendall, A.
-\newblock Uncertainties in Deep Learning.
-\newblock PhD thesis, University of Cambridge,  2017.
+\bibitem[Kendall(2019)]{kendall2017uncertainties}
+Kendall, A.G.
+\newblock Geometry and Uncertainty in Deep Learning for Computer Vision.
+\newblock PhD thesis, University of Cambridge,  2019.
+\newblock {\url{https://doi.org/10.17863/CAM.35260}}.
 
 \bibitem[Srivastava et~al.(2014)Srivastava, Hinton, Krizhevsky, Sutskever, and
   Salakhutdinov]{srivastava2014dropout}
@@ -222,6 +233,7 @@ Lakshminarayanan, B.; Pritzel, A.; Blundell, C.
   Ensembles.
 \newblock In Proceedings of the Advances in Neural Information Processing
   Systems (NeurIPS),  2017, Vol.~30, pp. 6402--6413.
+\newblock {\url{https://doi.org/10.48550/arXiv.1612.01474}}.
 
 \bibitem[Vaswani et~al.(2017)Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez,
   Kaiser, and Polosukhin]{vaswani2017attention}
@@ -230,6 +242,7 @@ Vaswani, A.; Shazeer, N.; Parmar, N.; Uszkoreit, J.; Jones, L.; Gomez, A.N.;
 \newblock Attention is all you need.
 \newblock In Proceedings of the Advances in Neural Information Processing
   Systems,  2017, Vol.~30, pp. 5998--6008.
+\newblock {\url{https://doi.org/10.48550/arXiv.1706.03762}}.
 
 \bibitem[Angelopoulos and Bates(2021)]{angelopoulos2021conformal}
 Angelopoulos, A.N.; Bates, S.
@@ -249,6 +262,7 @@ Kendall, A.; Gal, Y.; Cipolla, R.
   Geometry and Semantics.
 \newblock {\em Proceedings of the IEEE Conference on Computer Vision and
   Pattern Recognition (CVPR)} {\bf 2018}, pp. 7482--7491.
+\newblock {\url{https://doi.org/10.48550/arXiv.1705.07115}}.
 
 \bibitem[Wu and Keogh(2023)]{wu2021current}
 Wu, R.; Keogh, E.J.
@@ -274,12 +288,13 @@ Hundman, K.; Constantinou, V.; Laporte, C.; Colwell, I.; Soderstrom, T.
 \newblock {\url{https://doi.org/10.1145/3219819.3219845}}.
 
 \bibitem[Su et~al.(2019)Su, Zhao, Niu, Liu, Sun, and Pei]{su2019robust}
-Su, Y.; Zhao, Y.; Niu, J.; Liu, R.; Sun, W.; Pei, D.
+Su, Y.; Zhao, Y.; Niu, C.; Liu, R.; Sun, W.; Pei, D.
 \newblock Robust Anomaly Detection for Multivariate Time Series through
   Stochastic Recurrent Neural Network.
 \newblock In Proceedings of the Proceedings of the 25th ACM SIGKDD
   International Conference on Knowledge Discovery and Data Mining (KDD),  2019,
   pp. 2828--2837.
+\newblock {\url{https://doi.org/10.1145/3292500.3330672}}.
 
 \bibitem[Goh et~al.(2017)Goh, Adepu, Junejo, and Mathur]{goh2017dataset}
 Goh, J.; Adepu, S.; Junejo, K.N.; Mathur, A.
@@ -287,6 +302,7 @@ Goh, J.; Adepu, S.; Junejo, K.N.; Mathur, A.
   networks.
 \newblock In Proceedings of the 2017 IEEE 18th International Symposium on High
   Assurance Systems Engineering (HASE). IEEE,  2017, pp. 140--145.
+\newblock {\url{https://doi.org/10.1109/HASE.2017.36}}.
 
 \bibitem[Mathur and Tippenhauer(2016)]{mathur2016swat}
 Mathur, A.P.; Tippenhauer, N.O.
@@ -302,7 +318,8 @@ Filonov, P.; Lavrentyev, A.; Vorontsov, A.
 \newblock Multivariate Industrial Time Series with Cyber-Attack Simulation:
   Fault Detection Using an {LSTM}-based Predictive Data Model.
 \newblock In Proceedings of the NIPS Time Series Workshop,  2016.
-\newblock Origin of the Skoltech water-circulation testbed reused for SKAB.
+\newblock Origin of the Skoltech water-circulation testbed reused for SKAB,
+  {\url{https://doi.org/10.48550/arXiv.1612.06676}}.
 
 \bibitem[Katser and Kozitsin(2020)]{skab_dataset}
 Katser, I.D.; Kozitsin, V.O.
@@ -325,12 +342,14 @@ He, K.; Zhang, X.; Ren, S.; Sun, J.
 \newblock Deep Residual Learning for Image Recognition.
 \newblock In Proceedings of the Proceedings of the IEEE Conference on Computer
   Vision and Pattern Recognition (CVPR),  2016, pp. 770--778.
+\newblock {\url{https://doi.org/10.48550/arXiv.1512.03385}}.
 
 \bibitem[Kingma and Ba(2015)]{kingma2015adam}
 Kingma, D.P.; Ba, J.
 \newblock Adam: A Method for Stochastic Optimization.
 \newblock In Proceedings of the Proceedings of the 3rd International Conference
   on Learning Representations (ICLR),  2015.
+\newblock {\url{https://doi.org/10.48550/arXiv.1412.6980}}.
 
 \bibitem[Ioffe and Szegedy(2015)]{ioffe2015batchnorm}
 Ioffe, S.; Szegedy, C.
@@ -338,6 +357,7 @@ Ioffe, S.; Szegedy, C.
   Internal Covariate Shift.
 \newblock {\em Proceedings of the 32nd International Conference on Machine
   Learning (ICML)} {\bf 2015}, {\em 37},~448--456.
+\newblock {\url{https://doi.org/10.48550/arXiv.1502.03167}}.
 
 \bibitem[Liu et~al.(2008)Liu, Ting, and Zhou]{liu2008isolation}
 Liu, F.T.; Ting, K.M.; Zhou, Z.H.
@@ -352,13 +372,15 @@ Park, D.; Hoshi, Y.; Kemp, C.C.
   LSTM-Based Variational Autoencoder.
 \newblock {\em IEEE Robotics and Automation Letters} {\bf 2018}, {\em
   3},~1544--1551.
+\newblock {\url{https://doi.org/10.48550/arXiv.1711.00614}}.
 
-\bibitem[Wang et~al.(2025)Wang, Zhang, and Liu]{wang2025res2coder}
-Wang, Y.; Zhang, L.; Liu, H.
-\newblock Res2coder: A Two-Stage Residual Autoencoder for Unsupervised
-  Multivariate Time-Series Anomaly Detection.
-\newblock {\em Applied Intelligence} {\bf 2025}.
+\bibitem[Wang et~al.(2025)Wang, Liu, Yin, Zheng, Zha, Lv, and
+  Guo]{wang2025res2coder}
+Wang, H.; Liu, Y.; Yin, H.; Zheng, X.; Zha, Z.; Lv, M.; Guo, Z.
+\newblock Res2coder: A two-stage residual autoencoder for unsupervised time
+  series anomaly detection.
+\newblock {\em Applied Intelligence} {\bf 2025}, {\em 55}.
 \newblock Compact reimplementation used as a unified-protocol baseline in this
-  work.
+  work, {\url{https://doi.org/10.1007/s10489-025-06684-y}}.
 
 \end{thebibliography}
