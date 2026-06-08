@@ -1,19 +1,20 @@
 \begin{thebibliography}{999}
 
-\bibitem[Kumar et~al.(2022)Kumar, Khare, and Harrison]{kumar2022iaq_review}
-Kumar, P.; Khare, M.; Harrison, R.M.
-\newblock A Comprehensive Review of Indoor Air Quality Monitoring Systems and
-  Their Applications.
-\newblock {\em Science of the Total Environment} {\bf 2022}, {\em 828},~154419.
-\newblock {\url{https://doi.org/10.1016/j.scitotenv.2022.154419}}.
+\bibitem[Marques et~al.(2020)Marques, Saini, Dutta, Singh, and
+  Hong]{kumar2022iaq_review}
+Marques, G.; Saini, J.; Dutta, M.; Singh, P.K.; Hong, W.C.
+\newblock Indoor Air Quality Monitoring Systems for Enhanced Living
+  Environments: A Review toward Sustainable Smart Cities.
+\newblock {\em Sustainability} {\bf 2020}, {\em 12},~4024.
+\newblock {\url{https://doi.org/10.3390/su12104024}}.
 
-\bibitem[Szczurek et~al.(2020)Szczurek, Maciejewska, and
-  Pietrucha]{szczurek2020iaq}
-Szczurek, A.; Maciejewska, M.; Pietrucha, T.
-\newblock Indoor Air Quality and Prediction of Air Pollution in Rooms Using
-  Artificial Neural Networks.
-\newblock {\em Building and Environment} {\bf 2020}, {\em 177},~106906.
-\newblock {\url{https://doi.org/10.1016/j.buildenv.2020.106906}}.
+\bibitem[Loy-Benitez et~al.(2020)Loy-Benitez, Heo, and Yoo]{szczurek2020iaq}
+Loy-Benitez, J.; Heo, S.; Yoo, C.
+\newblock Soft sensor validation for monitoring and resilient control of
+  sequential subway indoor air quality through memory-gated recurrent neural
+  networks-based autoencoders.
+\newblock {\em Control Engineering Practice} {\bf 2020}, {\em 97},~104330.
+\newblock {\url{https://doi.org/10.1016/j.conengprac.2020.104330}}.
 
 \bibitem[Coleman and Meggers()]{coleman_sensing_2018}
 Coleman, J.R.; Meggers, F.
@@ -22,12 +23,12 @@ Coleman, J.R.; Meggers, F.
 \newblock {\em Front. Built Environ.}, {\em 4},~28.
 \newblock {\url{https://doi.org/10.3389/fbuil.2018.00028}}.
 
-\bibitem[Abid et~al.(2021)Abid, Li, Hussain, Ali, and Niaz]{abid2021iaq_deep}
-Abid, K.; Li, J.; Hussain, I.; Ali, H.; Niaz, M.
-\newblock Deep Learning Approach for Indoor Air Quality Prediction Using
-  Multi-Sensor Data.
-\newblock {\em Building and Environment} {\bf 2021}, {\em 197},~107836.
-\newblock {\url{https://doi.org/10.1016/j.buildenv.2021.107836}}.
+\bibitem[Taheri and Razban(2021)]{abid2021iaq_deep}
+Taheri, S.; Razban, A.
+\newblock Learning-based {CO2} concentration prediction: Application to indoor
+  air quality control using demand-controlled ventilation.
+\newblock {\em Building and Environment} {\bf 2021}, {\em 205},~108164.
+\newblock {\url{https://doi.org/10.1016/j.buildenv.2021.108164}}.
 
 \bibitem[Chandola et~al.(2009)Chandola, Banerjee, and
   Kumar]{chandola2009survey}
@@ -45,12 +46,12 @@ Pang, G.; Shen, C.; Cao, L.; Hengel, A.V.D.
 \newblock Deep Learning for Anomaly Detection: A Review.
 \newblock {\em ACM Computing Surveys} {\bf 2021}, {\em 54},~1--38.
 
-\bibitem[Choi et~al.(2024)Choi, Lee, and Kim]{choi2024air_anomaly}
-Choi, Y.; Lee, S.; Kim, D.
-\newblock Real-time Anomaly Detection in Indoor Air Quality Sensor Networks
-  Using Deep Autoencoders.
-\newblock {\em Building and Environment} {\bf 2024}, {\em 258},~111578.
-\newblock {\url{https://doi.org/10.1016/j.buildenv.2024.111578}}.
+\bibitem[Park et~al.(2023)Park, Seo, and Cho]{choi2024air_anomaly}
+Park, J.; Seo, Y.; Cho, J.
+\newblock Unsupervised outlier detection for time-series data of indoor air
+  quality using {LSTM} autoencoder with ensemble method.
+\newblock {\em Journal of Big Data} {\bf 2023}, {\em 10},~66.
+\newblock {\url{https://doi.org/10.1186/s40537-023-00746-z}}.
 
 \bibitem[Wei et~al.(2023)Wei, Jang-Jaccard, Xu, Sabrina, Camtepe, and
   Boulic]{wei2023lstm_ae_iaq}
@@ -58,7 +59,7 @@ Wei, Y.; Jang-Jaccard, J.; Xu, W.; Sabrina, F.; Camtepe, S.; Boulic, M.
 \newblock LSTM-Autoencoder-Based Anomaly Detection for Indoor Air Quality
   Time-Series Data.
 \newblock {\em IEEE Sensors Journal} {\bf 2023}, {\em 23},~3917--3928.
-\newblock {\url{https://doi.org/10.1109/JSEN.2022.3232532}}.
+\newblock {\url{https://doi.org/10.1109/JSEN.2022.3230361}}.
 
 \bibitem[Sánchez-Ferrera et~al.()Sánchez-Ferrera, Calvo, and
   Lozano]{sanchez-ferrera_review_2025}
@@ -126,13 +127,14 @@ van~den Oord, A.; Dieleman, S.; Zen, H.; Simonyan, K.; Vinyals, O.; Graves, A.;
 \newblock {WaveNet}: A Generative Model for Raw Audio.
 \newblock {\em {arXiv} preprint arXiv:1609.03499} {\bf 2016}.
 
-\bibitem[Zhang et~al.(2023)Zhang, Wu, Yang, Pan, and Yu]{zhang2020tcn_review}
-Zhang, Q.; Wu, J.; Yang, C.; Pan, T.; Yu, X.
-\newblock A Review of the Application of Temporal Convolutional Networks for
-  Time Series Forecasting.
-\newblock {\em Engineering Applications of Artificial Intelligence} {\bf 2023},
-  {\em 102},~104252.
-\newblock {\url{https://doi.org/10.1016/j.engappai.2023.104252}}.
+\bibitem[Lara-Ben{\'i}tez et~al.(2020)Lara-Ben{\'i}tez, Carranza-Garc{\'i}a,
+  Luna-Romera, and Riquelme]{zhang2020tcn_review}
+Lara-Ben{\'i}tez, P.; Carranza-Garc{\'i}a, M.; Luna-Romera, J.M.; Riquelme,
+  J.C.
+\newblock Temporal Convolutional Networks Applied to Energy-Related Time Series
+  Forecasting.
+\newblock {\em Applied Sciences} {\bf 2020}, {\em 10},~2322.
+\newblock {\url{https://doi.org/10.3390/app10072322}}.
 
 \bibitem[Thill et~al.()Thill, Konen, Wang, and Bäck]{thill_temporal_2021}
 Thill, M.; Konen, W.; Wang, H.; Bäck, T.
