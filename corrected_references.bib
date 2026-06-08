@@ -1,0 +1,151 @@
+% ============================================================================
+%  CORRECTED REFERENCES — AUDIT PATCH  (separate file; does NOT modify
+%  2209-hiper-chad.bib or any manuscript text)
+%
+%  Purpose: drop-in corrected BibTeX for the entries whose DOI was broken or
+%  pointed to an unrelated article. The ORIGINAL CITE KEYS ARE RETAINED so
+%  that no \cite{...} command in the manuscript needs to change — only the
+%  entry bodies differ. Verify each replacement reads as intended before use.
+%
+%  Verified against Crossref on 2026-06-08.
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+% PART 1 — BROKEN DOIs: replace the entry body (key kept identical)
+% ----------------------------------------------------------------------------
+
+% [1] WAS: Kumar/Khare/Harrison, "A Comprehensive Review of IAQ Monitoring..."
+%     DOI 10.1016/j.scitotenv.2022.154419 actually resolves to an unrelated
+%     lake-dynamics paper (STOTEN 829). Replaced with a genuine IAQ-monitoring
+%     review. (Alternative: Singh et al., J. Environ. Manage. 289 (2021)
+%     112510, doi 10.1016/j.jenvman.2021.112510 — has Kumar/Harrison overlap.)
+@article{kumar2022iaq_review,
+	title = {Indoor Air Quality Monitoring Systems for Enhanced Living Environments: A Review toward Sustainable Smart Cities},
+	author = {Marques, Gon{\c c}alo and Saini, Jagriti and Dutta, Maitreyee and Singh, Pradeep Kumar and Hong, Wei-Chiang},
+	journal = {Sustainability},
+	volume = {12},
+	number = {10},
+	pages = {4024},
+	year = {2020},
+	doi = {10.3390/su12104024}
+}
+
+% [2] WAS: Szczurek et al. (fabricated). DOI 10.1016/j.buildenv.2020.106906
+%     resolves to O'Brien et al., Build. Environ. 179. Replaced with a genuine
+%     IAQ sensor-network monitoring paper using RNN autoencoders.
+@article{szczurek2020iaq,
+	title = {Soft sensor validation for monitoring and resilient control of sequential subway indoor air quality through memory-gated recurrent neural networks-based autoencoders},
+	author = {Loy-Benitez, Jorge and Heo, SungKu and Yoo, ChangKyoo},
+	journal = {Control Engineering Practice},
+	volume = {97},
+	pages = {104330},
+	year = {2020},
+	doi = {10.1016/j.conengprac.2020.104330}
+}
+
+% [4] WAS: Abid et al. (fabricated). DOI 10.1016/j.buildenv.2021.107836
+%     resolves to Fauzi et al. (life-cycle assessment). Replaced with a genuine
+%     deep-learning multi-sensor IAQ (CO2) prediction paper, same journal.
+@article{abid2021iaq_deep,
+	title = {Learning-based {CO2} concentration prediction: Application to indoor air quality control using demand-controlled ventilation},
+	author = {Taheri, Saman and Razban, Ali},
+	journal = {Building and Environment},
+	volume = {205},
+	pages = {108164},
+	year = {2021},
+	doi = {10.1016/j.buildenv.2021.108164}
+}
+
+% [8] WAS: Choi et al. (fabricated). DOI 10.1016/j.buildenv.2024.111578
+%     resolves to Cao et al. (ventilation strategy). Replaced with a genuine
+%     deep autoencoder IAQ outlier-detection paper.
+@article{choi2024air_anomaly,
+	title = {Unsupervised outlier detection for time-series data of indoor air quality using {LSTM} autoencoder with ensemble method},
+	author = {Park, Junhyeok and Seo, Youngsuk and Cho, Jaehyuk},
+	journal = {Journal of Big Data},
+	volume = {10},
+	number = {1},
+	pages = {66},
+	year = {2023},
+	doi = {10.1186/s40537-023-00746-z}
+}
+
+% [9] DOI FIX ONLY: the paper is genuine but DOI 10.1109/JSEN.2022.3232532 is
+%     dead (404). Corrected to the real DOI 10.1109/JSEN.2022.3230361.
+@article{wei2023lstm_ae_iaq,
+	title = {LSTM-Autoencoder-Based Anomaly Detection for Indoor Air Quality Time-Series Data},
+	author = {Wei, Yuanyuan and Jang-Jaccard, Julian and Xu, Wen and Sabrina, Fariza and Camtepe, Seyit and Boulic, Mikael},
+	journal = {IEEE Sensors Journal},
+	volume = {23},
+	number = {4},
+	pages = {3917--3928},
+	year = {2023},
+	doi = {10.1109/JSEN.2022.3230361}
+}
+
+% [19] WAS: Zhang et al. (fabricated). DOI 10.1016/j.engappai.2023.104252 is
+%     dead (404). Replaced with a genuine review/empirical evaluation of TCNs
+%     applied to (industrial/energy) time series.
+@article{zhang2020tcn_review,
+	title = {Temporal Convolutional Networks Applied to Energy-Related Time Series Forecasting},
+	author = {Lara-Ben{\'i}tez, Pedro and Carranza-Garc{\'i}a, Manuel and Luna-Romera, Jos{\'e} Mar{\'i}a and Riquelme, Jos{\'e} C.},
+	journal = {Applied Sciences},
+	volume = {10},
+	number = {7},
+	pages = {2322},
+	year = {2020},
+	doi = {10.3390/app10072322}
+}
+
+% ----------------------------------------------------------------------------
+% PART 2 — CONTENT-vs-CONTEXT MISMATCHES (reference is REAL; the manuscript
+% TEXT describes it wrongly). These need a one-line WORDING fix in the text,
+% not a new reference, so no .bib change is given here — listed for tracking.
+%
+%   [10] sanchez-ferrera_review_2025 : cited to support physical sensor-drift
+%        timescales, but it is a methods review on self-supervised learning for
+%        TSAD. Either re-aim the sentence or add a sensor-degradation citation.
+%   [12] cui_sde-hnn_2025 : text calls it "hydrological forecasting"; it is a
+%        GENERAL time-series forecasting / calibrated-uncertainty paper.
+%   [22] mehta_nac-tcn_2023 : text says "industrial monitoring applications";
+%        the paper is about EMOTION understanding from video.
+% ----------------------------------------------------------------------------
+
+% ----------------------------------------------------------------------------
+% PART 3 — OPTIONAL: add verified DOIs to existing entries that currently lack
+% one (paste the doi = {...} line into the corresponding entry of the real
+% .bib). All verified against Crossref 2026-06-08.
+%
+%   chandola2009survey       doi = {10.1145/1541880.1541882}
+%   pang2021deep_survey      doi = {10.1145/3439950}
+%   cho2014gru               doi = {10.3115/v1/D14-1179}
+%   audibert2020usad         doi = {10.1145/3394486.3403392}
+%   malhotra2016lstmed       doi = {10.48550/arXiv.1607.00148}
+%   tuli2022tranad           doi = {10.14778/3514061.3514067}
+%   zhou2021informer         doi = {10.1609/aaai.v35i12.17325}
+%   zhao2020mtadgat          doi = {10.1109/ICDM50108.2020.00093}
+%   su2019robust             doi = {10.1145/3292500.3330672}
+%   goh2017dataset           doi = {10.1109/HASE.2017.36}
+%   he2016deep               doi = {10.1109/CVPR.2016.90}
+%   kendall2018multitask     doi = {10.1109/CVPR.2018.00781}
+%   park2018lstmvae          doi = {10.1109/LRA.2018.2801475}
+%   wang2025res2coder        doi = {10.1007/s10489-025-06684-y}
+%   bai2018tcn               doi = {10.48550/arXiv.1803.01271}
+%   oord2016wavenet          doi = {10.48550/arXiv.1609.03499}
+%   angelopoulos2021conformal doi = {10.48550/arXiv.2107.07511}
+%
+% arXiv IDs still to confirm before inserting (well-known but unverified here):
+%   gal2016dropout_bayesian  arXiv:1506.02142
+%   vaswani2017attention     arXiv:1706.03762
+%   lakshminarayanan2017ensembles arXiv:1612.01474
+%   kingma2015adam           arXiv:1412.6980
+%   ioffe2015batchnorm       arXiv:1502.03167
+%   xu2022anomalytransformer arXiv:2110.02642
+%   wu2022timesnet           arXiv:2210.02186
+%   filonov2016multivariate  arXiv:1612.06676
+%
+% Genuinely no DOI (leave as-is): srivastava2014dropout (JMLR),
+%   ester1996dbscan (KDD-96), kendall2017uncertainties (PhD thesis),
+%   lai2021revisiting (NeurIPS D&B). boucheron2013concentration: book DOI
+%   10.1093/acprof:oso/9780199535255.001.0001 (unverified).
+% ============================================================================
